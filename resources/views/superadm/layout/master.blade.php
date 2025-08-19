@@ -192,7 +192,7 @@
                         </li>
 
                         <li> <a href="{{ route('departments.list') }}"><i class="mdi mdi-gauge"></i><span>
-                                    Projects</span></a>
+                                    Departments</span></a>
                         </li>
 
                     </ul>

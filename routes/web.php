@@ -7,6 +7,8 @@ use App\Http\Controllers\Superadm\RoleController;
 use App\Http\Controllers\Superadm\DesignationsController;
 use App\Http\Controllers\Superadm\PlantMasterController;
 use App\Http\Controllers\Superadm\ProjectsController;
+use App\Http\Controllers\Superadm\DepartmentsController;
+
 
 
 
@@ -64,7 +66,19 @@ Route::group(['middleware' => ['SuperAdmin']], function () {
     Route::post('/projects/delete', [ProjectsController::class, 'delete'])->name('projects.delete');
     Route::post('/projects/update-status', [ProjectsController::class, 'updateStatus'])->name('projects.updatestatus');
 
-departments
+
+
+
+// departments management routes
+    Route::get('/departments/list', [DepartmentsController::class, 'index'])->name('departments.list');
+    Route::get('/departments/add', [DepartmentsController::class, 'create'])->name('departments.create');
+    Route::post('/departments/add', [DepartmentsController::class, 'save'])->name('departments.save');
+    Route::get('/departments/edit/{encodedId}', [DepartmentsController::class, 'edit'])->name('departments.edit');
+    Route::post('/departments/update/{encodedId}', [DepartmentsController::class, 'update'])->name('departments.update');
+    Route::post('/departments/delete', [DepartmentsController::class, 'delete'])->name('departments.delete');
+    Route::post('/departments/update-status', [DepartmentsController::class, 'updateStatus'])->name('departments.updatestatus');
+
+
     Route::get('logout', [LoginController::class, 'logout'])->name('logout');
 
 });
