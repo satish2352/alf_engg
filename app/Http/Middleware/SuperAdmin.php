@@ -15,10 +15,10 @@ class SuperAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(!$request->session()->exists('superLoginId'))
-        {
-            return redirect(route('super'));
-        }
+        // if(!$request->session()->exists('superLoginId'))
+        // {
+        //     return redirect(route('super'));
+        // }
         return $next($request);
     }
 }

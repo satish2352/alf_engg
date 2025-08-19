@@ -37,6 +37,9 @@ Route::group(['middleware' => ['SuperAdmin']], function () {
     // Delete Role
     Route::post('/roles/delete', [RoleController::class, 'delete'])->name('roles.delete');
 
+    Route::post('/roles/update-status', [RoleController::class, 'updateStatus'])->name('roles.updatestatus');
+
+
     
 
 

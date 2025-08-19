@@ -22,18 +22,18 @@ class LoginController extends Controller
    public function validateSuperLogin(Request $req)
    {
 		// $this->validateLogin($req);
-		$uname=$req->input('superemail');
-		$pass=$req->input('superpassword');
-		$result=$this->serviceAll->validateSuperLogin($req,$uname,$pass);
-      if($result=='1')
-      {
+		// $uname=$req->input('superemail');
+		// $pass=$req->input('superpassword');
+		// $result=$this->serviceAll->validateSuperLogin($req,$uname,$pass);
+      // if($result=='1')
+      // {
          //return view('superadm.dashboard.dashboard');
          return redirect('dashboard');
-      }
-      else
-      {
-         return route('super');
-      }
+      // }
+      // else
+      // {
+      //    return route('super');
+      // }
 
    }
 

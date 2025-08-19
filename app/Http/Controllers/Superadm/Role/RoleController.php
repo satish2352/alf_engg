@@ -1,104 +1,130 @@
 <?php
 namespace App\Http\Controllers\Superadm\Role;
+
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\ServiceAll\Superadm\Role\RoleService;
+use App\Http\Services\Superadm\Role\RoleService;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Validation\Rule;
+use Exception;
 
-
-//Dashboard
 class RoleController extends Controller
 {
+	protected $service;
 	function __construct()
 	{
-		$this->serviceAll=new RoleService();
+		$this->service = new RoleService();
 	}
 
 	public function index()
 	{
-    	$roles=$this->serviceAll->list();
-    	return view('superadm.role.list',compact('roles'));
+		try {
+			$roles = $this->service->list();
+			return view('superadm.role.list', compact('roles'));
+		} catch (Exception $e) {
+			return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
+		}
 	}
 
 	public function create(Request $req)
 	{
-		return view('superadm.role.create');
-
+		try {
+			return view('superadm.role.create');
+		} catch (Exception $e) {
+			return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
+		}
 	}
 
 	public function save(Request $req)
-	{
-		$this->validateData($req);
-		$this->serviceAll->save($req);
-		return redirect()->route('roles.list')->with('success', 'Role added successfully.');
-
-
-	}
-
-	public function edit($encodedId)
-	{
-		$id = base64_decode($encodedId);
-
-		$data = $this->serviceAll->edit($id);
-		return view('superadm.role.edit',compact('data','encodedId'));
-
-	}
-
-	public function update(Request $req)
 	{
 
 		$req->validate([
 			'role' => [
 				'required',
+				Rule::unique('roles', 'role')->where(function ($query) {
+					return $query->where('is_deleted', 0);
+				}),
+			],
+		], [
+			'role.required' => 'Enter Role Name',
+			'role.unique' => 'This role already exists.',
+		]);
+
+		try {
+			$this->service->save($req);
+			return redirect()->route('roles.list')->with('success', 'Role added successfully.');
+		} catch (Exception $e) {
+			return redirect()->back()->withInput()->with('error', 'Something went wrong: ' . $e->getMessage());
+		}
+
+	}
+
+	public function edit($encodedId)
+	{
+		try {
+			$id = base64_decode($encodedId);
+			$data = $this->service->edit($id);
+			return view('superadm.role.edit', compact('data', 'encodedId'));
+		} catch (Exception $e) {
+			return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
+		}
+	}
+
+	public function update(Request $req)
+	{
+		$req->validate([
+			'role' => [
+				'required',
 				Rule::unique('roles', 'role')
-					->where(fn ($query) => $query->where('is_active', 1))
+					->where(fn($query) => $query->where('is_deleted', 0))
 					->ignore($req->id),
 			],
 			'id' => 'required',
 			'is_active' => 'required'
 		], [
 			'role.required' => 'Enter Role Name',
-			'role.unique'   => 'This role already exists.',
+			'role.unique' => 'This role already exists.',
 			'id.required' => 'ID required',
-			'is_active.required' => 'Select active or in active required'
+			'is_active.required' => 'Select active or inactive required'
 		]);
 
-		$this->serviceAll->update($req);
-		return redirect()->route('roles.list')->with('success', 'Role updated successfully.');
-
-
+		try {
+			$this->service->update($req);
+			return redirect()->route('roles.list')->with('success', 'Role updated successfully.');
+		} catch (Exception $e) {
+			return redirect()->back()->withInput()->with('error', 'Something went wrong: ' . $e->getMessage());
+		}
 	}
 
 
 	public function delete(Request $req)
 	{
+		try {
+			$req->validate([
+				'id' => 'required',
+			], [
+				'id.required' => 'ID required'
+			]);
 
-		$req->validate([
-			'id' => 'required'
-		], [
-			'id.required' => 'ID required'
-		]);
-
-		$this->serviceAll->delete($req);
-		return redirect()->route('roles.list')->with('success', 'Role deleted successfully.');
-
+			$this->service->delete($req);
+			return redirect()->route('roles.list')->with('success', 'Role deleted successfully.');
+		} catch (Exception $e) {
+			return redirect()->back()->with('error', 'Failed to delete role: ' . $e->getMessage());
+		}
 	}
 
 	public function validateData(Request $req)
 	{
-		 $req->validate([
-			'role' => [
-				'required',
-				Rule::unique('roles', 'role')->where(function ($query) {
-					return $query->where('is_active', 1);
-				}),
-			],
-		], [
-			'role.required' => 'Enter Role Name',
-			'role.unique'   => 'This role already exists.',
-		]);
 
 	}
-}
 
+	public function updateStatus(Request $req)
+	{
+		try {
+			$this->service->updateStatus($req);
+			return redirect()->route('roles.list')->with('success', 'Role status updated successfully.');
+		} catch (Exception $e) {
+			return redirect()->back()->with('error', 'Failed to update status: ' . $e->getMessage());
+		}
+	}
+}
