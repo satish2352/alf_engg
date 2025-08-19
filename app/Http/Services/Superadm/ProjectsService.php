@@ -1,0 +1,96 @@
+<?php
+namespace App\Http\Services\Superadm;
+
+use Illuminate\Http\Request;
+use App\Http\Repository\Superadm\ProjectsRepository;
+use Exception;
+use Log;
+
+class ProjectsService
+{
+    protected $repo;
+
+    public function __construct()
+    {
+        $this->repo = new ProjectsRepository();
+    }
+
+    public function list()
+    {
+        try {
+            return $this->repo->list();
+        } catch (Exception $e) {
+            Log::error("Project Service list error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function save($req)
+    {
+        try {
+            $data = [   'project_name' => $req->input('project_name'), 
+                        'project_description' => $req->input('project_description'),
+                        'project_url' => $req->input('project_url')
+                    ];
+            return $this->repo->save($data);
+        } catch (Exception $e) {
+            Log::error("Project Service save error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function edit($id)
+    {
+        try {
+            return $this->repo->edit($id);
+        } catch (Exception $e) {
+            Log::error("Project Service edit error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function update($req)
+    {
+
+        try {
+            $id = $req->id;
+            $data = [
+                'project_name' => $req->input('project_name'), 
+                'project_description' => $req->input('project_description'),
+                'project_url' => $req->input('project_url'),
+                'is_active' => $req->is_active
+            ];
+
+            return $this->repo->update($data, $id);
+        } catch (Exception $e) {
+            Log::error("Project Service update error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function delete($req)
+    {
+        try {
+            $id = base64_decode($req->id);
+            $data = ['is_deleted' => 1];
+
+            return $this->repo->delete($data, $id);
+        } catch (Exception $e) {
+            Log::error("Project Service delete error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function updateStatus($req)
+    {
+        try {
+            $id = base64_decode($req->id);
+            $data = ['is_active' => $req->is_active];
+
+            return $this->repo->updateStatus($data, $id);
+        } catch (Exception $e) {
+            Log::error("Project Service updateStatus error: " . $e->getMessage());
+            return false;
+        }
+    }
+}

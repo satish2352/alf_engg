@@ -183,8 +183,16 @@
                                     Designations</span></a>
                         </li>
 
-                          <li> <a href="{{ route('plantmaster.list') }}"><i class="mdi mdi-gauge"></i><span>
+                        <li> <a href="{{ route('plantmaster.list') }}"><i class="mdi mdi-gauge"></i><span>
                                     Plant</span></a>
+                        </li>
+
+                        <li> <a href="{{ route('projects.list') }}"><i class="mdi mdi-gauge"></i><span>
+                                    Projects</span></a>
+                        </li>
+
+                        <li> <a href="{{ route('departments.list') }}"><i class="mdi mdi-gauge"></i><span>
+                                    Projects</span></a>
                         </li>
 
                     </ul>

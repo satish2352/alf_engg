@@ -6,6 +6,9 @@ use App\Http\Controllers\Superadm\DashboardController;
 use App\Http\Controllers\Superadm\RoleController;
 use App\Http\Controllers\Superadm\DesignationsController;
 use App\Http\Controllers\Superadm\PlantMasterController;
+use App\Http\Controllers\Superadm\ProjectsController;
+
+
 
 Route::get('login', function () {
     return view('superadm.login');
@@ -51,6 +54,17 @@ Route::group(['middleware' => ['SuperAdmin']], function () {
 
 
 
+
+    // ProjectsController management routes
+    Route::get('/projects/list', [ProjectsController::class, 'index'])->name('projects.list');
+    Route::get('/projects/add', [ProjectsController::class, 'create'])->name('projects.create');
+    Route::post('/projects/add', [ProjectsController::class, 'save'])->name('projects.save');
+    Route::get('/projects/edit/{encodedId}', [ProjectsController::class, 'edit'])->name('projects.edit');
+    Route::post('/projects/update/{encodedId}', [ProjectsController::class, 'update'])->name('projects.update');
+    Route::post('/projects/delete', [ProjectsController::class, 'delete'])->name('projects.delete');
+    Route::post('/projects/update-status', [ProjectsController::class, 'updateStatus'])->name('projects.updatestatus');
+
+departments
     Route::get('logout', [LoginController::class, 'logout'])->name('logout');
 
 });
