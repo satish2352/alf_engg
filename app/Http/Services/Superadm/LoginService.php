@@ -3,7 +3,7 @@
 namespace App\Http\ServiceAll\Superadm;
 
 use Illuminate\Http\Request;
-use App\Http\RepositoryAll\Superadm\LoginRepository;
+use App\Http\Repository\Superadm\LoginRepository;
 use session;
 
 class LoginService

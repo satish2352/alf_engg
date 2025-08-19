@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class PlantMasters extends Model
+{
+    public $table = 'plant_masters';
+    public $timestamps = true;
+    protected $fillable = ['plant_code','plant_name','address','city','plant_short_name', 'is_active'];
+}
+
+      

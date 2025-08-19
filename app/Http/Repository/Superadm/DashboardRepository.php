@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\RepositoryAll\Superadm\Dashboard;
+namespace App\Http\Repository\Superadm;
 use Illuminate\Http\Request;
 use App\Models\SuperAdm\MSchool;
 use App\Models\SuperAdm\AcdmcYear;

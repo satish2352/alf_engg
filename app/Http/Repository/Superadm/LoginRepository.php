@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\RepositoryAll\Superadm;
+namespace App\Http\Repository\Superadm;
 use App\Models\SuperAdm\SuperLogin;
 use App\Models\SuperAdm\MSchool;
 use DB;

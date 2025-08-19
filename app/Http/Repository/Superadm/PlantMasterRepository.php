@@ -1,23 +1,23 @@
 <?php
 
-namespace App\Http\RepositoryAll\Superadm\Role;
+namespace App\Http\Repository\Superadm;
 
 use Illuminate\Http\Request;
-use App\Models\Roles;
+use App\Models\PlantMasters;
 use DB;
 use Exception;
 use Illuminate\Support\Facades\Log;
 
-class RoleRepository
+class PlantMasterRepository
 {
     public function list()
     {
         try {
-            return Roles::where('is_deleted', 0)
+            return PlantMasters::where('is_deleted', 0)
                 ->orderBy('id', 'desc')
                 ->get();
         } catch (Exception $e) {
-            Log::error("Error fetching role list: " . $e->getMessage());
+            Log::error("Error fetching plant list: " . $e->getMessage());
             return collect(); // return empty collection on error
         }
     }
@@ -25,9 +25,9 @@ class RoleRepository
     public function save($data)
     {
         try {
-            return Roles::create($data);
+            return PlantMasters::create($data);
         } catch (Exception $e) {
-            Log::error("Error saving role: " . $e->getMessage());
+            Log::error("Error saving plant: " . $e->getMessage());
             return false;
         }
     }
@@ -35,9 +35,9 @@ class RoleRepository
     public function edit($id)
     {
         try {
-            return Roles::where('id', $id)->first();
+            return PlantMasters::where('id', $id)->first();
         } catch (Exception $e) {
-            Log::error("Error editing role ID {$id}: " . $e->getMessage());
+            Log::error("Error editing plant ID {$id}: " . $e->getMessage());
             return null;
         }
     }
@@ -45,9 +45,9 @@ class RoleRepository
     public function update($data, $id)
     {
         try {
-            return Roles::where('id', $id)->update($data);
+            return PlantMasters::where('id', $id)->update($data);
         } catch (Exception $e) {
-            Log::error("Error updating role ID {$id}: " . $e->getMessage());
+            Log::error("Error updating plant ID {$id}: " . $e->getMessage());
             return false;
         }
     }
@@ -55,9 +55,9 @@ class RoleRepository
     public function delete($data, $id)
     {
         try {
-            return Roles::where('id', $id)->update($data);
+            return PlantMasters::where('id', $id)->update($data);
         } catch (Exception $e) {
-            Log::error("Error deleting role ID {$id}: " . $e->getMessage());
+            Log::error("Error deleting plant ID {$id}: " . $e->getMessage());
             return false;
         }
     }
@@ -65,9 +65,9 @@ class RoleRepository
     public function updateStatus($data, $id)
     {
         try {
-            return Roles::where('id', $id)->update($data);
+            return PlantMasters::where('id', $id)->update($data);
         } catch (Exception $e) {
-            Log::error("Error updating status for role ID {$id}: " . $e->getMessage());
+            Log::error("Error updating status for plant ID {$id}: " . $e->getMessage());
             return false;
         }
     }

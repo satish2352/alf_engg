@@ -175,9 +175,18 @@
                         </li> -->
 
 
-                        <li> <a href="{{ route('roles.list') }}"><i class="mdi mdi-gauge"></i><span>All New
+                        <li> <a href="{{ route('roles.list') }}"><i class="mdi mdi-gauge"></i><span>
                                     Role</span></a>
                         </li>
+
+                        <li> <a href="{{ route('designations.list') }}"><i class="mdi mdi-gauge"></i><span>
+                                    Designations</span></a>
+                        </li>
+
+                          <li> <a href="{{ route('plantmaster.list') }}"><i class="mdi mdi-gauge"></i><span>
+                                    Plant</span></a>
+                        </li>
+
                     </ul>
                 </nav>
                 <!-- End Sidebar navigation -->

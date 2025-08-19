@@ -1,8 +1,8 @@
 <?php
-namespace App\Http\Services\Superadm\Role;
+namespace App\Http\Services\Superadm;
 
 use Illuminate\Http\Request;
-use App\Http\RepositoryAll\Superadm\Role\RoleRepository;
+use App\Http\Repository\Superadm\RoleRepository;
 use Exception;
 use Log;
 
