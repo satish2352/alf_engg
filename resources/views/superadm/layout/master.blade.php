@@ -194,6 +194,9 @@
                         <li> <a href="{{ route('departments.list') }}"><i class="mdi mdi-gauge"></i><span>
                                     Departments</span></a>
                         </li>
+                        <li> <a href="{{ route('employees.list') }}"><i class="mdi mdi-gauge"></i><span>
+                                    Employees</span></a>
+                        </li>
 
                     </ul>
                 </nav>

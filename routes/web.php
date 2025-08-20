@@ -8,6 +8,7 @@ use App\Http\Controllers\Superadm\DesignationsController;
 use App\Http\Controllers\Superadm\PlantMasterController;
 use App\Http\Controllers\Superadm\ProjectsController;
 use App\Http\Controllers\Superadm\DepartmentsController;
+use App\Http\Controllers\Superadm\EmployeesController;
 
 
 
@@ -69,7 +70,7 @@ Route::group(['middleware' => ['SuperAdmin']], function () {
 
 
 
-// departments management routes
+    // departments management routes
     Route::get('/departments/list', [DepartmentsController::class, 'index'])->name('departments.list');
     Route::get('/departments/add', [DepartmentsController::class, 'create'])->name('departments.create');
     Route::post('/departments/add', [DepartmentsController::class, 'save'])->name('departments.save');
@@ -77,6 +78,16 @@ Route::group(['middleware' => ['SuperAdmin']], function () {
     Route::post('/departments/update/{encodedId}', [DepartmentsController::class, 'update'])->name('departments.update');
     Route::post('/departments/delete', [DepartmentsController::class, 'delete'])->name('departments.delete');
     Route::post('/departments/update-status', [DepartmentsController::class, 'updateStatus'])->name('departments.updatestatus');
+
+
+    // employees management routes
+    Route::get('/employees/list', [EmployeesController::class, 'index'])->name('employees.list');
+    Route::get('/employees/add', [EmployeesController::class, 'create'])->name('employees.create');
+    Route::post('/employees/add', [EmployeesController::class, 'save'])->name('employees.save');
+    Route::get('/employees/edit/{encodedId}', [EmployeesController::class, 'edit'])->name('employees.edit');
+    Route::post('/employees/update/{encodedId}', [EmployeesController::class, 'update'])->name('employees.update');
+    Route::post('/employees/delete', [EmployeesController::class, 'delete'])->name('employees.delete');
+    Route::post('/employees/update-status', [EmployeesController::class, 'updateStatus'])->name('employees.updatestatus');
 
 
     Route::get('logout', [LoginController::class, 'logout'])->name('logout');
