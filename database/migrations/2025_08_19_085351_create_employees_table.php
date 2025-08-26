@@ -15,6 +15,7 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->string('plant_id');
             $table->string('department_id');
+            $table->string('projects_id');
             $table->string('designation_id');
             $table->string('role_id');
             $table->string('employee_code');

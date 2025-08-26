@@ -30,6 +30,7 @@ class EmployeesService
         try {
             $data = [   'plant_id' => $req->input('plant_id'), 
                         'department_id' => $req->input('department_id'),
+                        'projects_id' => $req->input('projects_id'),
                         'designation_id' => $req->input('designation_id'),
                         'role_id' => $req->input('role_id'),
                         'employee_code' => $req->input('employee_code'),
@@ -64,6 +65,7 @@ class EmployeesService
             $data = [
                 'plant_id' => $req->input('plant_id'), 
                 'department_id' => $req->input('department_id'),
+                'projects_id' => $req->input('projects_id'),
                 'designation_id' => $req->input('designation_id'),
                 'role_id' => $req->input('role_id'),
                 'employee_code' => $req->input('employee_code'),

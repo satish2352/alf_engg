@@ -11,7 +11,8 @@ use App\Models\
 	PlantMasters,
 	Departments,
 	Designations,
-	Roles
+	Roles,
+	Projects
 }
 ;
 use Exception;
@@ -56,6 +57,11 @@ class EmployeesController extends Controller
 				->where('is_active', 1)
 				->orderBy('id', 'desc')
 				->get();
+
+			// $projects = Projects::where('is_deleted', 0)
+			// 	->where('is_active', 1)
+			// 	->orderBy('id', 'desc')
+			// 	->get();
 				
 			return view('superadm.employees.create', compact('plants', 'departments','designations','roles'));
 		} catch (Exception $e) {
@@ -70,6 +76,7 @@ class EmployeesController extends Controller
 
 			'plant_id' => 'required',
 			'department_id' => 'required',
+			'projects_id' => 'required',
 			'designation_id' => 'required',
 			'role_id' => 'required',
 			'employee_code' => 'required',
@@ -83,6 +90,7 @@ class EmployeesController extends Controller
 		], [
 			'plant_id.required' => 'plant_id required',
 			'department_id.required' => 'department_id required',
+			'projects_id.required' => 'projects_id required',
 			'designation_id.required' => 'designation_id required',
 			'role_id.required' => 'role_id required',
 			'employee_code.required' => 'employee_code required',
@@ -124,7 +132,8 @@ class EmployeesController extends Controller
 	{
 		$req->validate([
 			'plant_id' => 'required',
-			'department_id' => 'required',
+			'department_id' => 'required', 
+			'projects_id' => 'required', 
 			'designation_id' => 'required',
 			'role_id' => 'required',
 			'employee_code' => 'required',
@@ -139,6 +148,7 @@ class EmployeesController extends Controller
 		], [
 			'plant_id.required' => 'plant_id required',
 			'department_id.required' => 'department_id required',
+			'projects_id.required' => 'projects_id required',
 			'designation_id.required' => 'designation_id required',
 			'role_id.required' => 'role_id required',
 			'employee_code.required' => 'employee_code required',

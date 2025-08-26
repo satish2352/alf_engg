@@ -13,9 +13,41 @@ class ProjectsRepository
     public function list()
     {
         try {
-            return Projects::where('is_deleted', 0)
-                ->orderBy('id', 'desc')
+            // return Projects::where('is_deleted', 0)
+            //     ->orderBy('plant_id', 'desc')
+            //     ->get();
+
+            return Projects::leftJoin('plant_masters', 'projects.plant_id', '=', 'plant_masters.id')
+                ->where('projects.is_deleted', 0)
+                ->orderBy('projects.plant_id', 'desc')
+                ->select(
+                    'projects.*',
+                    'plant_masters.plant_name',
+                    'plant_masters.plant_code',
+                    'plant_masters.city'
+                )
                 ->get();
+
+
+        } catch (Exception $e) {
+            Log::error("Error fetching project list: " . $e->getMessage());
+            return collect(); // return empty collection on error
+        }
+    }
+
+    public function listajaxlist($palnt_id)
+    {
+        try {
+            // return Projects::where('is_deleted', 0)
+            //     ->orderBy('plant_id', 'desc')
+            //     ->get();
+
+            return Projects::where('is_deleted', 0)
+                ->where('plant_id', $palnt_id)
+				->where('is_active', 1)
+				->orderBy('id', 'desc')
+				->get();
+
         } catch (Exception $e) {
             Log::error("Error fetching project list: " . $e->getMessage());
             return collect(); // return empty collection on error
@@ -25,6 +57,7 @@ class ProjectsRepository
     public function save($data)
     {
         try {
+            // dd($data);
             return Projects::create($data);
         } catch (Exception $e) {
             Log::error("Error saving project: " . $e->getMessage());

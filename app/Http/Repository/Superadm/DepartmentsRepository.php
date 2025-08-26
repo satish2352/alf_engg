@@ -13,14 +13,45 @@ class DepartmentsRepository
     public function list()
     {
         try {
-            return Departments::where('is_deleted', 0)
-                ->orderBy('id', 'desc')
-                ->get();
+            // return Departments::where('is_deleted', 0)
+            //     ->orderBy('plant_id', 'desc')
+            //     ->get();
+
+
+            return Departments::leftJoin('plant_masters', 'departments.plant_id', '=', 'plant_masters.id')
+                    ->where('departments.is_deleted', 0)
+                    ->orderBy('departments.plant_id', 'desc')
+                    ->select(
+                        'departments.*',
+                        'plant_masters.plant_name',
+                        'plant_masters.plant_code',
+                        'plant_masters.city'
+                    )
+                    ->get();
+
         } catch (Exception $e) {
             Log::error("Error fetching project list: " . $e->getMessage());
             return collect(); // return empty collection on error
         }
     }
+
+    public function listajaxlist($plant_id)
+    {
+        try {
+
+            return Departments::where('is_deleted', 0)
+				->where('plant_id', $plant_id)
+				->where('is_active', 1)
+				->orderBy('id', 'desc')
+				->get();
+
+
+        } catch (Exception $e) {
+            Log::error("Error fetching project list: " . $e->getMessage());
+            return collect(); // return empty collection on error
+        }
+    }
+
 
     public function save($data)
     {

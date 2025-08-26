@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('plant_id');
             $table->string('project_name');
             $table->string('project_description');
             $table->string('project_url');

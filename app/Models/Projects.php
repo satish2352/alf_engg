@@ -8,5 +8,5 @@ class Projects extends Model
 {
      public $table = 'projects';
     public $timestamps = true;
-    protected $fillable = ['project_name','project_description','project_url', 'is_active'];
+    protected $fillable = ['plant_id','project_name','project_description','project_url', 'is_active'];
 }

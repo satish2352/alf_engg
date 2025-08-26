@@ -25,6 +25,16 @@ class DepartmentsService
         }
     }
 
+     public function listajaxlist($req)
+    {
+        try {
+            return $this->repo->listajaxlist($req['plant_id']);
+        } catch (Exception $e) {
+            Log::error("Department Service list error: " . $e->getMessage());
+            return false;
+        }
+    }
+
     public function save($req)
     {
 

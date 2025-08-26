@@ -7,6 +7,9 @@ use App\Http\Services\Superadm\ProjectsService;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Validation\Rule;
 use Exception;
+use App\Models\{
+	PlantMasters
+};
 
 class ProjectsController extends Controller
 {
@@ -26,10 +29,27 @@ class ProjectsController extends Controller
 		}
 	}
 
+
+	public function listajaxlist(Request $req)
+	{
+		try {
+			$projects = $this->service->listajaxlist($req);
+			return response()->json(['projects' => $projects]);
+
+		} catch (Exception $e) {
+			return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
+		}
+	}
+
 	public function create(Request $req)
 	{
 		try {
-			return view('superadm.projects.create');
+			$plants = PlantMasters::where('is_deleted', 0)
+				->where('is_active', 1)
+				->orderBy('id', 'desc')
+				->get();
+
+			return view('superadm.projects.create',compact('plants'));
 		} catch (Exception $e) {
 			return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
 		}
@@ -52,6 +72,7 @@ class ProjectsController extends Controller
 				}),
 			],
 			'project_description' => 'required',
+			'plant_id' => 'required',
 
 			
 		], [
@@ -62,6 +83,7 @@ class ProjectsController extends Controller
 			'project_url.unique' => 'This project url already exists.',
 
 			'project_description.required' => 'Project short description required.',
+			'plant_id.required' => 'Please select plant.',
 		]);
 
 		try {
@@ -76,9 +98,15 @@ class ProjectsController extends Controller
 	public function edit($encodedId)
 	{
 		try {
+			$plants = PlantMasters::where('is_deleted', 0)
+				->where('is_active', 1)
+				->orderBy('id', 'desc')
+				->get();
+
+
 			$id = base64_decode($encodedId);
 			$data = $this->service->edit($id);
-			return view('superadm.projects.edit', compact('data', 'encodedId'));
+			return view('superadm.projects.edit', compact('data', 'encodedId','plants'));
 		} catch (Exception $e) {
 			return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
 		}
@@ -101,6 +129,7 @@ class ProjectsController extends Controller
 					->ignore($req->id),
 			],
 			'project_description' => 'required',
+			'plant_id' => 'required',
 			'id' => 'required',
 			'is_active' => 'required'
 		], [
@@ -111,6 +140,7 @@ class ProjectsController extends Controller
 			'project_url.unique' => 'This project url already exists.',
 
 			'project_description.required' => 'Project short description required.',
+			'plant_id.required' => 'Please select plant.',
 			'id.required' => 'ID required',
 			'is_active.required' => 'Select active or inactive required'
 		]);

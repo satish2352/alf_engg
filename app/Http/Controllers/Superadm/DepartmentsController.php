@@ -27,6 +27,17 @@ class DepartmentsController extends Controller
 		}
 	}
 
+	public function listajaxlist(Request $req)
+	{
+		try {
+			$department = $this->service->listajaxlist($req);
+			return response()->json(['department' => $department]);
+
+		} catch (Exception $e) {
+			return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
+		}
+	}
+
 	public function create(Request $req)
 	{
 		try {

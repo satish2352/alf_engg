@@ -18,6 +18,27 @@
                     <h4>Edit Designation</h4>
                     <form action="{{ route('projects.update', $encodedId) }}" method="POST">
                         @csrf
+
+
+                        <div class="form-group">
+                            <label for="plant_id">Plant</label>
+                            <input type="hidden" name="id" class="form-control" value="{{ old('id', $data->id) }}">
+                            <select name="plant_id" id="plant_id" class="form-control">
+                                <option value="">Select Plant </option>
+                                @foreach ($plants as $plant)
+                                    <option value="{{ $plant->id }}"
+                                        {{ $data->plant_id == $plant->id ? 'selected' : '' }}
+                                        {{ old('plant_id') == $plant->id ? 'selected' : '' }}
+                                        >
+                                        {{ $plant->plant_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('plant_id')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
                        
                         <div class="form-group">
                             <label>Project Name</label>

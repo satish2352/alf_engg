@@ -66,7 +66,7 @@ Route::group(['middleware' => ['SuperAdmin']], function () {
     Route::post('/projects/update/{encodedId}', [ProjectsController::class, 'update'])->name('projects.update');
     Route::post('/projects/delete', [ProjectsController::class, 'delete'])->name('projects.delete');
     Route::post('/projects/update-status', [ProjectsController::class, 'updateStatus'])->name('projects.updatestatus');
-
+    Route::post('/projects/list-ajax', [ProjectsController::class, 'listajaxlist'])->name('projects.list-ajax');
 
 
 
@@ -78,6 +78,7 @@ Route::group(['middleware' => ['SuperAdmin']], function () {
     Route::post('/departments/update/{encodedId}', [DepartmentsController::class, 'update'])->name('departments.update');
     Route::post('/departments/delete', [DepartmentsController::class, 'delete'])->name('departments.delete');
     Route::post('/departments/update-status', [DepartmentsController::class, 'updateStatus'])->name('departments.updatestatus');
+    Route::post('/departments/list-ajax', [DepartmentsController::class, 'listajaxlist'])->name('departments.list-ajax');
 
 
     // employees management routes

@@ -25,10 +25,21 @@ class ProjectsService
         }
     }
 
+    public function listajaxlist($req)
+	{  
+		 try {
+            return $this->repo->listajaxlist($req['plant_id']);
+        } catch (Exception $e) {
+            Log::error("Project Service list error: " . $e->getMessage());
+            return false;
+        }
+	}
+
     public function save($req)
     {
         try {
-            $data = [   'project_name' => $req->input('project_name'), 
+            $data = [   'plant_id' => $req->input('plant_id'), 
+                        'project_name' => $req->input('project_name'), 
                         'project_description' => $req->input('project_description'),
                         'project_url' => $req->input('project_url')
                     ];
@@ -55,6 +66,7 @@ class ProjectsService
         try {
             $id = $req->id;
             $data = [
+                'plant_id' => $req->input('plant_id'), 
                 'project_name' => $req->input('project_name'), 
                 'project_description' => $req->input('project_description'),
                 'project_url' => $req->input('project_url'),

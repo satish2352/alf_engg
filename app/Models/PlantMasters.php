@@ -9,6 +9,11 @@ class PlantMasters extends Model
     public $table = 'plant_masters';
     public $timestamps = true;
     protected $fillable = ['plant_code','plant_name','address','city','plant_short_name', 'is_active'];
+    
+    public function departments()
+    {
+        return $this->hasMany(Departments::class, 'plant_id', 'id');
+    }
 }
 
       

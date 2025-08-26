@@ -30,7 +30,7 @@
                                 @foreach ($dataAll as $key => $data)
                                     <tr>
                                         <td>{{ $key + 1 }}</td>
-                                        <td>{{ $data->plant_id }}</td>
+                                        <td> {{ $data->plant_name}}</td>
                                         <td>{{ $data->department_code }}</td>
                                         <td>{{ $data->department_name }}</td>
                                         <td>{{ $data->department_short_name }}</td>

@@ -7,7 +7,7 @@
                 <div class="card-body">
 
                     <div class="mb-3 d-flex justify-content-end">
-                        <a href="{{ route('projects.create') }}" class="btn btn-warning">Add Designation</a>
+                        <a href="{{ route('projects.create') }}" class="btn btn-warning">Add Projects</a>
                     </div>
 
                     @if (session('success'))
@@ -19,6 +19,7 @@
                             <thead>
                                 <tr>
                                     <th>Sr.No.</th>
+                                    <th>Plant Name</th>
                                     <th>Project Name</th>
                                     <th>Project Description</th>
                                     <th>Project URL</th>
@@ -28,6 +29,7 @@
                                 @foreach ($dataAll as $key => $data)
                                     <tr>
                                         <td>{{ $key + 1 }}</td>
+                                        <td>{{ $data->plant_name }}</td>
                                         <td>{{ $data->project_name }}</td>
                                         <td>{{ $data->project_description }}</td>
                                         <td>{{ $data->project_url }}</td>
@@ -42,7 +44,8 @@
                                                     <span class="slider"></span>
                                                 </label>
 
-                                                <input type="hidden" name="id" value="{{ base64_encode($data->id) }}">
+                                                <input type="hidden" name="id"
+                                                    value="{{ base64_encode($data->id) }}">
                                             </form>
                                         </td>
 
