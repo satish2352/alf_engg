@@ -15,7 +15,7 @@ class EmployeesRepository
         try {
             return Employees::where('is_deleted', 0)
                 ->orderBy('id', 'desc')
-                ->get();
+                ->paginate(10);
         } catch (Exception $e) {
             Log::error("Error fetching project list: " . $e->getMessage());
             return collect(); // return empty collection on error
@@ -42,15 +42,28 @@ class EmployeesRepository
         }
     }
 
-    public function update($data, $id)
+    // public function update($data, $id)
+    // {
+    //     try {
+    //         return Employees::where('id', $id)->update($data);
+    //     } catch (Exception $e) {
+    //         Log::error("Error updating project ID {$id}: " . $e->getMessage());
+    //         return false;
+    //     }
+    // }
+
+    public function update($id, $data)
     {
         try {
-            return Employees::where('id', $id)->update($data);
+            $employee = Employees::findOrFail($id);
+            // dd($employee);
+            return $employee->update($data);
         } catch (Exception $e) {
-            Log::error("Error updating project ID {$id}: " . $e->getMessage());
+            Log::error("Error updating employee: " . $e->getMessage());
             return false;
         }
     }
+
 
     public function delete($data, $id)
     {

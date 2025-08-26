@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Superadm\LoginController;
 use App\Http\Controllers\Superadm\DashboardController;
+use App\Http\Controllers\EmpDashboardController;
 use App\Http\Controllers\Superadm\RoleController;
 use App\Http\Controllers\Superadm\DesignationsController;
 use App\Http\Controllers\Superadm\PlantMasterController;
@@ -13,12 +14,9 @@ use App\Http\Controllers\Superadm\EmployeesController;
 
 
 
-Route::get('login', function () {
-    return view('superadm.login');
-});
-
-// Route::get('super', [LoginController::class, 'loginsuper'])->name('super');
+Route::get('login', [LoginController::class, 'loginsuper'])->name('login');
 Route::post('superlogin', [LoginController::class, 'validateSuperLogin'])->name('superlogin');
+
 Route::group(['middleware' => ['SuperAdmin']], function () {
 
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -44,7 +42,7 @@ Route::group(['middleware' => ['SuperAdmin']], function () {
     Route::post('/designations/update-status', [DesignationsController::class, 'updateStatus'])->name('designations.updatestatus');
 
 
-    
+
     // plantmaster management routes
     Route::get('/plantmaster/list', [PlantMasterController::class, 'index'])->name('plantmaster.list');
     Route::get('/plantmaster/add', [PlantMasterController::class, 'create'])->name('plantmaster.create');
@@ -86,11 +84,19 @@ Route::group(['middleware' => ['SuperAdmin']], function () {
     Route::get('/employees/add', [EmployeesController::class, 'create'])->name('employees.create');
     Route::post('/employees/add', [EmployeesController::class, 'save'])->name('employees.save');
     Route::get('/employees/edit/{encodedId}', [EmployeesController::class, 'edit'])->name('employees.edit');
-    Route::post('/employees/update/{encodedId}', [EmployeesController::class, 'update'])->name('employees.update');
+    Route::PUT('/employees/update/{encodedId}', [EmployeesController::class, 'update'])->name('employees.update');
     Route::post('/employees/delete', [EmployeesController::class, 'delete'])->name('employees.delete');
     Route::post('/employees/update-status', [EmployeesController::class, 'updateStatus'])->name('employees.updatestatus');
 
 
+    Route::get('logout', [LoginController::class, 'logout'])->name('logout');
+
+});
+
+
+Route::group(['middleware' => ['Employee']], function () {
+
+    Route::get('dashboard-emp', [EmpDashboardController::class, 'index'])->name('dashboard-emp');
     Route::get('logout', [LoginController::class, 'logout'])->name('logout');
 
 });

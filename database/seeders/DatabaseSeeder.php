@@ -2,9 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use App\Models\Employees;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,9 +16,21 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        Employees::create(
+            [
+                'plant_id' => 0,
+                'department_id' => 0,
+                'projects_id' => 0,
+                'designation_id' => 0,
+                'role_id' => 1,
+                'employee_code' => 0,
+                'employee_name' => 0,
+                'employee_type' => 0,
+                'employee_email' => 'alfadmin@gmail.com',
+                'employee_user_name' => 'alfadmin@gmail.com',
+                'employee_password' => Hash::make('alfadmin'),
+            ]
+
+        );
     }
 }

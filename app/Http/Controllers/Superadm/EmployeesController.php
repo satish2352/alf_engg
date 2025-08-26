@@ -12,7 +12,8 @@ use App\Models\
 	Departments,
 	Designations,
 	Roles,
-	Projects
+	Projects,
+	Employees,
 }
 ;
 use Exception;
@@ -25,11 +26,12 @@ class EmployeesController extends Controller
 		$this->service = new EmployeesService();
 	}
 
+
 	public function index()
 	{
 		try {
-			$dataAll = $this->service->list();
-			return view('superadm.employees.list', compact('dataAll'));
+			$employees = $this->service->list();
+			return view('superadm.employees.list', compact('employees'));
 		} catch (Exception $e) {
 			return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
 		}
@@ -62,8 +64,8 @@ class EmployeesController extends Controller
 			// 	->where('is_active', 1)
 			// 	->orderBy('id', 'desc')
 			// 	->get();
-				
-			return view('superadm.employees.create', compact('plants', 'departments','designations','roles'));
+
+			return view('superadm.employees.create', compact('plants', 'departments', 'designations', 'roles'));
 		} catch (Exception $e) {
 			return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
 		}
@@ -110,64 +112,66 @@ class EmployeesController extends Controller
 
 	}
 
-	public function edit($encodedId)
+	public function edit($id)
 	{
-		try {
 
-			$plants = PlantMasters::where('is_deleted', 0)
-				->where('is_active', 1)
-				->orderBy('id', 'desc')
-				->get();
+		$employee = Employees::findOrFail($id);
+		$plants = PlantMasters::all();
+		$departments = Departments::all();
+		$projects = Projects::all();
+		$designations = Designations::all();
+		$roles = Roles::all();
 
-
-			$id = base64_decode($encodedId);
-			$data = $this->service->edit($id);
-			return view('superadm.employees.edit', compact('data', 'plants', 'encodedId'));
-		} catch (Exception $e) {
-			return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
-		}
+		return view('superadm.employees.edit', compact(
+			'employee',
+			'plants',
+			'departments',
+			'projects',
+			'designations',
+			'roles'
+		));
 	}
 
-	public function update(Request $req)
-	{
-		$req->validate([
-			'plant_id' => 'required',
-			'department_id' => 'required', 
-			'projects_id' => 'required', 
-			'designation_id' => 'required',
-			'role_id' => 'required',
-			'employee_code' => 'required',
-			'employee_name' => 'required',
-			'employee_type' => 'required',
-			'employee_email' => 'required',
-			'employee_user_name' => 'required',
-			'employee_password' => 'required',
+	// public function update(Request $req)
+	// {
+	// 	$req->validate([
+	// 		'plant_id' => 'required',
+	// 		'department_id' => 'required', 
+	// 		'projects_id' => 'required', 
+	// 		'designation_id' => 'required',
+	// 		'role_id' => 'required',
+	// 		'employee_code' => 'required',
+	// 		'employee_name' => 'required',
+	// 		'employee_type' => 'required',
+	// 		'employee_email' => 'required',
+	// 		'employee_user_name' => 'required',
+	// 		'employee_password' => 'required',
 
-			'id' => 'required',
-			'is_active' => 'required'
-		], [
-			'plant_id.required' => 'plant_id required',
-			'department_id.required' => 'department_id required',
-			'projects_id.required' => 'projects_id required',
-			'designation_id.required' => 'designation_id required',
-			'role_id.required' => 'role_id required',
-			'employee_code.required' => 'employee_code required',
-			'employee_name.required' => 'employee_name required',
-			'employee_type.required' => 'employee_type required',
-			'employee_email.required' => 'employee_email required',
-			'employee_user_name.required' => 'employee_user_name required',
-			'employee_password.required' => 'employee_password required',
-			'id.required' => 'ID required',
-			'is_active.required' => 'Select active or inactive required'
-		]);
+	// 		'id' => 'required',
+	// 		'is_active' => 'required'
+	// 	], [
+	// 		'plant_id.required' => 'plant_id required',
+	// 		'department_id.required' => 'department_id required',
+	// 		'projects_id.required' => 'projects_id required',
+	// 		'designation_id.required' => 'designation_id required',
+	// 		'role_id.required' => 'role_id required',
+	// 		'employee_code.required' => 'employee_code required',
+	// 		'employee_name.required' => 'employee_name required',
+	// 		'employee_type.required' => 'employee_type required',
+	// 		'employee_email.required' => 'employee_email required',
+	// 		'employee_user_name.required' => 'employee_user_name required',
+	// 		'employee_password.required' => 'employee_password required',
+	// 		'id.required' => 'ID required',
+	// 		'is_active.required' => 'Select active or inactive required'
+	// 	]);
 
-		try {
-			$this->service->update($req);
-			return redirect()->route('employees.list')->with('success', 'Department updated successfully.');
-		} catch (Exception $e) {
-			return redirect()->back()->withInput()->with('error', 'Something went wrong: ' . $e->getMessage());
-		}
-	}
+	// 	try {
+	// 		$this->service->update($req);
+	// 		return redirect()->route('employees.list')->with('success', 'Department updated successfully.');
+	// 	} catch (Exception $e) {
+	// 		return redirect()->back()->withInput()->with('error', 'Something went wrong: ' . $e->getMessage());
+	// 	}
+	// }
 
 
 	public function delete(Request $req)
@@ -191,13 +195,44 @@ class EmployeesController extends Controller
 
 	}
 
-	public function updateStatus(Request $req)
+	public function update(Request $req, $id)
 	{
+		$req->validate([
+			'plant_id' => 'required',
+			'department_id' => 'required',
+			'projects_id' => 'required',
+			'designation_id' => 'required',
+			'role_id' => 'required',
+			'employee_code' => 'required',
+			'employee_name' => 'required',
+			'employee_type' => 'required',
+			'employee_email' => 'required',
+			'employee_user_name' => 'required',
+			// 'employee_password' => 'required',
+
+			// 'id' => 'required',
+			// 'is_active' => 'required'
+		], [
+			'plant_id.required' => 'plant_id required',
+			'department_id.required' => 'department_id required',
+			'projects_id.required' => 'projects_id required',
+			'designation_id.required' => 'designation_id required',
+			'role_id.required' => 'role_id required',
+			'employee_code.required' => 'employee_code required',
+			'employee_name.required' => 'employee_name required',
+			'employee_type.required' => 'employee_type required',
+			'employee_email.required' => 'employee_email required',
+			'employee_user_name.required' => 'employee_user_name required',
+			// 'employee_password.required' => 'employee_password required',
+			// 'id.required' => 'ID required',
+			// 'is_active.required' => 'Select active or inactive required'
+		]);
+
 		try {
-			$this->service->updateStatus($req);
-			return redirect()->route('employees.list')->with('success', 'Department status updated successfully.');
+			$this->service->update($req, $id);
+			return redirect()->route('employees.list')->with('success', 'Employee updated successfully.');
 		} catch (Exception $e) {
-			return redirect()->back()->with('error', 'Failed to update status: ' . $e->getMessage());
+			return redirect()->back()->withInput()->with('error', 'Something went wrong: ' . $e->getMessage());
 		}
 	}
 }

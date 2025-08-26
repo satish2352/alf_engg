@@ -5,113 +5,55 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-
-                    <div class="mb-3 d-flex justify-content-end">
-                        <a href="{{ route('employees.create') }}" class="btn btn-warning">Add Deprtment</a>
-                    </div>
+                    <h4>Employees List</h4>
 
                     @if (session('success'))
                         <div class="alert alert-success">{{ session('success') }}</div>
                     @endif
+                    @if (session('error'))
+                        <div class="alert alert-danger">{{ session('error') }}</div>
+                    @endif
 
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped datatables">
-                            <thead>
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>User Name</th>
+                                <th>Plant</th>
+                                <th>Role</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($employees as $employee)
                                 <tr>
-
-                                    <th>Sr.No.</th>
-                                    <th>Plant Name</th>
-                                    <th>Department Code</th>
-                                    <th>Department Name</th>
-                                    <th>Department Description</th>
+                                    <td>{{ $employee->employee_code }}</td>
+                                    <td>{{ $employee->employee_name }}</td>
+                                    <td>{{ $employee->employee_email }}</td>
+                                    <td>{{ $employee->employee_user_name }}</td>
+                                    <td>{{ $employee->plant->plant_name ?? '-' }}</td>
+                                    <td>{{ $employee->role->role ?? '-' }}</td>
+                                    <td>
+                                        <a href="{{ route('employees.edit', $employee->id) }}"
+                                            class="btn btn-primary btn-sm">Edit</a>
+                                        <form action="{{ route('employees.delete', $employee->id) }}" method="POST"
+                                            style="display:inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="btn btn-danger btn-sm"
+                                                onclick="return confirm('Delete this employee?')">Delete</button>
+                                        </form>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($dataAll as $key => $data)
-                                    <tr>
-                                        <td>{{ $key + 1 }}</td>
-                                        <td>{{ $data->plant_id }}</td>
-                                        <td>{{ $data->department_code }}</td>
-                                        <td>{{ $data->department_name }}</td>
-                                        <td>{{ $data->department_short_name }}</td>
-                                        <td>
-                                            <form action="{{ route('employees.updatestatus') }}" method="POST"
-                                                class="d-inline-block delete-form">
-                                                @csrf
-                                                <label class="switch">
-                                                    <input type="checkbox" class="toggle-status"
-                                                        data-id="{{ base64_encode($data->id) }}"
-                                                        {{ $data->is_active == '1' ? 'checked' : '' }}>
-                                                    <span class="slider"></span>
-                                                </label>
+                            @endforeach
+                        </tbody>
+                    </table>
 
-                                                <input type="hidden" name="id" value="{{ base64_encode($data->id) }}">
-                                            </form>
-                                        </td>
-
-
-                                        <td>
-
-
-
-                                            <a href="{{ route('employees.edit', base64_encode($data->id)) }}"
-                                                class="btn btn-primary btn-sm">Edit</a>
-                                            <form action="{{ route('employees.delete') }}" method="POST"
-                                                class="d-inline-block delete-form">
-                                                @csrf
-                                                <input type="hidden" name="id"
-                                                    value="{{ base64_encode($data->id) }}">
-                                                <button type="button"
-                                                    class="btn btn-danger btn-sm delete-btn">Delete</button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-
+                    {{ $employees->links() }} {{-- pagination --}}
                 </div>
             </div>
         </div>
     </div>
-
-
-    <script>
-        $(document).on("change", ".toggle-status", function(e) {
-            e.preventDefault();
-
-            let checkbox = $(this);
-            let form = checkbox.closest("form");
-            let id = checkbox.data("id");
-            let is_active = checkbox.is(":checked") ? 1 : 0;
-
-            // Show SweetAlert confirmation
-            Swal.fire({
-                title: "Are you sure?",
-                text: "Do you want to change the status?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#28a745",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, change it!",
-                cancelButtonText: "No, cancel"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Append or update hidden input with status
-                    if (form.find("input[name='is_active']").length) {
-                        form.find("input[name='is_active']").val(is_active);
-                    } else {
-                        form.append(
-                            `<input type="hidden" name="is_active" value="${is_active}">`
-                        );
-                    }
-                    form.submit(); // submit the form
-                } else {
-                    // If cancelled, revert checkbox back
-                    checkbox.prop("checked", !checkbox.is(":checked"));
-                }
-            });
-        });
-    </script>
 @endsection

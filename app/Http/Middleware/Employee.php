@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class SuperAdmin
+class Employee
 {
     /**
      * Handle an incoming request.
@@ -15,7 +15,7 @@ class SuperAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!($request->session()->has('user_id') && $request->session()->get('role_id') == 1)) {
+        if (!($request->session()->has('user_id') && $request->session()->get('role_id') == 2)) {
             return redirect()->route('login');
         }
 

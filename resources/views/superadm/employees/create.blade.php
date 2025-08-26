@@ -37,9 +37,9 @@
                             @enderror
                         </div>
 
-                        
+
                         <div class="form-group">
-                            <label for="department_id">Select Project</label>
+                            <label for="department_id">Select Department</label>
                             <select id="department_id" name="department_id[]" multiple="multiple" class="form-control">
                                 <!-- Options will be appended here by AJAX -->
                             </select>
@@ -208,8 +208,8 @@
                                     `<option value="${project.id}">${project.project_name}</option>`
                                 );
                             });
-                        } else if(response.projects.length == 0){
-                            alert( "No projects found");
+                        } else if (response.projects.length == 0) {
+                            alert("No projects found");
                         }
 
                         // Refresh multiselect to show new options
@@ -223,7 +223,7 @@
         });
     </script>
 
-    
+
 
 
     <script>
@@ -262,8 +262,8 @@
                                     `<option value="${department_result.id}">${department_result.department_name}</option>`
                                 );
                             });
-                        } else if(response.department.length == 0){
-                            alert( "No departments found");
+                        } else if (response.department.length == 0) {
+                            alert("No departments found");
                         }
 
                         // Refresh multiselect to show new options
