@@ -7,6 +7,11 @@
                 <div class="card-body">
                     <h4>Employees List</h4>
 
+                    <div class="mb-3 d-flex justify-content-end">
+                        <a href="{{ route('employees.create') }}" class="btn btn-warning">Add Employee</a>
+                    </div>
+
+
                     @if (session('success'))
                         <div class="alert alert-success">{{ session('success') }}</div>
                     @endif
