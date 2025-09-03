@@ -84,4 +84,22 @@ class EmployeesRepository
             return false;
         }
     }
+
+
+    public function listajaxlist($palnt_id)
+    {
+        try {
+            return Employees::where('is_deleted', 0)
+                ->where('plant_id', $palnt_id)
+				->where('is_active', 1)
+                ->select('id','employee_name')
+				->orderBy('id', 'desc')
+				->get();
+
+        } catch (Exception $e) {
+            Log::error("Error fetching project list: " . $e->getMessage());
+            return collect(); // return empty collection on error
+        }
+    }
+
 }

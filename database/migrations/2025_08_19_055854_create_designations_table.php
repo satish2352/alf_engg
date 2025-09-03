@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('designations', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('designation');
-            $table->string('short_description');
+            $table->string('short_description')->nullable();
             $table->boolean('is_active')->default(true);
             $table->boolean('is_deleted')->default(false);
             $table->timestamps();

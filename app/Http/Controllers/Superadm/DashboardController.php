@@ -7,7 +7,9 @@ use App\Models\{
 	Roles,
 	Designations,
 	PlantMasters,
-	Employees
+	Employees,
+	Projects,
+	Departments
 };
 use Illuminate\Support\Facades\DB;
 
@@ -21,14 +23,24 @@ class DashboardController extends Controller
 	public function index(Request $req)
 	{
 
-		if (session('role_id') == 1) {
+		if ($req->session()->get('role_id') == 0) {
 			$allSessions = $req->session()->all();
 			// dd($allSessions); // dumps and stops execution
 
 			$allRoles = Roles::where('is_deleted', 0)->count();
 			$allDesignations = Designations::where('is_deleted', 0)->count();
 			$allPlants = PlantMasters::where('is_deleted', 0)->count();
-			return view('dashboard.dashboard', compact('allRoles', 'allDesignations', 'allPlants'));
+			$allProjects = Projects::where('is_deleted', 0)->count();
+			$allDepartments = Departments::where('is_deleted', 0)->count();
+			$allEmployees = Employees::where('is_deleted', 0)->count();
+			return view('dashboard.dashboard', compact(
+				'allRoles',
+				'allDesignations',
+				'allPlants',
+				'allProjects',
+				'allDepartments',
+				'allEmployees'
+			));
 		} else {
 
 			$projects = Employees::leftJoin('projects', function ($join) {

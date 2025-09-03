@@ -41,6 +41,9 @@ class EmployeesService
                 'employee_email' => $req->input('employee_email'),
                 'employee_user_name' => $req->input('employee_user_name'),
                 'employee_password' => Hash::make($req->input('employee_password')),
+                'reporting_to' => $req->input('reporting_to'),
+
+                
             ];
             return $this->repo->save($data);
         } catch (Exception $e) {
@@ -59,33 +62,7 @@ class EmployeesService
         }
     }
 
-    // public function update($req)
-    // {
-
-    //     try {
-    //         $id = $req->id;
-    //         $data = [
-    //             'plant_id' => $req->input('plant_id'), 
-    //             'department_id' => $req->input('department_id'),
-    //             'projects_id' => $req->input('projects_id'),
-    //             'designation_id' => $req->input('designation_id'),
-    //             'role_id' => $req->input('role_id'),
-    //             'employee_code' => $req->input('employee_code'),
-    //             'employee_name' => $req->input('employee_name'),
-    //             'employee_type' => $req->input('employee_type'),
-    //             'employee_email' => $req->input('employee_email'),
-    //             'employee_user_name' =>  $req->input('employee_user_name'),
-    //             'employee_password' => Hash::make($req->input('employee_password'))  ,
-    //             'is_active' => $req->is_active
-    //         ];
-
-    //         return $this->repo->update($data, $id);
-    //     } catch (Exception $e) {
-    //         Log::error("Employees Service update error: " . $e->getMessage());
-    //         return false;
-    //     }
-    // }
-
+   
 
     public function update($req, $id)
     {
@@ -103,6 +80,7 @@ class EmployeesService
                 'employee_type' => $req->input('employee_type'),
                 'employee_email' => $req->input('employee_email'),
                 'employee_user_name' => $req->input('employee_user_name'),
+                'reporting_to' => $req->input('reporting_to'),
             ];
 
             if ($req->filled('employee_password')) {
@@ -143,4 +121,17 @@ class EmployeesService
             return false;
         }
     }
+
+    public function listajaxlist($req)
+	{  
+		 try {
+            return $this->repo->listajaxlist($req['plant_id']);
+        } catch (Exception $e) {
+            Log::error("Employees Service list error: " . $e->getMessage());
+            return false;
+        }
+	}
+
+    
+
 }

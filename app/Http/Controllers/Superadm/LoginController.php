@@ -29,16 +29,20 @@ class LoginController extends Controller
          ->where('is_deleted', 0)
          ->where('is_active', 1)
          ->first();
-         
       if ($result) {
          if (Hash::check($pass, $result->employee_password)) {
 
             Session::put('user_id', $result->id);
             Session::put('role_id', $result->role_id);
+            if($result->role_id == 0) {
+               Session::put('role', 'admin');
+            } else {
+               Session::put('role', 'notadmin');
+            }
             Session::put('email_id', $result->employee_email);
             Session::put('department_id', explode(",",$result->department_id) );
             Session::put('projects_id', explode(",",$result->projects_id));
-            if(Session::get('user_id')===1) {
+            if($result->role_id == 0) {
                return redirect('dashboard');
             } else {
                return redirect('dashboard-emp');

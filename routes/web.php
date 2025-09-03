@@ -87,6 +87,9 @@ Route::group(['middleware' => ['SuperAdmin']], function () {
     Route::PUT('/employees/update/{encodedId}', [EmployeesController::class, 'update'])->name('employees.update');
     Route::post('/employees/delete', [EmployeesController::class, 'delete'])->name('employees.delete');
     Route::post('/employees/update-status', [EmployeesController::class, 'updateStatus'])->name('employees.updatestatus');
+    Route::post('/employees/list-ajax', [EmployeesController::class, 'listajaxlist'])->name('employees.list-ajax');
+    Route::post('/employees/update-status', [EmployeesController::class, 'updateStatus'])->name('employees.updatestatus');
+
 
 
     Route::get('logout', [LoginController::class, 'logout'])->name('logout');

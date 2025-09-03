@@ -34,8 +34,8 @@
                     <a class="navbar-brand" href="">
 
                         <span>
-                            <img src="{{ asset('asset/images/background/alf.jpg') }}" class="light-logo"
-                                alt="homepage" style="    height: 50px;"/></span>
+                            <img src="{{ asset('asset/images/background/alf.jpg') }}" class="light-logo" alt="homepage"
+                                style="    height: 50px;" /></span>
                     </a>
                 </div>
                 <div class="navbar-collapse">
@@ -80,11 +80,15 @@
         <aside class="left-sidebar">
             <div class="scroll-sidebar">
                 <div class="user-profile" style="margin-top: 28px;"></div>
-                @if (session('role_id') == 1)
+                @if (session('role') == 'admin')
                     @include('superadm.layout.super-menu')
-                @elseif (session('role_id') == 2)
+                @else
                     @include('superadm.layout.emp-menu')
                 @endif
+
+
+              
+
 
 
             </div>

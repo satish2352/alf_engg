@@ -21,7 +21,6 @@ class EmpDashboardController extends Controller
 	public function index(Request $req)
 	{
 
-
 		$projects = Employees::leftJoin('projects', function ($join) {
 			$join->on(DB::raw("FIND_IN_SET(projects.id, employees.projects_id)"), ">", DB::raw("0"));
 		})

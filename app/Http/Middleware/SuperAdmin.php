@@ -15,7 +15,7 @@ class SuperAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!($request->session()->has('user_id') && $request->session()->get('role_id') == 1)) {
+        if (!($request->session()->has('user_id') && $request->session()->get('role_id') == 0)) {
             return redirect()->route('login');
         }
 

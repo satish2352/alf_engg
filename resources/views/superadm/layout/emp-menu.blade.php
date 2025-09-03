@@ -5,5 +5,9 @@
                  </span></a>
          </li>
 
+         <li> <a href="{{ route('logout') }}"><i class="mdi mdi-gauge"></i><span>Logout
+                 </span></a>
+         </li>
+
      </ul>
  </nav>

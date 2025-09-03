@@ -148,6 +148,19 @@
                             @enderror
                         </div>
 
+
+                        {{-- Reporting To --}}
+                        <div class="form-group">
+                            <label for="reporting_to">Reporting To</label>
+                            <select name="reporting_to" id="reporting_to" class="form-control">
+                                <option value="">Select Reporting To </option>
+                            </select>
+                            @error('reporting_to')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+
                         <div class="form-group d-flex justify-content-end">
                             <a href="{{ route('employees.list') }}" class="btn btn-secondary mr-2">Cancel</a>
                             <button type="submit" class="btn btn-success">Save</button>
@@ -270,6 +283,61 @@
 
                         // Refresh multiselect to show new options
                         $('#department_id').multiselect('rebuild');
+                    },
+                    error: function(xhr) {
+                        console.log(xhr.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+
+
+     <script>
+        $(document).ready(function() {
+            // Initialize multiselect first
+            $('#reporting_to').multiselect({
+                includeSelectAllOption: true,
+                enableFiltering: true,
+                maxHeight: 300,
+                buttonWidth: '100%'
+            });
+
+            // On Plant Change
+            $('#plant_id').on('change', function() {
+                let plantId = $(this).val();
+                if (!plantId) {
+                    $('#reporting_to').empty().multiselect('rebuild');
+                    return;
+                }
+
+                $.ajax({
+                    url: "{{ route('employees.list-ajax') }}", // Laravel route
+                    type: "POST", // POST because we are sending plant_id
+                    data: {
+                        _token: "{{ csrf_token() }}", // CSRF token
+                        plant_id: plantId
+                    },
+                    dataType: "json",
+                    success: function(response) {
+                        console.log(response);
+                        $('#reporting_to').empty(); // clear old options
+                        $('#reporting_to').append(
+                                    `<option value="">select name</option>`
+                                );
+
+                        if (response.employees && response.employees.length > 0) {
+                            $.each(response.employees, function(key, employees_result) {
+                                $('#reporting_to').append(
+                                    `<option value="${employees_result.id}">${employees_result.employee_name}</option>`
+                                );
+                            });
+                        } else if (response.employees.length == 0) {
+                            alert("No employees found");
+                        }
+
+                        // Refresh multiselect to show new options
+                        $('#reporting_to').multiselect('rebuild');
                     },
                     error: function(xhr) {
                         console.log(xhr.responseText);
