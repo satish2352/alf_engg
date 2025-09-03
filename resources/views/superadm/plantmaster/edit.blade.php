@@ -8,13 +8,14 @@
                     <h4>Edit Role</h4>
                     <form action="{{ route('plantmaster.update', $encodedId) }}" method="POST">
                         @csrf
-                        
 
 
-                          <div class="form-group">
+
+                        <div class="form-group">
                             <label>Plant Code</label>
                             <input type="hidden" name="id" class="form-control" value="{{ old('id', $data->id) }}">
-                            <input type="text" value="{{ old('plant_code', $data->plant_code) }}" name="plant_code" class="form-control" value="{{ old('plant_code') }}">
+                            <input type="text" value="{{ old('plant_code', $data->plant_code) }}" name="plant_code"
+                                class="form-control" value="{{ old('plant_code') }}">
                             @error('plant_code')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
@@ -22,16 +23,18 @@
 
                         <div class="form-group">
                             <label>Plant Name</label>
-                            <input type="text" value="{{ old('plant_name', $data->plant_name) }}" name="plant_name" class="form-control" value="{{ old('plant_name') }}">
+                            <input type="text" value="{{ old('plant_name', $data->plant_name) }}" name="plant_name"
+                                class="form-control" value="{{ old('plant_name') }}">
                             @error('plant_name')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
 
 
-                         <div class="form-group">
+                        <div class="form-group">
                             <label>Address</label>
-                            <input type="text" value="{{ old('address', $data->address) }}" name="address" class="form-control" value="{{ old('address') }}">
+                            <input type="text" value="{{ old('address', $data->address) }}" name="address"
+                                class="form-control" value="{{ old('address') }}">
                             @error('address')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
@@ -39,15 +42,17 @@
 
                         <div class="form-group">
                             <label>City</label>
-                            <input type="text" value="{{ old('city', $data->city) }}" name="city" class="form-control" value="{{ old('city') }}">
+                            <input type="text" value="{{ old('city', $data->city) }}" name="city"
+                                class="form-control" value="{{ old('city') }}">
                             @error('city')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
 
-                         <div class="form-group">
+                        <div class="form-group">
                             <label>Plant Short Name</label>
-                            <input type="text" value="{{ old('plant_short_name', $data->plant_short_name) }}" name="plant_short_name" class="form-control" value="{{ old('plant_short_name') }}">
+                            <input type="text" value="{{ old('plant_short_name', $data->plant_short_name) }}"
+                                name="plant_short_name" class="form-control" value="{{ old('plant_short_name') }}">
                             @error('plant_short_name')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
@@ -67,9 +72,10 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
-
-                        <button type="submit" class="btn btn-success">Update</button>
-                        <a href="{{ route('plantmaster.list') }}" class="btn btn-secondary">Cancel</a>
+                        <div class="form-group d-flex justify-content-end">
+                            <a href="{{ route('plantmaster.list') }}" class="btn btn-secondary mr-2">Cancel</a>
+                            <button type="submit" class="btn btn-success">Update</button>
+                        </div>
                     </form>
                 </div>
             </div>

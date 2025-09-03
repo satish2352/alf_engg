@@ -20,8 +20,8 @@ $(function () {
           },
           limitMax: false,     // If false, the max value of the gauge will be updated if value surpass max
           limitMin: false,     // If true, the min value of the gauge will be fixed unless you set it manually
-          colorStart: '#009efb',   // Colors
-          colorStop: '#009efb',    // just experiment with them
+          colorStart: '#c74434',   // Colors
+          colorStop: '#c74434',    // just experiment with them
           strokeColor: '#E0E0E0',  // to see which ones work best for you
           generateGradient: true,
           highDpiSupport: true     // High resolution support
@@ -99,8 +99,8 @@ $(function () {
           },
           limitMax: false,     // If false, the max value of the gauge will be updated if value surpass max
           limitMin: false,     // If true, the min value of the gauge will be fixed unless you set it manually
-          colorStart: '#26c6da',   // Colors
-          colorStop: '#26c6da',    // just experiment with them
+          colorStart: '#cb3426',   // Colors
+          colorStop: '#cb3426',    // just experiment with them
           strokeColor: '#E0E0E0',  // to see which ones work best for you
           generateGradient: true,
           highDpiSupport: true     // High resolution support
@@ -122,22 +122,22 @@ $(function () {
             type: 'line',
             width: '100%',
             height: '50',
-            lineColor: '#26c6da',
-            fillColor: '#26c6da',
-            maxSpotColor: '#26c6da',
+            lineColor: '#cb3426',
+            fillColor: '#cb3426',
+            maxSpotColor: '#cb3426',
             highlightLineColor: 'rgba(0, 0, 0, 0.2)',
-            highlightSpotColor: '#26c6da'
+            highlightSpotColor: '#cb3426'
         });
         $("#spark2").sparkline([0,2,8,6,8,5,6,4,8,6,6,2 ], {
             type: 'line',
             width: '100%',
             height: '50',
-            lineColor: '#009efb',
-            fillColor: '#009efb',
-            minSpotColor:'#009efb',
-            maxSpotColor: '#009efb',
+            lineColor: '#c74434',
+            fillColor: '#c74434',
+            minSpotColor:'#c74434',
+            maxSpotColor: '#c74434',
             highlightLineColor: 'rgba(0, 0, 0, 0.2)',
-            highlightSpotColor: '#009efb'
+            highlightSpotColor: '#c74434'
         });
         $("#spark3").sparkline([2,4,4,6,8,5,6,4,8,6,6,2], {
             type: 'line',
@@ -164,30 +164,30 @@ $(function () {
             width: '100%',
             height: '50',
             lineColor: '#fff',
-            fillColor: '#1e88e5',
-            maxSpotColor: '#1e88e5',
+            fillColor: '#cb3426',
+            maxSpotColor: '#cb3426',
             highlightLineColor: 'rgba(0, 0, 0, 0.2)',
-            highlightSpotColor: '#1e88e5'
+            highlightSpotColor: '#cb3426'
         });
         $("#spark6").sparkline([2,4,4,6,8,5,6,4,8,6,6,2], {
             type: 'line',
             width: '100%',
             height: '50',
             lineColor: '#fff',
-            fillColor: '#21c1d6',
-            maxSpotColor: '#21c1d6',
+            fillColor: '#c74434',
+            maxSpotColor: '#c74434',
             highlightLineColor: 'rgba(0, 0, 0, 0.2)',
-            highlightSpotColor: '#21c1d6'
+            highlightSpotColor: '#c74434'
         });
         $("#spark7").sparkline([2,4,4,6,8,5,6,4,8,6,6,2], {
             type: 'line',
             width: '100%',
             height: '50',
             lineColor: '#fff',
-            fillColor: '#ffb22b',
-            maxSpotColor: '#ffb22b',
+            fillColor: '#c74434',
+            maxSpotColor: '#c74434',
             highlightLineColor: 'rgba(0, 0, 0, 0.2)',
-            highlightSpotColor: '#ffb22b'
+            highlightSpotColor: '#c74434'
         });
         $('#spark8').sparkline([ 4, 5, 0, 10, 9, 12, 4, 9], {
             type: 'bar',
@@ -196,7 +196,7 @@ $(function () {
             barWidth: '8',
             resize: true,
             barSpacing: '5',
-            barColor: '#26c6da'
+            barColor: '#cb3426'
         });
          $('#spark9').sparkline([ 0, 5, 6, 10, 9, 12, 4, 9], {
             type: 'bar',
@@ -231,7 +231,7 @@ $(function () {
             barWidth: '2',
             resize: true,
             barSpacing: '5',
-            barColor: '#26c6da'
+            barColor: '#cb3426'
         });
          $('#sparklinedash2').sparkline([ 0, 5, 6, 10, 9, 12, 4, 9], {
             type: 'bar',

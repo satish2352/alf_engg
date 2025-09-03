@@ -55,7 +55,7 @@ var plot = $.plot("#placeholder", [getRandomData()], {
     , xaxis: {
         show: false
     }
-    , colors: ["#26c6da"]
+    , colors: ["#cb3426"]
     , grid: {
         color: "#AFAFAF"
         , hoverable: true
@@ -105,7 +105,7 @@ $(document).ready(function () {
                 min: -1.2
                 , max: 1.2
             }
-            , colors: ["#009efb", "#26c6da"]
+            , colors: ["#c74434", "#cb3426"]
             , grid: {
                 color: "#AFAFAF"
                 , hoverable: true
@@ -139,11 +139,11 @@ $(function () {
     , }, {
         label: "Series 1"
         , data: 1
-        , color: "#26c6da"
+        , color: "#cb3426"
     , }, {
         label: "Series 2"
         , data: 3
-        , color: "#009efb"
+        , color: "#c74434"
     , }, {
         label: "Series 3"
         , data: 1
@@ -205,7 +205,7 @@ $(function () {
     }];
     //
     var plot = $.plot(container, series, {
-        colors: ["#26c6da"]
+        colors: ["#cb3426"]
         , grid: {
             borderWidth: 0
             , minBorderMargin: 20
@@ -286,7 +286,7 @@ $(function () {
     };
     var barData = {
         label: "bar"
-        , color: "#009efb"
+        , color: "#c74434"
         , data: [
             [1354521600000, 1000]
             , [1355040000000, 2000]
@@ -379,7 +379,7 @@ $(function () {
                 color: '#bdbdbd'
             }
         }
-        , colors: ["#4F5467", "#009efb", "#26c6da"]
+        , colors: ["#4F5467", "#c74434", "#cb3426"]
         , tooltip: true, //activate tooltip
         tooltipOpts: {
             content: "%s : %y.0"

@@ -28,8 +28,7 @@
                                 @foreach ($plants as $plant)
                                     <option value="{{ $plant->id }}"
                                         {{ $data->plant_id == $plant->id ? 'selected' : '' }}
-                                        {{ old('plant_id') == $plant->id ? 'selected' : '' }}
-                                        >
+                                        {{ old('plant_id') == $plant->id ? 'selected' : '' }}>
                                         {{ $plant->plant_name }}
                                     </option>
                                 @endforeach
@@ -39,37 +38,35 @@
                             @enderror
                         </div>
 
-                       
+
                         <div class="form-group">
                             <label>Project Name</label>
                             <input type="hidden" name="id" class="form-control" value="{{ old('id', $data->id) }}">
                             <input type="text" name="project_name" class="form-control"
-                            value="{{ old('project_name', $data->project_name) }}">
+                                value="{{ old('project_name', $data->project_name) }}">
                             @error('project_name')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
 
-                         <div class="form-group">
+                        <div class="form-group">
                             <label>Project Short Description</label>
                             <input type="text" name="project_description" class="form-control"
-                            value="{{ old('project_description', $data->project_description) }}">
+                                value="{{ old('project_description', $data->project_description) }}">
                             @error('project_description')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
 
 
-                         <div class="form-group">
+                        <div class="form-group">
                             <label>Project URL</label>
                             <input type="text" name="project_url" class="form-control"
-                            value="{{ old('project_url', $data->project_url) }}">
+                                value="{{ old('project_url', $data->project_url) }}">
                             @error('project_url')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
-                        
-
 
 
                         <div class="form-group">
@@ -85,9 +82,10 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
-
-                        <button type="submit" class="btn btn-success">Update</button>
-                        <a href="{{ route('projects.list') }}" class="btn btn-secondary">Cancel</a>
+                        <div class="form-group d-flex justify-content-end">
+                            <a href="{{ route('projects.list') }}" class="btn btn-secondary mr-2">Cancel</a>
+                            <button type="submit" class="btn btn-success">Update</button>
+                        </div>
                     </form>
                 </div>
             </div>

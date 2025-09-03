@@ -163,9 +163,11 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
+                        <div class="form-group d-flex justify-content-end">
+                            <a href="{{ route('employees.list') }}" class="btn btn-secondary mr-2">Cancel</a>
+                            <button type="submit" class="btn btn-success">Update</button>
+                        </div>
 
-                        <button type="submit" class="btn btn-success">Update</button>
-                        <a href="{{ route('employees.list') }}" class="btn btn-secondary">Cancel</a>
                     </form>
                 </div>
             </div>

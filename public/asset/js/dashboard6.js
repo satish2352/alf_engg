@@ -67,7 +67,7 @@ $(function () {
           //or hide: ['data1', 'data2']
         },
         color: {
-              pattern: ['#eceff1', '#745af2', '#26c6da', '#1e88e5']
+              pattern: ['#eceff1', '#745af2', '#cb3426', '#cb3426']
         }
     });
  
@@ -83,22 +83,22 @@ $(function () {
             type: 'line',
             width: '100%',
             height: '50',
-            lineColor: '#26c6da',
-            fillColor: '#26c6da',
-            maxSpotColor: '#26c6da',
+            lineColor: '#cb3426',
+            fillColor: '#cb3426',
+            maxSpotColor: '#cb3426',
             highlightLineColor: 'rgba(0, 0, 0, 0.2)',
-            highlightSpotColor: '#26c6da'
+            highlightSpotColor: '#cb3426'
         });
         $("#spark2").sparkline([0,2,8,6,8,5,6,4,8,6,6,2 ], {
             type: 'line',
             width: '100%',
             height: '50',
-            lineColor: '#009efb',
-            fillColor: '#009efb',
-            minSpotColor:'#009efb',
-            maxSpotColor: '#009efb',
+            lineColor: '#c74434',
+            fillColor: '#c74434',
+            minSpotColor:'#c74434',
+            maxSpotColor: '#c74434',
             highlightLineColor: 'rgba(0, 0, 0, 0.2)',
-            highlightSpotColor: '#009efb'
+            highlightSpotColor: '#c74434'
         });
         $("#spark3").sparkline([2,4,4,6,8,5,6,4,8,6,6,2], {
             type: 'line',

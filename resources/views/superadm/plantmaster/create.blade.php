@@ -25,7 +25,7 @@
                         </div>
 
 
-                         <div class="form-group">
+                        <div class="form-group">
                             <label>Address</label>
                             <input type="text" name="address" class="form-control" value="{{ old('address') }}">
                             @error('address')
@@ -41,16 +41,18 @@
                             @enderror
                         </div>
 
-                         <div class="form-group">
+                        <div class="form-group">
                             <label>Plant Short Name</label>
-                            <input type="text" name="plant_short_name" class="form-control" value="{{ old('plant_short_name') }}">
+                            <input type="text" name="plant_short_name" class="form-control"
+                                value="{{ old('plant_short_name') }}">
                             @error('plant_short_name')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
-
-                        <button type="submit" class="btn btn-success">Save</button>
-                        <a href="{{ route('plantmaster.list') }}" class="btn btn-secondary">Cancel</a>
+                        <div class="form-group d-flex justify-content-end">
+                            <a href="{{ route('plantmaster.list') }}" class="btn btn-secondary mr-2">Cancel</a>
+                            <button type="submit" class="btn btn-success">Save</button>
+                        </div>
                     </form>
                 </div>
             </div>

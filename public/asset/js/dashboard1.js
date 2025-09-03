@@ -162,7 +162,7 @@ $(function () {
             //or hide: ['data1', 'data2']
         },
         color: {
-            pattern: ['#eceff1', '#745af2', '#26c6da', '#1e88e5']
+            pattern: ['#eceff1', '#745af2', '#cb3426', '#cb3426']
         }
     });
 

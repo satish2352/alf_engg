@@ -70,9 +70,9 @@
 }
 
 .wizard-content .wizard>.steps>ul>li.current .step {
-	border-color: #009efb ;
+	border-color: #c74434 ;
 	background-color: #fff;
-	color: #009efb
+	color: #c74434
 }
 
 .wizard-content .wizard>.steps>ul>li.disabled a,
@@ -89,8 +89,8 @@
 }
 
 .wizard-content .wizard>.steps>ul>li.done .step {
-	background-color: #009efb ;
-	border-color: #009efb ;
+	background-color: #c74434 ;
+	border-color: #c74434 ;
 	color: #fff
 }
 
@@ -162,7 +162,7 @@
 }
 
 .wizard-content .wizard>.actions>ul>li>a {
-	background: #009efb ;
+	background: #c74434 ;
 	color: #fff;
 	display: block;
 	padding: 7px 12px;
@@ -185,8 +185,8 @@
 
 .wizard-content .wizard>.actions>ul>li>a[href="#previous"] {
 	background-color: #fff;
-	color: #009efb;
-	border: 1px solid #009efb;
+	color: #c74434;
+	border: 1px solid #c74434;
 }
 
 .wizard-content .wizard>.actions>ul>li>a[href="#previous"]:focus,
@@ -218,7 +218,7 @@
 	top: 45px;
 	width: 50%;
 	height: 3px;
-	background-color: #009efb
+	background-color: #c74434
 }
 
 .wizard-content .wizard.wizard-circle>.steps>ul>li.current:after,
@@ -241,18 +241,18 @@
 	top: 39px;
 	width: 50%;
 	height: 2px;
-	background-color: #009efb
+	background-color: #c74434
 }
 
 .wizard-content .wizard.wizard-notification>.steps>ul>li.current .step {
-	border: 2px solid #009efb ;
-	color: #009efb ;
+	border: 2px solid #c74434 ;
+	color: #c74434 ;
 	line-height: 36px
 }
 
 .wizard-content .wizard.wizard-notification>.steps>ul>li.current .step:after,
 .wizard-content .wizard.wizard-notification>.steps>ul>li.done .step:after {
-	border-top-color: #009efb
+	border-top-color: #c74434
 }
 
 .wizard-content .wizard.wizard-notification>.steps>ul>li.current:after,
@@ -325,7 +325,7 @@
 	}
 	.wizard-content .wizard>.steps>ul>li:last-child:after {
 		content: '';
-		background-color: #009efb
+		background-color: #c74434
 	}
 	.wizard-content .wizard.vertical>.steps {
 		width: 15%
@@ -337,7 +337,7 @@
 		width: 50%;
 	}
 	.wizard-content .wizard>.steps>ul>li.current:after {
-		background-color: #009efb;
+		background-color: #c74434;
 	}
 	.wizard-content .wizard.vertical>.steps>ul>li {
 		display: block;

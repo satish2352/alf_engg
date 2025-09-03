@@ -153,9 +153,9 @@ File: scss
 /*Topi bar  
 *******************/
 .topbar {
-  background: #2196f3; }
+  background: #ce261d; }
   .topbar .top-navbar .navbar-header {
-    background: #2196f3; }
+    background: #ce261d; }
   .topbar .top-navbar .navbar-header .navbar-brand .dark-logo {
     display: none; }
   .topbar .top-navbar .navbar-header .navbar-brand .light-logo {
@@ -170,10 +170,10 @@ File: scss
 /*General Elements
 *******************/
 a.link:hover, a.link:focus {
-  color: #009efb !important; }
+  color: #c74434 !important; }
 
 .bg-theme {
-  background-color: #009efb !important; }
+  background-color: #c74434 !important; }
 
 .pagination > .active > a,
 .pagination > .active > span,
@@ -181,40 +181,40 @@ a.link:hover, a.link:focus {
 .pagination > .active > span:hover,
 .pagination > .active > a:focus,
 .pagination > .active > span:focus {
-  background-color: #009efb;
-  border-color: #009efb; }
+  background-color: #c74434;
+  border-color: #c74434; }
 
 .right-sidebar .rpanel-title {
-  background: #009efb; }
+  background: #c74434; }
 
 .stylish-table tbody tr:hover, .stylish-table tbody tr.active {
-  border-left: 4px solid #009efb; }
+  border-left: 4px solid #c74434; }
 
 .text-themecolor {
-  color: #009efb !important; }
+  color: #c74434 !important; }
 
 .profile-tab li a.nav-link.active,
 .customtab li a.nav-link.active {
-  border-bottom: 2px solid #009efb;
-  color: #009efb; }
+  border-bottom: 2px solid #c74434;
+  color: #c74434; }
 
 .profile-tab li a.nav-link:hover,
 .customtab li a.nav-link:hover {
-  color: #009efb; }
+  color: #c74434; }
 
 /*******************
 /*Buttons
 *******************/
 .btn-themecolor,
 .btn-themecolor.disabled {
-  background: #009efb;
+  background: #c74434;
   color: #fff;
-  border: 1px solid #009efb; }
+  border: 1px solid #c74434; }
   .btn-themecolor:hover,
   .btn-themecolor.disabled:hover {
-    background: #009efb;
+    background: #c74434;
     opacity: 0.7;
-    border: 1px solid #009efb; }
+    border: 1px solid #c74434; }
   .btn-themecolor.active, .btn-themecolor:focus,
   .btn-themecolor.disabled.active,
   .btn-themecolor.disabled:focus {
@@ -228,22 +228,22 @@ a.link:hover, a.link:focus {
   .sidebar-nav ul li a {
     color: #607d8b; }
     .sidebar-nav ul li a.active, .sidebar-nav ul li a:hover {
-      color: #26c6da; }
+      color: #cb3426; }
     .sidebar-nav ul li a.active {
       color: #212529; }
   .sidebar-nav ul li.nav-small-cap {
     color: #99abb4; }
   .sidebar-nav > ul > li > a.active i, .sidebar-nav > ul > li > a:hover i {
-    color: #26c6da; }
+    color: #cb3426; }
   .sidebar-nav > ul > li > a i {
     color: #99abb4; }
   .sidebar-nav > ul > li > a.active {
     font-weight: 400;
     background: #fff;
-    color: #009efb; }
+    color: #c74434; }
   .sidebar-nav > ul > li.active > a, .sidebar-nav > ul > li.active:hover > a {
     color: #fff;
-    background: #26c6da !important; }
+    background: #cb3426 !important; }
     .sidebar-nav > ul > li.active > a i, .sidebar-nav > ul > li.active:hover > a i {
       color: #fff; }
     .sidebar-nav > ul > li.active > a:after, .sidebar-nav > ul > li.active:hover > a:after {

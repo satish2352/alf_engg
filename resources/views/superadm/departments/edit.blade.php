@@ -27,8 +27,7 @@
                                 @foreach ($plants as $plant)
                                     <option value="{{ $plant->id }}"
                                         {{ $data->plant_id == $plant->id ? 'selected' : '' }}
-                                        {{ old('plant_id') == $plant->id ? 'selected' : '' }}
-                                        >
+                                        {{ old('plant_id') == $plant->id ? 'selected' : '' }}>
                                         {{ $plant->plant_name }}
                                     </option>
                                 @endforeach
@@ -42,7 +41,7 @@
                         <div class="form-group">
                             <label>Department Code</label>
                             <input type="text" name="department_code" class="form-control"
-                                value="{{ old('department_code' , $data->department_code) }}">
+                                value="{{ old('department_code', $data->department_code) }}">
                             @error('department_code')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
@@ -68,7 +67,7 @@
                         </div>
 
 
-                        
+
 
 
 
@@ -85,9 +84,11 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
+                        <div class="form-group d-flex justify-content-end">
 
-                        <button type="submit" class="btn btn-success">Update</button>
-                        <a href="{{ route('departments.list') }}" class="btn btn-secondary">Cancel</a>
+                            <a href="{{ route('departments.list') }}" class="btn btn-secondary mr-2">Cancel</a>
+                            <button type="submit" class="btn btn-success">Update</button>
+                        </div>
                     </form>
                 </div>
             </div>

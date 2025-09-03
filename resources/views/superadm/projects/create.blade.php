@@ -27,31 +27,34 @@
 
                         <div class="form-group">
                             <label>Project Name</label>
-                            <input type="text" name="project_name" class="form-control" value="{{ old('project_name') }}">
+                            <input type="text" name="project_name" class="form-control"
+                                value="{{ old('project_name') }}">
                             @error('project_name')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
 
-                         <div class="form-group">
+                        <div class="form-group">
                             <label>Project Short Description</label>
-                            <input type="text" name="project_description" class="form-control" value="{{ old('project_description') }}">
+                            <input type="text" name="project_description" class="form-control"
+                                value="{{ old('project_description') }}">
                             @error('project_description')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
 
 
-                         <div class="form-group">
+                        <div class="form-group">
                             <label>Project URL</label>
                             <input type="text" name="project_url" class="form-control" value="{{ old('project_url') }}">
                             @error('project_url')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
-
-                        <button type="submit" class="btn btn-success">Save</button>
-                        <a href="{{ route('projects.list') }}" class="btn btn-secondary">Cancel</a>
+                        <div class="form-group d-flex justify-content-end">
+                            <a href="{{ route('projects.list') }}" class="btn btn-secondary mr-2">Cancel</a>
+                            <button type="submit" class="btn btn-success">Save</button>
+                        </div>
                     </form>
                 </div>
             </div>

@@ -135,7 +135,7 @@ $(function () {
           //or hide: ['data1', 'data2']
         },
         color: {
-              pattern: ['#eceff1', '#745af2', '#26c6da', '#1e88e5']
+              pattern: ['#eceff1', '#745af2', '#cb3426', '#cb3426']
         }
     });
  
@@ -205,7 +205,7 @@ $(function () {
             markers: [{
                     latLng : [40.71, -74.00],
                     name : 'Newyork: 250'
-                    , style: {fill: '#1e88e5'}
+                    , style: {fill: '#cb3426'}
                 },{
                     latLng : [39.01, -98.48],
                     name : 'Kansas: 250'
@@ -214,7 +214,7 @@ $(function () {
               {
                 latLng : [37.38, -122.05],
                 name : 'Vally : 250'
-                , style: {fill: '#26c6da'}
+                , style: {fill: '#cb3426'}
               }]
         });
     

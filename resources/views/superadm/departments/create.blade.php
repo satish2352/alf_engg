@@ -54,10 +54,10 @@
                             @enderror
                         </div>
 
-
-                      
-                        <button type="submit" class="btn btn-success">Save</button>
-                        <a href="{{ route('departments.list') }}" class="btn btn-secondary">Cancel</a>
+                        <div class="form-group d-flex justify-content-end">
+                            <a href="{{ route('departments.list') }}" class="btn btn-secondary mr-2">Cancel</a>
+                            <button type="submit" class="btn btn-success">Save</button>
+                        </div>
                     </form>
                 </div>
             </div>

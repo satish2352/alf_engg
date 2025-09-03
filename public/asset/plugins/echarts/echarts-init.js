@@ -20,7 +20,7 @@ option = {
             saveAsImage: { show: true }
         }
     },
-    color: ["#55ce63", "#009efb"],
+    color: ["#55ce63", "#c74434"],
     calculable: true,
     xAxis: [{
         type: 'category',
@@ -98,7 +98,7 @@ option = {
             saveAsImage: { show: true }
         }
     },
-    color: ["#55ce63", "#009efb"],
+    color: ["#55ce63", "#c74434"],
     calculable: true,
     xAxis: [{
         type: 'category',
@@ -209,7 +209,7 @@ option = {
             saveAsImage: { show: true }
         }
     },
-    color: ["#f62d51", "#dddddd", "#ffbc34", "#7460ee", "#009efb", "#2f3d4a", "#90a4ae", "#55ce63"],
+    color: ["#f62d51", "#dddddd", "#ffbc34", "#7460ee", "#c74434", "#2f3d4a", "#90a4ae", "#55ce63"],
     calculable: true,
     series: [{
             name: 'Radius mode',
@@ -319,7 +319,7 @@ option = {
             { text: 'Marketing', max: 25000 }
         ]
     }],
-    color: ["#55ce63", "#009efb"],
+    color: ["#55ce63", "#c74434"],
     calculable: true,
     series: [{
         name: 'Budget vs spending',
@@ -386,7 +386,7 @@ option = {
             saveAsImage: { show: true }
         }
     },
-    color: ["#f62d51", "#009efb", "#55ce63", "#ffbc34", "#2f3d4a"],
+    color: ["#f62d51", "#c74434", "#55ce63", "#ffbc34", "#2f3d4a"],
     calculable: true,
     series: [{
         name: 'Source',
@@ -461,7 +461,7 @@ option = {
             lineStyle: { // 属性lineStyle控制线条样式
                 color: [
                     [0.2, '#55ce63'],
-                    [0.8, '#009efb'],
+                    [0.8, '#c74434'],
                     [1, '#f62d51']
                 ],
 
@@ -511,7 +511,7 @@ option = {
             lineStyle: { // 属性lineStyle控制线条样式
                 color: [
                     [0.2, '#55ce63'],
-                    [0.8, '#009efb'],
+                    [0.8, '#c74434'],
                     [1, '#f62d51']
                 ],
                 width: 8

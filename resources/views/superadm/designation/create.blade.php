@@ -16,17 +16,20 @@
                             @enderror
                         </div>
 
-                         <div class="form-group">
+                        <div class="form-group">
                             <label>Short Description</label>
-                            <input type="text" name="short_description" class="form-control" value="{{ old('short_description') }}">
+                            <input type="text" name="short_description" class="form-control"
+                                value="{{ old('short_description') }}">
                             @error('short_description')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
 
-
-                        <button type="submit" class="btn btn-success">Save</button>
-                        <a href="{{ route('designations.list') }}" class="btn btn-secondary">Cancel</a>
+                        <div class="form-group d-flex justify-content-end">
+                            
+                            <a href="{{ route('designations.list') }}" class="btn btn-secondary mr-2">Cancel</a>
+                            <button type="submit" class="btn btn-success">Save</button>
+                        </div>
                     </form>
                 </div>
             </div>

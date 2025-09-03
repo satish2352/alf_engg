@@ -8,10 +8,10 @@ jQuery('#world-map-markers').vectorMap(
     borderOpacity: 0.25,
     borderWidth: 1,
     zoomOnScroll: false,
-    color: '#009efb',
+    color: '#c74434',
     regionStyle : {
         initial : {
-          fill : '#009efb'
+          fill : '#c74434'
         }
       },
     markerStyle: {
@@ -25,7 +25,7 @@ jQuery('#world-map-markers').vectorMap(
                 },
                 },
     enableZoom: true,
-    hoverColor: '#009efb',
+    hoverColor: '#c74434',
     markers : [{
         latLng : [21.00, 78.00],
         name : 'I Love My India'

@@ -69,7 +69,7 @@ $(function () {
         , markerStyle: {
             initial: {
                 r: 8
-                , 'fill': '#26c6da'
+                , 'fill': '#cb3426'
                 , 'fill-opacity': 1
                 , 'stroke': '#000'
                 , 'stroke-width': 0
@@ -81,7 +81,7 @@ $(function () {
         , markers: [{
             latLng: [21.00, 78.00]
             , name: 'India : 9347'
-            , style: {fill: '#26c6da'}
+            , style: {fill: '#cb3426'}
         },
       {
         latLng : [-33.00, 151.00],
@@ -125,22 +125,22 @@ $(function () {
             type: 'line',
             width: '100%',
             height: '50',
-            lineColor: '#26c6da',
-            fillColor: '#26c6da',
-            maxSpotColor: '#26c6da',
+            lineColor: '#cb3426',
+            fillColor: '#cb3426',
+            maxSpotColor: '#cb3426',
             highlightLineColor: 'rgba(0, 0, 0, 0.2)',
-            highlightSpotColor: '#26c6da'
+            highlightSpotColor: '#cb3426'
         });
         $("#spark2").sparkline([0,2,8,6,8,5,6,4,8,6,6,2 ], {
             type: 'line',
             width: '100%',
             height: '50',
-            lineColor: '#009efb',
-            fillColor: '#009efb',
-            minSpotColor:'#009efb',
-            maxSpotColor: '#009efb',
+            lineColor: '#c74434',
+            fillColor: '#c74434',
+            minSpotColor:'#c74434',
+            maxSpotColor: '#c74434',
             highlightLineColor: 'rgba(0, 0, 0, 0.2)',
-            highlightSpotColor: '#009efb'
+            highlightSpotColor: '#c74434'
         });
         $("#spark3").sparkline([2,4,4,6,8,5,6,4,8,6,6,2], {
             type: 'line',
@@ -167,20 +167,20 @@ $(function () {
             width: '100%',
             height: '50',
             lineColor: '#fff',
-            fillColor: '#009efb',
-            maxSpotColor: '#009efb',
+            fillColor: '#c74434',
+            maxSpotColor: '#c74434',
             highlightLineColor: 'rgba(0, 0, 0, 0.2)',
-            highlightSpotColor: '#009efb'
+            highlightSpotColor: '#c74434'
         });
         $("#spark6").sparkline([2,4,4,6,8,5,6,4,8,6,6,2], {
             type: 'line',
             width: '100%',
             height: '50',
             lineColor: '#fff',
-            fillColor: '#26c6da',
-            maxSpotColor: '#26c6da',
+            fillColor: '#cb3426',
+            maxSpotColor: '#cb3426',
             highlightLineColor: 'rgba(0, 0, 0, 0.2)',
-            highlightSpotColor: '#26c6da'
+            highlightSpotColor: '#cb3426'
         });
         $("#spark7").sparkline([2,4,4,6,8,5,6,4,8,6,6,2], {
             type: 'line',
@@ -199,7 +199,7 @@ $(function () {
             barWidth: '8',
             resize: true,
             barSpacing: '5',
-            barColor: '#26c6da'
+            barColor: '#cb3426'
         });
          $('#spark9').sparkline([ 0, 5, 6, 10, 9, 12, 4, 9], {
             type: 'bar',
@@ -234,7 +234,7 @@ $(function () {
             barWidth: '2',
             resize: true,
             barSpacing: '5',
-            barColor: '#26c6da'
+            barColor: '#cb3426'
         });
          $('#sparklinedash2').sparkline([ 0, 5, 6, 10, 9, 12, 4, 9], {
             type: 'bar',

@@ -8,8 +8,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('asset/images/favicon.png') }}">
-    <title>Alf Engineering Template - Bootstrap 4 Admin Template</title>
+    <link rel="icon" type="image/png" sizes="16x16"
+        href="{{ asset('asset/theamoriginalalf/images/logo_bg1.ico') }}">
+    <title>Alf Engineering</title>
     <link href="{{ asset('asset/css/style.css') }}" rel="stylesheet">
 
 
@@ -32,9 +33,9 @@
                 <div class="navbar-header">
                     <a class="navbar-brand" href="">
 
-                        <!-- Logo text --><span>
+                        <span>
                             <img src="{{ asset('asset/images/background/alf.jpg') }}" class="light-logo"
-                                alt="homepage" /></span>
+                                alt="homepage" style="    height: 50px;"/></span>
                     </a>
                 </div>
                 <div class="navbar-collapse">
@@ -78,12 +79,7 @@
         </header>
         <aside class="left-sidebar">
             <div class="scroll-sidebar">
-                <div class="user-profile"
-                    style="background: url('{{ asset('asset/images/background/user-info.jpg') }}'); no-repeat;">
-                    <div class="profile-img"> <img src="{{ asset('asset/images/background/alf.jpg') }}"
-                            alt="user" /> </div>
-
-                </div>
+                <div class="user-profile" style="margin-top: 28px;"></div>
                 @if (session('role_id') == 1)
                     @include('superadm.layout.super-menu')
                 @elseif (session('role_id') == 2)
