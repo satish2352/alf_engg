@@ -78,7 +78,7 @@
 <!-- footer -->
 <!-- ============================================================== -->
 <footer class="footer">
-    © 2019 Alf Engineering by wrappixel.com
+    © {{date('Y') }} Alf Engineering 
 </footer>
 <!-- ============================================================== -->
 <!-- End footer -->
