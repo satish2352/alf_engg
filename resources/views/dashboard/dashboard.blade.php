@@ -18,7 +18,7 @@
                                         <div class="d-flex flex-row">
                                             <div
                                                 class="round round-lg text-white d-inline-block text-center rounded-circle bg-info">
-                                                <i class="ti-wallet"></i>
+                                              <i class="mdi mdi-account-key mdi-24px"></i>
                                             </div>
                                             <div class="ml-2 align-self-center">
                                                 <h3 class="mb-0 font-weight-light">
@@ -39,7 +39,7 @@
                                         <div class="d-flex flex-row">
                                             <div
                                                 class="round round-lg text-white d-inline-block text-center rounded-circle bg-info">
-                                                <i class="ti-wallet"></i>
+                                                <i class="mdi mdi-badge-account mdi-24px"></i>
                                             </div>
                                             <div class="ml-2 align-self-center">
                                                 <h3 class="mb-0 font-weight-light">
@@ -60,7 +60,7 @@
                                         <div class="d-flex flex-row">
                                             <div
                                                 class="round round-lg text-white d-inline-block text-center rounded-circle bg-info">
-                                                <i class="ti-wallet"></i>
+                                               <i class="mdi mdi-factory mdi-24px"></i>
                                             </div>
                                             <div class="ml-2 align-self-center">
                                                 <h3 class="mb-0 font-weight-light">
@@ -82,7 +82,7 @@
                                         <div class="d-flex flex-row">
                                             <div
                                                 class="round round-lg text-white d-inline-block text-center rounded-circle bg-info">
-                                                <i class="ti-wallet"></i>
+                                                <i class="mdi mdi-clipboard-text mdi-24px"></i>
                                             </div>
                                             <div class="ml-2 align-self-center">
                                                 <h3 class="mb-0 font-weight-light">
@@ -104,7 +104,7 @@
                                         <div class="d-flex flex-row">
                                             <div
                                                 class="round round-lg text-white d-inline-block text-center rounded-circle bg-info">
-                                                <i class="ti-wallet"></i>
+                                               <i class="mdi mdi-office-building mdi-24px"></i>
                                             </div>
                                             <div class="ml-2 align-self-center">
                                                 <h3 class="mb-0 font-weight-light">
@@ -126,7 +126,7 @@
                                         <div class="d-flex flex-row">
                                             <div
                                                 class="round round-lg text-white d-inline-block text-center rounded-circle bg-info">
-                                                <i class="ti-wallet"></i>
+                                                <i class="mdi mdi-account-group mdi-24px"></i>
                                             </div>
                                             <div class="ml-2 align-self-center">
                                                 <h3 class="mb-0 font-weight-light">

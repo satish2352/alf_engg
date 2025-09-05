@@ -41,13 +41,19 @@ class RoleController extends Controller
 		$req->validate([
 			'role' => [
 				'required',
+				'max:255',
 				Rule::unique('roles', 'role')->where(function ($query) {
 					return $query->where('is_deleted', 0);
+
 				}),
 			],
+			 'short_description' => 'required|max:255',
 		], [
 			'role.required' => 'Enter Role Name',
 			'role.unique' => 'This role already exists.',
+			'role.max' => 'Role name must not exceed 255 characters.',
+			'short_description.required' => 'Enter Description',
+			 'short_description.max' => 'Description must not exceed 255 characters.',
 		]);
 
 		try {
@@ -75,17 +81,22 @@ class RoleController extends Controller
 		$req->validate([
 			'role' => [
 				'required',
+				'max:255',
 				Rule::unique('roles', 'role')
 					->where(fn($query) => $query->where('is_deleted', 0))
 					->ignore($req->id),
 			],
+			 'short_description' => 'required|max:255',
 			'id' => 'required',
 			'is_active' => 'required'
 		], [
 			'role.required' => 'Enter Role Name',
 			'role.unique' => 'This role already exists.',
+			'role.max' => 'Role name must not exceed 255 characters.',
 			'id.required' => 'ID required',
-			'is_active.required' => 'Select active or inactive required'
+			'is_active.required' => 'Select active or inactive required',
+			'short_description.required' => 'Enter Description',
+			'short_description.max' => 'Description must not exceed 255 characters.',
 		]);
 
 		try {

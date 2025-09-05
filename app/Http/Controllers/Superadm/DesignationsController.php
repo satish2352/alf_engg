@@ -41,17 +41,19 @@ class DesignationsController extends Controller
 		$req->validate([
 			'designation' => [
 				'required',
+				'max:255',
 				Rule::unique('designations', 'designation')->where(function ($query) {
 					return $query->where('is_deleted', 0);
 				}),
 			],
-			'short_description' => 'required',
+			'short_description' => 'required|max:255',
 
 			
 		], [
 			'designation.required' => 'Enter designation Name',
 			'designation.unique' => 'This designation already exists.',
 			'short_description.required' => 'This short description required.',
+			 'short_description.max' => 'Description must not exceed 255 characters.',
 		]);
 
 		try {
@@ -79,11 +81,12 @@ class DesignationsController extends Controller
 		$req->validate([
 			'designation' => [
 				'required',
+				'max:255',
 				Rule::unique('designations', 'designation')
 					->where(fn($query) => $query->where('is_deleted', 0))
 					->ignore($req->id),
 			],
-			'short_description' => 'required',
+			'short_description' => 'required|max:255',
 			'id' => 'required',
 			'is_active' => 'required'
 		], [
@@ -91,7 +94,8 @@ class DesignationsController extends Controller
 			'designation.unique' => 'This designation already exists.',
 			'short_description.required' => 'This short description required.',
 			'id.required' => 'ID required',
-			'is_active.required' => 'Select active or inactive required'
+			'is_active.required' => 'Select active or inactive required',
+			 'short_description.max' => 'Description must not exceed 255 characters.',
 		]);
 
 		try {

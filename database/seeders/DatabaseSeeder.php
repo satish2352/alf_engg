@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
                 'department_id' => 0,
                 'projects_id' => 0,
                 'designation_id' => 0,
-                'role_id' => 1,
+                'role_id' => 0,
                 'employee_code' => 0,
                 'employee_name' => 0,
                 'employee_type' => 0,
@@ -32,5 +32,7 @@ class DatabaseSeeder extends Seeder
             ]
 
         );
+
+        
     }
 }

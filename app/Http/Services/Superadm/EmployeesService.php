@@ -19,7 +19,8 @@ class EmployeesService
     public function list()
     {
         try {
-            return $this->repo->list();
+            $data_output =  $this->repo->list();
+            return  $data_output;
         } catch (Exception $e) {
             Log::error("Employees Service list error: " . $e->getMessage());
             return false;
@@ -45,6 +46,8 @@ class EmployeesService
 
                 
             ];
+            // dd($data);
+            // die();
             return $this->repo->save($data);
         } catch (Exception $e) {
             Log::error("Employees Service save error: " . $e->getMessage());

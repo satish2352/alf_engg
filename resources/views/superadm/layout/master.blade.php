@@ -12,7 +12,8 @@
         href="{{ asset('asset/theamoriginalalf/images/logo_bg1.ico') }}">
     <title>Alf Engineering</title>
     <link href="{{ asset('asset/css/style.css') }}" rel="stylesheet">
-
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css">
+    
 
 
     <link href="{{ asset('asset/css/colors/blue.css') }}" id="theme" rel="stylesheet">

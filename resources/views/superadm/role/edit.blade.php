@@ -17,7 +17,15 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
+                         <div class="form-group">
+                            <label>Short Description</label>
 
+                            <input type="text" name="short_description" class="form-control"
+                                value="{{ old('short_description', $data->short_description) }}">
+                            @error('short_description')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
                         <div class="form-group">
                             <label>Status</label>
                             <select name="is_active" class="form-control">

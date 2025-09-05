@@ -83,13 +83,13 @@ class EmployeesController extends Controller
 			'projects_id' => 'required',
 			'designation_id' => 'required',
 			'role_id' => 'required',
-			'employee_code' => 'required',
-			'employee_name' => 'required',
-			'employee_type' => 'required',
-			'employee_email' => 'required',
-			'employee_user_name' => 'required',
-			'employee_password' => 'required',
-			'reporting_to' => 'required',
+			'employee_code'      => 'required|string|max:50|unique:employees,employee_code',
+			'employee_name'      => 'required|string|max:255',
+			'employee_type'      => 'required|string',
+			'employee_email'     => 'required|email|max:255|unique:employees,employee_email',
+			'employee_user_name' => 'required|string|max:100|unique:employees,employee_user_name',
+			'employee_password'  => 'required|string|min:6|max:15',
+			// 'reporting_to' => 'required',
 
 
 		], [
@@ -98,13 +98,19 @@ class EmployeesController extends Controller
 			'projects_id.required' => 'Select projects',
 			'designation_id.required' => 'Select designation',
 			'role_id.required' => 'Select role',
-			'employee_code.required' => 'Employee code',
-			'employee_name.required' => 'Employee name',
-			'employee_type.required' => 'Employee type',
-			'employee_email.required' => 'Employee email',
-			'employee_user_name.required' => 'Employee user name',
-			'employee_password.required' => 'Employee password',
-			'reporting_to.required' => 'Select reporting to name',
+			'employee_code.required' => 'Enter employee code',
+			'employee_code.unique'   => 'This employee code already exists',
+			'employee_name.required' => 'Enter employee name',
+			'employee_type.required' => 'Select employee type',
+			'employee_email.required' => 'Enter employee email',
+			'employee_email.email'    => 'Enter a valid email address',
+			'employee_email.unique'   => 'This email is already registered',
+			'employee_user_name.required' => 'Enter username',
+			'employee_user_name.unique'   => 'This username is already taken',
+			'employee_password.required' => 'Enter employee password',
+			'employee_password.min'      => 'Password must be at least 6 characters',
+			'employee_password.max'      => 'Password cannot exceed 15 characters',
+			// 'reporting_to.required' => 'Select reporting to name',
 		]);
 
 		try {
@@ -163,12 +169,12 @@ class EmployeesController extends Controller
 			'projects_id' => 'required',
 			'designation_id' => 'required',
 			'role_id' => 'required',
-			'employee_code' => 'required',
-			'employee_name' => 'required',
-			'employee_type' => 'required',
-			'employee_email' => 'required',
-			'employee_user_name' => 'required',
-			'employee_password' => 'required',
+		    'employee_code'      => 'required|string|max:50',
+			'employee_name'      => 'required|string|max:255',
+			'employee_type'      => 'required|string',
+			'employee_email'     => 'required|email|max:255',
+			'employee_user_name' => 'required|string|max:100',
+			'employee_password'  => 'required|string|min:6|max:15',
 			'reporting_to' => 'required',
 
 			// 'id' => 'required',
@@ -181,13 +187,18 @@ class EmployeesController extends Controller
 			'projects_id.required' => 'Select projects',
 			'designation_id.required' => 'Select designation',
 			'role_id.required' => 'Select role',
-			'employee_code.required' => 'Employee code',
-			'employee_name.required' => 'Employee name',
-			'employee_type.required' => 'Employee type',
-			'employee_email.required' => 'Employee email',
-			'employee_user_name.required' => 'Employee user name',
-			'employee_password.required' => 'Employee password',
-			'reporting_to.required' => 'Select reporting to name',
+		    'employee_code.required' => 'Enter employee code',
+			// 'employee_code.unique'   => 'This employee code already exists',
+			'employee_name.required' => 'Enter employee name',
+			'employee_type.required' => 'Select employee type',
+			'employee_email.required' => 'Enter employee email',
+			'employee_email.email'    => 'Enter a valid email address',
+			// 'employee_email.unique'   => 'This email is already registered',
+			'employee_user_name.required' => 'Enter username',
+			// 'employee_user_name.unique'   => 'This username is already taken',
+			'employee_password.required' => 'Enter employee password',
+			'employee_password.min'      => 'Password must be at least 6 characters',
+			'employee_password.max'      => 'Password cannot exceed 15 characters',
 
 			// 'id.required' => 'ID required',
 			// 'is_active.required' => 'Select active or inactive required'
@@ -219,6 +230,7 @@ class EmployeesController extends Controller
 	{
 		try {
 			$this->service->updateStatus($req);
+			
 			return redirect()->route('employees.list')->with('success', 'Employees status updated successfully.');
 		} catch (Exception $e) {
 			return redirect()->back()->with('error', 'Failed to update status: ' . $e->getMessage());

@@ -59,32 +59,37 @@ class ProjectsController extends Controller
 	{
 
 		$req->validate([
-			'project_name' => [
-				'required',
-				Rule::unique('projects', 'project_name')->where(function ($query) {
-					return $query->where('is_deleted', 0);
-				}),
-			],
-			'project_url' => [
-				'required',
-				Rule::unique('projects', 'project_url')->where(function ($query) {
-					return $query->where('is_deleted', 0);
-				}),
-			],
-			'project_description' => 'required',
-			'plant_id' => 'required',
+    'project_name' => [
+        'required',
+        'max:255',
+        Rule::unique('projects', 'project_name')->where(function ($query) {
+            return $query->where('is_deleted', 0);
+        }),
+    ],
+    'project_url' => [
+        'required',
+        'max:255',
+        // Rule::unique('projects', 'project_url')->where(function ($query) {
+        //     return $query->where('is_deleted', 0);
+        // }),
+    ],
+    'project_description' => 'required|max:500',
+    'plant_id' => 'required',
+], [
+    'project_name.required' => 'Enter project name',
+    'project_name.unique' => 'This project name already exists.',
+    'project_name.max' => 'Project name must not exceed 255 characters.',
 
-			
-		], [
-			'project_name.required' => 'Enter project name',
-			'project_name.unique' => 'This project name already exists.',
+    'project_url.required' => 'Enter project URL',
+    'project_url.unique' => 'This project URL already exists.',
+    'project_url.max' => 'Project URL must not exceed 255 characters.',
 
-			'project_url.required' => 'Enter project url',
-			'project_url.unique' => 'This project url already exists.',
+    'project_description.required' => 'Project short description is required.',
+    'project_description.max' => 'Project description must not exceed 500 characters.',
 
-			'project_description.required' => 'Project short description required.',
-			'plant_id.required' => 'Please select plant.',
-		]);
+    'plant_id.required' => 'Please select plant.',
+]);
+
 
 		try {
 			$this->service->save($req);
@@ -124,9 +129,9 @@ class ProjectsController extends Controller
 			],
 			'project_url' => [
 				'required',
-				Rule::unique('projects', 'project_url')
-					->where(fn($query) => $query->where('is_deleted', 0))
-					->ignore($req->id),
+				// Rule::unique('projects', 'project_url')
+				// 	->where(fn($query) => $query->where('is_deleted', 0))
+				// 	->ignore($req->id),
 			],
 			'project_description' => 'required',
 			'plant_id' => 'required',
@@ -137,7 +142,7 @@ class ProjectsController extends Controller
 			'project_name.unique' => 'This project name already exists.',
 
 			'project_url.required' => 'Enter project url',
-			'project_url.unique' => 'This project url already exists.',
+			// 'project_url.unique' => 'This project url already exists.',
 
 			'project_description.required' => 'Project short description required.',
 			'plant_id.required' => 'Please select plant.',

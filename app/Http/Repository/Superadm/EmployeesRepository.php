@@ -10,17 +10,61 @@ use Illuminate\Support\Facades\Log;
 
 class EmployeesRepository
 {
-    public function list()
-    {
-        try {
-            return Employees::where('is_deleted', 0)
-                ->orderBy('id', 'desc')
-                ->paginate(10);
-        } catch (Exception $e) {
-            Log::error("Error fetching project list: " . $e->getMessage());
-            return collect(); // return empty collection on error
-        }
+public function list()
+{
+    try {
+        return Employees::leftJoin('plant_masters', function($join) {
+                $join->on('employees.plant_id', '=', 'plant_masters.id');
+            })
+            ->leftJoin('designations', function($join) {
+                $join->on('employees.designation_id', '=', 'designations.id');
+            })
+            ->leftJoin('roles', function($join) {
+                $join->on('employees.role_id', '=', 'roles.id');
+            })
+            ->leftJoin('employees as reporting', function ($join) {
+                $join->on('employees.reporting_to', '=', 'reporting.id');
+            })
+            ->leftJoin('departments', function($join) {
+                $join->whereRaw("FIND_IN_SET(departments.id, employees.department_id)");
+            })
+            ->leftJoin('projects', function($join) {
+                $join->whereRaw("FIND_IN_SET(projects.id, employees.projects_id)");
+            })
+            ->where('employees.is_deleted', 0)
+            ->select(
+                'employees.id',
+                'employees.employee_name',
+                'employees.employee_type',
+                'employees.employee_email',
+                'employees.employee_user_name',
+                'employees.employee_code',
+                'reporting.employee_name as reporting_name',
+                'plant_masters.plant_name',
+                'designations.designation',
+                'roles.role',
+                DB::raw("GROUP_CONCAT(DISTINCT departments.department_name ORDER BY departments.department_name SEPARATOR ', ') as department_names"),
+                DB::raw("GROUP_CONCAT(DISTINCT projects.project_name ORDER BY projects.project_name SEPARATOR ', ') as project_names")
+            )
+            ->groupBy(
+                'employees.id',
+                'employees.employee_name',
+                'employees.employee_type',
+                'employees.employee_email',
+                'employees.employee_user_name',
+                'employees.employee_code',
+                'reporting.employee_name',
+                'plant_masters.plant_name',
+                'designations.designation',
+                'roles.role'
+            )
+            ->orderBy('employees.id', 'desc')
+            ->paginate(10);
+    } catch (Exception $e) {
+        Log::error("Error fetching employee list: " . $e->getMessage());
+        return collect(); 
     }
+}
 
     public function save($data)
     {
@@ -78,7 +122,9 @@ class EmployeesRepository
     public function updateStatus($data, $id)
     {
         try {
+            
             return Employees::where('id', $id)->update($data);
+
         } catch (Exception $e) {
             Log::error("Error updating status for project ID {$id}: " . $e->getMessage());
             return false;

@@ -23,6 +23,8 @@
                                     <th>Project Name</th>
                                     <th>Project Description</th>
                                     <th>Project URL</th>
+                                     <th>StatusL</th>
+                                      <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>

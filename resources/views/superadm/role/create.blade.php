@@ -15,6 +15,15 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
+                        <div class="form-group">
+                            <label>Short Description</label>
+                            <input type="text" name="short_description" class="form-control"
+                                value="{{ old('short_description') }}">
+                            @error('short_description')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
                         <div class="form-group d-flex justify-content-end">
                             <a href="{{ route('roles.list') }}" class="btn btn-secondary mr-2">Cancel</a>
                             <button type="submit" class="btn btn-success">Save</button>

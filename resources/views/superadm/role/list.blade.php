@@ -20,6 +20,7 @@
                                 <tr>
                                     <th>Sr.No.</th>
                                     <th>Role Name</th>
+                                    <th>Short Description</th>
                                     <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
@@ -29,6 +30,7 @@
                                     <tr>
                                         <td>{{ $key + 1 }}</td>
                                         <td>{{ $role->role }}</td>
+                                         <td>{{ $role->short_description }}</td>
                                         <td>
                                             <form action="{{ route('roles.updatestatus') }}" method="POST"
                                                 class="d-inline-block delete-form">

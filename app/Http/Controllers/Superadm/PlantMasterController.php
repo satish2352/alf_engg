@@ -38,26 +38,32 @@ class PlantMasterController extends Controller
 	public function save(Request $req)
 	{
 
-		$req->validate([
-			'plant_code' => [
-				'required',
-				Rule::unique('plant_masters', 'plant_code')->where(function ($query) {
-					return $query->where('is_deleted', 0);
-				}),
-			],
-			'plant_name' => 'required',
-			'address' => 'required',
-			'city' => 'required',
-			'plant_short_name' => 'required',
-		], [
-			'plant_code.required' => 'Enter plant code',
-			'plant_code.unique' => 'This plant code already exists.',
-			'plant_name.required' => 'Enter plant name',
-			'address.required' => 'Enter address for plant',
-			'city.required' => 'Enter city for plant',
-			'plant_short_name.required' => 'Enter plant short name',
+	$req->validate([
+    'plant_code' => [
+        'required',
+        'max:255',
+        Rule::unique('plant_masters', 'plant_code')->where(function ($query) {
+            return $query->where('is_deleted', 0);
+        }),
+    ],
+    'plant_name' => 'required|max:255',
+    'address' => 'required',
+    'city' => 'required',
+    'plant_short_name' => 'nullable|max:255', 
+], [
+    'plant_code.required' => 'Enter plant code',
+    'plant_code.unique' => 'This plant code already exists.',
+    'plant_code.max' => 'Plant code must not exceed 255 characters.',
 
-		]);
+    'plant_name.required' => 'Enter plant name',
+    'plant_name.max' => 'Plant name must not exceed 255 characters.',
+
+    'address.required' => 'Enter address for plant',
+    'city.required' => 'Enter city for plant',
+
+    'plant_short_name.required' => 'Enter plant short name',
+]);
+
 
 		try {
 			$this->service->save($req);

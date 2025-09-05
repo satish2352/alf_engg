@@ -28,7 +28,10 @@ class RoleService
     public function save($req)
     {
         try {
-            $data = ['role' => $req->input('role')];
+               $data = [
+                'role' => $req->input('role'),
+                'short_description' => $req->input('short_description'),
+            ];
             return $this->repo->save($data);
         } catch (Exception $e) {
             Log::error("RoleService save error: " . $e->getMessage());
@@ -52,6 +55,7 @@ class RoleService
             $id = $req->id;
             $data = [
                 'role' => $req->input('role'),
+                'short_description' => $req->input('short_description'),
                 'is_active' => $req->is_active
             ];
 
