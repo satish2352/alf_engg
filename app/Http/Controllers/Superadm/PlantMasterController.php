@@ -58,7 +58,7 @@ class PlantMasterController extends Controller
     'address' => 'required',
     'city' => [
             'required',
-            'regex:/^[a-zA-Z\s]+$/', // only letters and spaces
+            'regex:/^[a-zA-Z\s]+$/', 
         ],
     'plant_short_name' => 'nullable|max:255', 
 ], [

@@ -7,7 +7,7 @@
                 <div class="card-body">
 
                     <div class="mb-3 d-flex justify-content-end">
-                        <a href="{{ route('departments.create') }}" class="btn btn-warning">Add Deprtment</a>
+                        <a href="{{ route('departments.create') }}" class="btn btn-warning">Add Department</a>
                     </div>
 
                     @if (session('success'))
@@ -24,15 +24,15 @@
                                     <th>Department Code</th>
                                     <th>Department Name</th>
                                     <th>Department Description</th>
-                                     <th>Status</th>
-                                      <th>Action</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($dataAll as $key => $data)
                                     <tr>
                                         <td>{{ $key + 1 }}</td>
-                                        <td> {{ $data->plant_name}}</td>
+                                        <td> {{ $data->plant_name }}</td>
                                         <td>{{ $data->department_code }}</td>
                                         <td>{{ $data->department_name }}</td>
                                         <td>{{ $data->department_short_name }}</td>
@@ -47,15 +47,11 @@
                                                     <span class="slider"></span>
                                                 </label>
 
-                                                <input type="hidden" name="id" value="{{ base64_encode($data->id) }}">
+                                                <input type="hidden" name="id"
+                                                    value="{{ base64_encode($data->id) }}">
                                             </form>
                                         </td>
-
-
                                         <td>
-
-
-
                                             <a href="{{ route('departments.edit', base64_encode($data->id)) }}"
                                                 class="btn btn-primary btn-sm">Edit</a>
                                             <form action="{{ route('departments.delete') }}" method="POST"
@@ -77,8 +73,6 @@
             </div>
         </div>
     </div>
-
-
     <script>
         $(document).on("change", ".toggle-status", function(e) {
             e.preventDefault();

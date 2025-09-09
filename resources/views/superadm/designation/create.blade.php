@@ -15,7 +15,6 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
-
                         <div class="form-group">
                             <label>Short Description</label>
                             <input type="text" name="short_description" class="form-control"

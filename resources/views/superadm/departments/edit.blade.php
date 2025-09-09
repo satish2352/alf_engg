@@ -65,12 +65,6 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
-
-
-
-
-
-
                         <div class="form-group">
                             <label>Status</label>
                             <select name="is_active" class="form-control">

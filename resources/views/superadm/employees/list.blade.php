@@ -1,14 +1,12 @@
 @extends('superadm.layout.master')
 
 @section('content')
-<style>
-    .dataTables_wrapper {
-    padding-top: 10px;
-    overflow: visible;
-}
-
-   
-</style>
+    <style>
+        .dataTables_wrapper {
+            padding-top: 10px;
+            overflow: visible;
+        }
+    </style>
     <div class="row">
         <div class="col-12">
             <div class="card">
@@ -23,38 +21,38 @@
                     @endif
 
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped datatables" >
+                        <table class="table table-bordered table-striped datatables">
                             <thead>
                                 <tr>
-                                  <th>Sr. No.</th> 
-                                <th> Name</th>
-                                <th>Code</th>
-                                <th>Email</th>
-                                <th>User Name</th>
-                                <th>Reporting To</th>
-                                <th>Plant Name</th>
-                                <th>Project Name</th>
-                                <th>Department Name</th>
-                                <th>Designation</th>
-                                <th>Role</th>
-                                <th>Status</th>
-                                <th>Action</th>
+                                    <th>Sr. No.</th>
+                                    <th> Name</th>
+                                    <th>Code</th>
+                                    <th>Email</th>
+                                    <th>User Name</th>
+                                    <th>Reporting To</th>
+                                    <th>Plant Name</th>
+                                    <th>Project Name</th>
+                                    <th>Department Name</th>
+                                    <th>Designation</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($employees as $key => $data)
                                     <tr>
                                         <td>{{ $key + 1 }}</td>
-                                    <td>{{ $data->employee_name }}</td>
-                                    <td>{{ $data->employee_code }}</td>
-                                    <td>{{ $data->employee_email }}</td>
-                                    <td>{{ $data->employee_user_name }}</td>
-                                    <td>{{ $data->reporting_name }}</td>
-                                    <td>{{ $data->plant_name ?? '-' }}</td>
-                                    <td>{{ $data->project_names ?? '-' }}</td>
-                                    <td>{{ $data->department_names ?? '-' }}</td>
-                                    <td>{{ $data->designation  ?? '-'}}</td>
-                                    <td>{{ $data->role ?? '-' }}</td>
+                                        <td>{{ $data->employee_name }}</td>
+                                        <td>{{ $data->employee_code }}</td>
+                                        <td>{{ $data->employee_email }}</td>
+                                        <td>{{ $data->employee_user_name }}</td>
+                                        <td>{{ $data->reporting_name ?? '-'}}</td>
+                                        <td>{{ $data->plant_name ?? '-' }}</td>
+                                        <td>{{ $data->project_names ?? '-' }}</td>
+                                        <td>{{ $data->department_names ?? '-' }}</td>
+                                        <td>{{ $data->designation ?? '-' }}</td>
+                                        <td>{{ $data->role ?? '-' }}</td>
                                         <td>
                                             <form action="{{ route('employees.updatestatus') }}" method="POST"
                                                 class="d-inline-block delete-form">
@@ -65,17 +63,11 @@
                                                         {{ $data->is_active == '1' ? 'checked' : '' }}>
                                                     <span class="slider"></span>
                                                 </label>
-
-
-                                                <input type="hidden" name="id" value="{{ base64_encode($data->id) }}">
+                                                <input type="hidden" name="id"
+                                                    value="{{ base64_encode($data->id) }}">
                                             </form>
                                         </td>
-
-
                                         <td>
-
-
-
                                             <a href="{{ route('employees.edit', base64_encode($data->id)) }}"
                                                 class="btn btn-primary btn-sm">Edit</a>
                                             <form action="{{ route('employees.delete') }}" method="POST"

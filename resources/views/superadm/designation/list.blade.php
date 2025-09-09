@@ -46,12 +46,7 @@
                                                 <input type="hidden" name="id" value="{{ base64_encode($data->id) }}">
                                             </form>
                                         </td>
-
-
                                         <td>
-
-
-
                                             <a href="{{ route('designations.edit', base64_encode($data->id)) }}"
                                                 class="btn btn-primary btn-sm">Edit</a>
                                             <form action="{{ route('designations.delete') }}" method="POST"
@@ -73,8 +68,6 @@
             </div>
         </div>
     </div>
-
-
     <script>
         $(document).on("change", ".toggle-status", function(e) {
             e.preventDefault();

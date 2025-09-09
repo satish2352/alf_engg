@@ -13,11 +13,6 @@ class DepartmentsRepository
     public function list()
     {
         try {
-            // return Departments::where('is_deleted', 0)
-            //     ->orderBy('plant_id', 'desc')
-            //     ->get();
-
-
             return Departments::leftJoin('plant_masters', 'departments.plant_id', '=', 'plant_masters.id')
                     ->where('departments.is_deleted', 0)
                     ->orderBy('departments.plant_id', 'desc')

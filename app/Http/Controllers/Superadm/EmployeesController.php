@@ -60,134 +60,70 @@ class EmployeesController extends Controller
 			$roles = Roles::where('is_deleted', 0)
 				->where('is_active', 1)
 				->orderBy('id', 'desc')
-				->get();
-
-	
-
-			// $projects = Projects::where('is_deleted', 0)
-			// 	->where('is_active', 1)
-			// 	->orderBy('id', 'desc')
-			// 	->get();
-
+				->get();			
 			return view('superadm.employees.create', compact('plants', 'departments', 'designations', 'roles'));
 		} catch (Exception $e) {
 			return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
 		}
 	}
+	public function save(Request $req)
+	{
+		// First validate the base rules
+		$validator = Validator::make($req->all(), [
+			'plant_id'          => 'required',
+			'department_id'     => 'required',
+			'projects_id'       => 'required',
+			'designation_id'    => 'required',
+			'role_id'           => 'required',
+			'employee_code'     => 'required|string|max:50|unique:employees,employee_code',
+			'employee_name'     => 'required|string|max:255',
+			'employee_type'     => 'required|string',
+			'employee_email'    => 'required|email|max:255|unique:employees,employee_email',
+			'employee_user_name'=> 'required|string|max:100|unique:employees,employee_user_name',
+			'employee_password' => [
+				'required',
+				'string',
+				'min:8',
+				'max:8',
+				'regex:/^(?=(?:.*\d){2,})(?=(?:.*[A-Za-z]){5,})(?=.*[^A-Za-z0-9])[A-Za-z\d\W]{8}$/'
+			],
+		], [
+			'plant_id.required' => 'Select plant',
+			'department_id.required' => 'Select department',
+			'projects_id.required' => 'Select projects',
+			'designation_id.required' => 'Select designation',
+			'role_id.required' => 'Select role',
+			'employee_code.required' => 'Enter employee code',
+			'employee_code.unique'   => 'This employee code already exists',
+			'employee_name.required' => 'Enter employee name',
+			'employee_type.required' => 'Select employee type',
+			'employee_email.required' => 'Enter employee email',
+			'employee_email.email'    => 'Enter a valid email address',
+			'employee_email.unique'   => 'This email is already registered',
+			'employee_user_name.required' => 'Enter username',
+			'employee_user_name.unique'   => 'This username is already taken',
+			'employee_password.required' => 'Enter employee password',
+			'employee_password.min'      => 'Password must be exactly 8 characters',
+			'employee_password.max'      => 'Password must be exactly 8 characters',
+			'employee_password.regex'    => 'Password must be exactly 8 characters and contain at least 2 digits, 5 letters, and 1 special character',
+		]);
 
-	// public function save(Request $req)
-	// {
+		// Add conditional validation for reporting_to
+		$validator->sometimes('reporting_to', 'required', function ($input) {
+			return Employees::where('plant_id', $input->plant_id)
+							->where('is_deleted', 0)
+							->exists(); // only require if employees exist for that plant
+		});
 
-	// 	$req->validate([
+		$validator->validate(); // run the validation
 
-	// 		'plant_id' => 'required',
-	// 		'department_id' => 'required',
-	// 		'projects_id' => 'required',
-	// 		'designation_id' => 'required',
-	// 		'role_id' => 'required',
-	// 		'employee_code'      => 'required|string|max:50|unique:employees,employee_code',
-	// 		'employee_name'      => 'required|string|max:255',
-	// 		'employee_type'      => 'required|string',
-	// 		'employee_email'     => 'required|email|max:255|unique:employees,employee_email',
-	// 		'employee_user_name' => 'required|string|max:100|unique:employees,employee_user_name',
-	// 		'employee_password'  => [
-	// 		'required',
-	// 		'string',
-	// 		'min:8',
-	// 		'max:8',
-	// 		'regex:/^(?=(?:.*\d){2,})(?=(?:.*[A-Za-z]){5,})(?=.*[^A-Za-z0-9])[A-Za-z\d\W]{8}$/'
-	// 		],
-	// 		// 'reporting_to' => 'required',
-            
-	// 	], [
-	// 		'plant_id.required' => 'Select plant',
-	// 		'department_id.required' => 'Select department',
-	// 		'projects_id.required' => 'Select projects',
-	// 		'designation_id.required' => 'Select designation',
-	// 		'role_id.required' => 'Select role',
-	// 		'employee_code.required' => 'Enter employee code',
-	// 		'employee_code.unique'   => 'This employee code already exists',
-	// 		'employee_name.required' => 'Enter employee name',
-	// 		'employee_type.required' => 'Select employee type',
-	// 		'employee_email.required' => 'Enter employee email',
-	// 		'employee_email.email'    => 'Enter a valid email address',
-	// 		'employee_email.unique'   => 'This email is already registered',
-	// 		'employee_user_name.required' => 'Enter username',
-	// 		'employee_user_name.unique'   => 'This username is already taken',
-	// 		'employee_password.required' => 'Enter employee password',
-	// 		'employee_password.min'      => 'Password must be exactly 8 characters',
-	// 		'employee_password.max'      => 'Password must be exactly 8 characters',
-	// 		'employee_password.regex'    => 'Password must be exactly 8 characters and contain at least 2 digits, 5 letters, and 1 special character',
-	// 		// 'reporting_to.required' => 'Select reporting to name',
-	// 	]);
-
-	// 	try {
-	// 		$this->service->save($req);
-	// 		return redirect()->route('employees.list')->with('success', 'Department added successfully.');
-	// 	} catch (Exception $e) {
-	// 		return redirect()->back()->withInput()->with('error', 'Something went wrong: ' . $e->getMessage());
-	// 	}
-
-	// }
-public function save(Request $req)
-{
-    // First validate the base rules
-    $validator = Validator::make($req->all(), [
-        'plant_id'          => 'required',
-        'department_id'     => 'required',
-        'projects_id'       => 'required',
-        'designation_id'    => 'required',
-        'role_id'           => 'required',
-        'employee_code'     => 'required|string|max:50|unique:employees,employee_code',
-        'employee_name'     => 'required|string|max:255',
-        'employee_type'     => 'required|string',
-        'employee_email'    => 'required|email|max:255|unique:employees,employee_email',
-        'employee_user_name'=> 'required|string|max:100|unique:employees,employee_user_name',
-        'employee_password' => [
-            'required',
-            'string',
-            'min:8',
-            'max:8',
-            'regex:/^(?=(?:.*\d){2,})(?=(?:.*[A-Za-z]){5,})(?=.*[^A-Za-z0-9])[A-Za-z\d\W]{8}$/'
-        ],
-    ], [
-        'plant_id.required' => 'Select plant',
-        'department_id.required' => 'Select department',
-        'projects_id.required' => 'Select projects',
-        'designation_id.required' => 'Select designation',
-        'role_id.required' => 'Select role',
-        'employee_code.required' => 'Enter employee code',
-        'employee_code.unique'   => 'This employee code already exists',
-        'employee_name.required' => 'Enter employee name',
-        'employee_type.required' => 'Select employee type',
-        'employee_email.required' => 'Enter employee email',
-        'employee_email.email'    => 'Enter a valid email address',
-        'employee_email.unique'   => 'This email is already registered',
-        'employee_user_name.required' => 'Enter username',
-        'employee_user_name.unique'   => 'This username is already taken',
-        'employee_password.required' => 'Enter employee password',
-        'employee_password.min'      => 'Password must be exactly 8 characters',
-        'employee_password.max'      => 'Password must be exactly 8 characters',
-        'employee_password.regex'    => 'Password must be exactly 8 characters and contain at least 2 digits, 5 letters, and 1 special character',
-    ]);
-
-    // Add conditional validation for reporting_to
-    $validator->sometimes('reporting_to', 'required', function ($input) {
-        return Employees::where('plant_id', $input->plant_id)
-                        ->where('is_deleted', 0)
-                        ->exists(); // only require if employees exist for that plant
-    });
-
-    $validator->validate(); // run the validation
-
-    try {
-        $this->service->save($req);
-        return redirect()->route('employees.list')->with('success', 'Employee added successfully.');
-    } catch (Exception $e) {
-        return redirect()->back()->withInput()->with('error', 'Something went wrong: ' . $e->getMessage());
-    }
-}
-
+		try {
+			$this->service->save($req);
+			return redirect()->route('employees.list')->with('success', 'Employee added successfully.');
+		} catch (Exception $e) {
+			return redirect()->back()->withInput()->with('error', 'Something went wrong: ' . $e->getMessage());
+		}
+	}
 	public function edit($id)
 	{
 

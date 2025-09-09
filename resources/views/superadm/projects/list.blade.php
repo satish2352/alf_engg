@@ -23,8 +23,8 @@
                                     <th>Project Name</th>
                                     <th>Project Description</th>
                                     <th>Project URL</th>
-                                     <th>StatusL</th>
-                                      <th>Action</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -50,12 +50,7 @@
                                                     value="{{ base64_encode($data->id) }}">
                                             </form>
                                         </td>
-
-
                                         <td>
-
-
-
                                             <a href="{{ route('projects.edit', base64_encode($data->id)) }}"
                                                 class="btn btn-primary btn-sm">Edit</a>
                                             <form action="{{ route('projects.delete') }}" method="POST"
@@ -72,13 +67,10 @@
                             </tbody>
                         </table>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
-
-
     <script>
         $(document).on("change", ".toggle-status", function(e) {
             e.preventDefault();

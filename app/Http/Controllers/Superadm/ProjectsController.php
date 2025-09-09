@@ -69,7 +69,7 @@ class ProjectsController extends Controller
      'project_url' => [
             'required',
             'max:255',
-            'url', // ✅ ensures it is a valid URL
+            'url', 
             Rule::unique('projects', 'project_url')->where(function ($query) {
                 return $query->where('is_deleted', 0);
             }),

@@ -30,7 +30,7 @@
                                     <tr>
                                         <td>{{ $key + 1 }}</td>
                                         <td>{{ $role->role }}</td>
-                                         <td>{{ $role->short_description }}</td>
+                                        <td>{{ $role->short_description }}</td>
                                         <td>
                                             <form action="{{ route('roles.updatestatus') }}" method="POST"
                                                 class="d-inline-block delete-form">
@@ -41,17 +41,10 @@
                                                         {{ $role->is_active == '1' ? 'checked' : '' }}>
                                                     <span class="slider"></span>
                                                 </label>
-
-
                                                 <input type="hidden" name="id" value="{{ base64_encode($role->id) }}">
                                             </form>
                                         </td>
-
-
                                         <td>
-
-
-
                                             <a href="{{ route('roles.edit', base64_encode($role->id)) }}"
                                                 class="btn btn-primary btn-sm">Edit</a>
                                             <form action="{{ route('roles.delete') }}" method="POST"
@@ -68,13 +61,10 @@
                             </tbody>
                         </table>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
-
-
     <script>
         $(document).on("change", ".toggle-status", function(e) {
             e.preventDefault();

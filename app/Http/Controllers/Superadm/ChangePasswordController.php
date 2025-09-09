@@ -9,16 +9,15 @@ use Validator;
 use App\Models\Employees;
 
 class ChangePasswordController extends Controller
-{
+ {
     public function index()
-    {
-        return view('superadm.change-password');
+ {
+        return view( 'superadm.change-password' );
     }
 
-    public function updatePassword(Request $request)
-    {
-        // ✅ Custom validation rules
-        $validator = Validator::make($request->all(), [
+    public function updatePassword( Request $request )
+ {
+        $validator = Validator::make( $request->all(), [
             'new_password' => [
                 'required',
                 'string',
@@ -28,34 +27,31 @@ class ChangePasswordController extends Controller
             ],
             'confirm_password' => 'required|same:new_password',
         ], [
-            // ✅ Custom error messages
             'new_password.required' => 'Enter employee password',
             'new_password.min'      => 'Password must be exactly 8 characters',
             'new_password.max'      => 'Password must be exactly 8 characters',
             'new_password.regex'    => 'Password must contain at least 2 digits, 5 letters, and 1 special character',
             'confirm_password.required' => 'Please confirm your password',
             'confirm_password.same'     => 'New Password & Confirm Password must match',
-        ]);
+        ] );
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
+        if ( $validator->fails() ) {
+            return redirect()->back()->withErrors( $validator )->withInput();
         }
 
-        $userId = Session::get('user_id');
-        if (!$userId) {
-            return redirect()->back()->with('error', 'Password not updated!');
+        $userId = Session::get( 'user_id' );
+        if ( !$userId ) {
+            return redirect()->back()->with( 'error', 'Password not updated!' );
         }
 
-        $user = Employees::find($userId);
-        if (!$user) {
-            return redirect()->back()->with('error', 'Password not updated!');
+        $user = Employees::find( $userId );
+        if ( !$user ) {
+            return redirect()->back()->with( 'error', 'Password not updated!' );
         }
+        Employees::where( 'id', $userId )->update( [
+            'employee_password' => bcrypt( $request->new_password ),
+        ] );
 
-        // ✅ Update password
-        Employees::where('id', $userId)->update([
-            'employee_password' => bcrypt($request->new_password),
-        ]);
-
-        return redirect()->back()->with('success', 'Password updated successfully!');
+        return redirect()->back()->with( 'success', 'Password updated successfully!' );
     }
 }

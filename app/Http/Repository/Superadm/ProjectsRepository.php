@@ -13,10 +13,6 @@ class ProjectsRepository
     public function list()
     {
         try {
-            // return Projects::where('is_deleted', 0)
-            //     ->orderBy('plant_id', 'desc')
-            //     ->get();
-
             return Projects::leftJoin('plant_masters', 'projects.plant_id', '=', 'plant_masters.id')
                 ->where('projects.is_deleted', 0)
                 ->where('plant_masters.is_deleted', 0)
@@ -39,10 +35,6 @@ class ProjectsRepository
     public function listajaxlist($palnt_id)
     {
         try {
-            // return Projects::where('is_deleted', 0)
-            //     ->orderBy('plant_id', 'desc')
-            //     ->get();
-
             return Projects::where('is_deleted', 0)
                 ->where('plant_id', $palnt_id)
 				->where('is_active', 1)

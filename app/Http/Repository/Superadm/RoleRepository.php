@@ -17,7 +17,7 @@ class RoleRepository
                 ->get();
         } catch (Exception $e) {
             Log::error("Error fetching role list: " . $e->getMessage());
-            return collect(); // return empty collection on error
+            return collect(); 
         }
     }
 

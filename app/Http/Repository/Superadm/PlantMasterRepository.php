@@ -18,7 +18,7 @@ class PlantMasterRepository
                 ->get();
         } catch (Exception $e) {
             Log::error("Error fetching plant list: " . $e->getMessage());
-            return collect(); // return empty collection on error
+            return collect(); 
         }
     }
 

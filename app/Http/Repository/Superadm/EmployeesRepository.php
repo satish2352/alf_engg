@@ -88,22 +88,10 @@ public function list()
             return null;
         }
     }
-
-    // public function update($data, $id)
-    // {
-    //     try {
-    //         return Employees::where('id', $id)->update($data);
-    //     } catch (Exception $e) {
-    //         Log::error("Error updating project ID {$id}: " . $e->getMessage());
-    //         return false;
-    //     }
-    // }
-
     public function update($id, $data)
     {
         try {
             $employee = Employees::findOrFail($id);
-            // dd($employee);
             return $employee->update($data);
         } catch (Exception $e) {
             Log::error("Error updating employee: " . $e->getMessage());

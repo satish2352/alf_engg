@@ -22,7 +22,7 @@
 
                         {{-- Plant --}}
                         <div class="form-group">
-                            <label for="plant_id">Plant</label>
+                            <label for="plant_id">Select Plant</label>
                             <select name="plant_id" id="plant_id" class="form-control">
                                 <option value="">Select Plant</option>
                                 @foreach ($plants as $plant)
@@ -164,7 +164,7 @@
                             @enderror
                         </div>
 
-                          {{-- Reporting To --}}
+                        {{-- Reporting To --}}
                         <div class="form-group">
                             <label for="reporting_to">Reporting To</label>
                             <select name="reporting_to" id="reporting_to" class="form-control">
@@ -308,17 +308,17 @@
     </script>
 
 
-     <script>
+    <script>
         $(document).ready(function() {
 
-         // Initialize multiselect first
+            // Initialize multiselect first
             $('#reporting_to').multiselect({
                 includeSelectAllOption: true,
                 enableFiltering: true,
                 maxHeight: 300,
                 buttonWidth: '100%'
             });
-            
+
             // On Plant Change
             $('#plant_id').on('change', function() {
                 let plantId = $(this).val();
@@ -339,8 +339,8 @@
                         console.log(response);
                         $('#reporting_to').empty(); // clear old options
                         $('#reporting_to').append(
-                                    `<option value="">select name</option>`
-                                );
+                            `<option value="">select name</option>`
+                        );
 
                         if (response.employees && response.employees.length > 0) {
                             $.each(response.employees, function(key, employees_result) {

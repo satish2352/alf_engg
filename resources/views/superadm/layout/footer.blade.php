@@ -110,7 +110,7 @@
             language: {
                 search: "Search:",
                 lengthMenu: "Show _MENU_ entries",
-                info: "Showing _START_ to _END_ of _TOTAL_ roles",
+                info: "Showing _START_ to _END_ of _TOTAL_ rows",
                 paginate: {
                     next: "Next",
                     previous: "Previous"

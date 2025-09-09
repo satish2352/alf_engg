@@ -8,9 +8,6 @@
                     <h4>Edit Role</h4>
                     <form action="{{ route('plantmaster.update', $encodedId) }}" method="POST">
                         @csrf
-
-
-
                         <div class="form-group">
                             <label>Plant Code</label>
                             <input type="hidden" name="id" class="form-control" value="{{ old('id', $data->id) }}">
@@ -29,8 +26,6 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
-
-
                         <div class="form-group">
                             <label>Address</label>
                             <input type="text" value="{{ old('address', $data->address) }}" name="address"
@@ -39,7 +34,6 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
-
                         <div class="form-group">
                             <label>City</label>
                             <input type="text" value="{{ old('city', $data->city) }}" name="city"
@@ -48,7 +42,6 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
-
                         <div class="form-group">
                             <label>Plant Short Name</label>
                             <input type="text" value="{{ old('plant_short_name', $data->plant_short_name) }}"
@@ -57,8 +50,6 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
-
-
                         <div class="form-group">
                             <label>Status</label>
                             <select name="is_active" class="form-control">
