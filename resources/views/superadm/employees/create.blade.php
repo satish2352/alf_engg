@@ -51,7 +51,7 @@
 
                         {{-- Designation --}}
                         <div class="form-group">
-                            <label for="designation_id">Designation</label>
+                            <label for="designation_id">Designation <span class="text-danger">*</span></label>
                             <select name="designation_id" id="designation_id" class="form-control">
                                 <option value="">Select Designation </option>
                                 @foreach ($designations as $designation)
@@ -68,7 +68,7 @@
 
                         {{-- Role --}}
                         <div class="form-group">
-                            <label for="role_id">Role</label>
+                            <label for="role_id">Role <span class="text-danger">*</span></label>
                             <select name="role_id" id="role_id" class="form-control">
                                 <option value="">Select Role </option>
                                 @foreach ($roles as $role)
@@ -85,7 +85,7 @@
 
                         {{-- Employee Type --}}
                         <div class="form-group">
-                            <label for="employee_type">Employee Type</label>
+                            <label for="employee_type">Employee Type <span class="text-danger">*</span></label>
                             <select name="employee_type" id="employee_type" class="form-control">
                                 <option value="">Select Type </option>
                                 <option value="test_1" {{ old('employee_type') == 'test_1' ? 'selected' : '' }}>Test 1
@@ -100,7 +100,7 @@
 
                         {{-- Employee Code --}}
                         <div class="form-group">
-                            <label>Employee Code</label>
+                            <label>Employee Code <span class="text-danger">*</span></label>
                             <input type="text" name="employee_code" class="form-control"
                                 value="{{ old('employee_code') }}">
                             @error('employee_code')
@@ -110,7 +110,7 @@
 
                         {{-- Employee Name --}}
                         <div class="form-group">
-                            <label>Employee Name</label>
+                            <label>Employee Name <span class="text-danger">*</span></label>
                             <input type="text" name="employee_name" class="form-control"
                                 value="{{ old('employee_name') }}">
                             @error('employee_name')
@@ -120,7 +120,7 @@
 
                         {{-- Email --}}
                         <div class="form-group">
-                            <label>Email</label>
+                            <label>Email <span class="text-danger">*</span></label>
                             <input type="text" name="employee_email" class="form-control"
                                 value="{{ old('employee_email') }}">
                             @error('employee_email')
@@ -130,7 +130,7 @@
 
                         {{-- Username --}}
                         <div class="form-group">
-                            <label>User Name</label>
+                            <label>User Name <span class="text-danger">*</span></label>
                             <input type="text" name="employee_user_name" class="form-control"
                                 value="{{ old('employee_user_name') }}">
                             @error('employee_user_name')
@@ -140,7 +140,7 @@
 
                         {{-- Password --}}
                         <div class="form-group">
-                            <label>Password</label>
+                            <label>Password <span class="text-danger">*</span></label>
                             <input type="text" name="employee_password" class="form-control"
                                 value="{{ old('employee_password') }}">
                             @error('employee_password')

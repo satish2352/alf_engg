@@ -15,7 +15,7 @@ class DepartmentsRepository
         try {
             return Departments::leftJoin('plant_masters', 'departments.plant_id', '=', 'plant_masters.id')
                     ->where('departments.is_deleted', 0)
-                    ->orderBy('departments.plant_id', 'desc')
+                    ->orderBy('departments.id', 'desc')
                     ->select(
                         'departments.*',
                         'plant_masters.plant_name',

@@ -22,7 +22,7 @@
 
                         {{-- Plant --}}
                         <div class="form-group">
-                            <label for="plant_id">Select Plant</label>
+                            <label for="plant_id">Select Plant <span class="text-danger">*</span></label>
                             <select name="plant_id" id="plant_id" class="form-control">
                                 <option value="">Select Plant</option>
                                 @foreach ($plants as $plant)
@@ -39,7 +39,7 @@
 
                         {{-- Department --}}
                         <div class="form-group">
-                            <label for="department_id">Select Department</label>
+                            <label for="department_id">Select Department <span class="text-danger">*</span></label>
                             <select id="department_id" name="department_id[]" multiple="multiple" class="form-control">
                                 @foreach ($departments as $dept)
                                     <option value="{{ $dept->id }}"
@@ -55,7 +55,7 @@
 
                         {{-- Projects --}}
                         <div class="form-group">
-                            <label for="projects_id">Select Project</label>
+                            <label for="projects_id">Select Project <span class="text-danger">*</span></label>
                             <select id="projects_id" name="projects_id[]" multiple="multiple" class="form-control">
                                 @foreach ($projects as $proj)
                                     <option value="{{ $proj->id }}"
@@ -71,7 +71,7 @@
 
                         {{-- Designation --}}
                         <div class="form-group">
-                            <label for="designation_id">Designation</label>
+                            <label for="designation_id">Designation <span class="text-danger">*</span></label>
                             <select name="designation_id" id="designation_id" class="form-control">
                                 <option value="">Select Designation</option>
                                 @foreach ($designations as $designation)
@@ -88,7 +88,7 @@
 
                         {{-- Role --}}
                         <div class="form-group">
-                            <label for="role_id">Role</label>
+                            <label for="role_id">Role <span class="text-danger">*</span></label>
                             <select name="role_id" id="role_id" class="form-control">
                                 <option value="">Select Role</option>
                                 @foreach ($roles as $role)
@@ -105,7 +105,7 @@
 
                         {{-- Employee Type --}}
                         <div class="form-group">
-                            <label for="employee_type">Employee Type</label>
+                            <label for="employee_type">Employee Type <span class="text-danger">*</span></label>
                             <select name="employee_type" id="employee_type" class="form-control">
                                 <option value="">Select Type </option>
                                 <option value="test_1" {{ $employee->employee_type == 'test_1' ? 'selected' : '' }}>Test 1
@@ -121,7 +121,7 @@
 
                         {{-- Other Fields --}}
                         <div class="form-group">
-                            <label>Employee Code</label>
+                            <label>Employee Code <span class="text-danger">*</span></label>
                             <input type="text" name="employee_code" class="form-control"
                                 value="{{ $employee->employee_code }}">
                             @error('employee_code')
@@ -130,7 +130,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label>Employee Name</label>
+                            <label>Employee Name <span class="text-danger">*</span></label>
                             <input type="text" name="employee_name" class="form-control"
                                 value="{{ $employee->employee_name }}">
                             @error('employee_name')
@@ -148,7 +148,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label>User Name</label>
+                            <label>User Name <span class="text-danger">*</span></label>
                             <input type="text" name="employee_user_name" class="form-control"
                                 value="{{ $employee->employee_user_name }}">
                             @error('employee_user_name')
