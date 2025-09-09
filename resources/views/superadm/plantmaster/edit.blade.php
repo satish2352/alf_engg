@@ -9,7 +9,7 @@
                     <form action="{{ route('plantmaster.update', $encodedId) }}" method="POST">
                         @csrf
                         <div class="form-group">
-                            <label>Plant Code</label>
+                            <label>Plant Code <span class="text-danger">*</span></label>
                             <input type="hidden" name="id" class="form-control" value="{{ old('id', $data->id) }}">
                             <input type="text" value="{{ old('plant_code', $data->plant_code) }}" name="plant_code"
                                 class="form-control" value="{{ old('plant_code') }}">
@@ -19,7 +19,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label>Plant Name</label>
+                            <label>Plant Name <span class="text-danger">*</span></label>
                             <input type="text" value="{{ old('plant_name', $data->plant_name) }}" name="plant_name"
                                 class="form-control" value="{{ old('plant_name') }}">
                             @error('plant_name')
@@ -35,7 +35,7 @@
                             @enderror
                         </div>
                         <div class="form-group">
-                            <label>City</label>
+                            <label>City <span class="text-danger">*</span></label>
                             <input type="text" value="{{ old('city', $data->city) }}" name="city"
                                 class="form-control" value="{{ old('city') }}">
                             @error('city')

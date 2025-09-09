@@ -9,14 +9,14 @@
                     <form action="{{ route('roles.save') }}" method="POST">
                         @csrf
                         <div class="form-group">
-                            <label>Role Name</label>
+                            <label>Role Name <span class="text-danger">*</span></label>
                             <input type="text" name="role" class="form-control" value="{{ old('role') }}">
                             @error('role')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
                         <div class="form-group">
-                            <label>Short Description</label>
+                            <label>Short Description <span class="text-danger">*</span></label>
                             <input type="text" name="short_description" class="form-control"
                                 value="{{ old('short_description') }}">
                             @error('short_description')

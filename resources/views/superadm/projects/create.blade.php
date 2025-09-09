@@ -10,7 +10,7 @@
                         @csrf
 
                         <div class="form-group">
-                            <label for="plant_id">Plant</label>
+                            <label for="plant_id">Plant <span class="text-danger">*</span></label>
                             <select name="plant_id" id="plant_id" class="form-control">
                                 <option value="">Select Plant </option>
                                 @foreach ($plants as $plant)
@@ -26,7 +26,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label>Project Name</label>
+                            <label>Project Name <span class="text-danger">*</span></label>
                             <input type="text" name="project_name" class="form-control"
                                 value="{{ old('project_name') }}">
                             @error('project_name')
@@ -45,7 +45,7 @@
 
 
                         <div class="form-group">
-                            <label>Project URL</label>
+                            <label>Project URL <span class="text-danger">*</span></label>
                             <input type="text" name="project_url" class="form-control" value="{{ old('project_url') }}">
                             @error('project_url')
                                 <span class="text-danger">{{ $message }}</span>

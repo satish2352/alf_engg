@@ -55,12 +55,12 @@ class PlantMasterController extends Controller
 					return $query->where('is_deleted', 0);
 				}),
 			],
-    'address' => 'required',
+    // 'address' => 'required',
     'city' => [
             'required',
             'regex:/^[a-zA-Z\s]+$/', 
         ],
-    'plant_short_name' => 'nullable|max:255', 
+    // 'plant_short_name' => 'nullable|max:255', 
 ], [
     'plant_code.required' => 'Enter plant code',
     'plant_code.unique' => 'This plant code already exists.',
@@ -68,11 +68,11 @@ class PlantMasterController extends Controller
     'plant_name.required' => 'Enter plant name',
     'plant_name.max' => 'Plant name must not exceed 255 characters.',
      'plant_name.regex' => 'Plant Name must contain only letters, numbers, and spaces.',
-    'address.required' => 'Enter address for plant',
+    // 'address.required' => 'Enter address for plant',
    'city.required' => 'Enter city for plant',
         'city.regex' => 'City name must contain only letters and spaces.',
 
-    'plant_short_name.required' => 'Enter plant short name',
+    // 'plant_short_name.required' => 'Enter plant short name',
 ]);
 
 
@@ -106,12 +106,12 @@ class PlantMasterController extends Controller
 					->ignore($req->id),
 			],
 			'plant_name' => 'required',
-			'address' => 'required',
+			// 'address' => 'required',
 			 'city' => [
             'required',
             'regex:/^[a-zA-Z\s]+$/', // only letters and spaces
         ],
-			'plant_short_name' => 'required',
+			// 'plant_short_name' => 'required',
 			'id' => 'required',
 			'is_active' => 'required'
 
@@ -120,10 +120,10 @@ class PlantMasterController extends Controller
 			'plant_code.unique' => 'This plant code already exists.',
 			'id.required' => 'ID required',
 			'plant_name.required' => 'Enter plant name',
-			'address.required' => 'Enter address for plant',
+			// 'address.required' => 'Enter address for plant',
 			 'city.required' => 'Enter city for plant',
         'city.regex' => 'City name must contain only letters and spaces.',
-			'plant_short_name.required' => 'Enter plant short name',
+			// 'plant_short_name.required' => 'Enter plant short name',
 			'is_active.required' => 'Select active or inactive required'
 		]);
 

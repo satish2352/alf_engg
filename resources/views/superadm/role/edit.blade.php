@@ -9,7 +9,7 @@
                     <form action="{{ route('roles.update', $encodedId) }}" method="POST">
                         @csrf
                         <div class="form-group">
-                            <label>Role Name</label>
+                            <label>Role Name <span class="text-danger">*</span></label>
                             <input type="hidden" name="id" class="form-control" value="{{ old('id', $data->id) }}">
                             <input type="text" name="role" class="form-control"
                                 value="{{ old('role', $data->role) }}">
@@ -18,7 +18,7 @@
                             @enderror
                         </div>
                         <div class="form-group">
-                            <label>Short Description</label>
+                            <label>Short Description <span class="text-danger">*</span></label>
 
                             <input type="text" name="short_description" class="form-control"
                                 value="{{ old('short_description', $data->short_description) }}">

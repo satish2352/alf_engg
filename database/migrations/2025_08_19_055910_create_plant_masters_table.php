@@ -15,7 +15,7 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->string('plant_code');
             $table->string('plant_name');
-            $table->string('address');
+            $table->string('address')->nullable();
             $table->string('city');
             $table->string('plant_short_name')->nullable();
             $table->boolean('is_active')->default(true);

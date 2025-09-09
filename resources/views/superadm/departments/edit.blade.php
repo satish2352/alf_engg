@@ -15,12 +15,12 @@
                         </div>
                     @endif
 
-                    <h4>Edit Designation</h4>
+                    <h4>Edit Department</h4>
                     <form action="{{ route('departments.update', $encodedId) }}" method="POST">
                         @csrf
 
                         <div class="form-group">
-                            <label for="plant_id">Plant</label>
+                            <label for="plant_id">Select Plant <span class="text-danger">*</span></label>
                             <input type="hidden" name="id" class="form-control" value="{{ old('id', $data->id) }}">
                             <select name="plant_id" id="plant_id" class="form-control">
                                 <option value="">Select Plant </option>
@@ -39,7 +39,7 @@
 
 
                         <div class="form-group">
-                            <label>Department Code</label>
+                            <label>Department Code <span class="text-danger">*</span></label>
                             <input type="text" name="department_code" class="form-control"
                                 value="{{ old('department_code', $data->department_code) }}">
                             @error('department_code')
@@ -49,7 +49,7 @@
 
 
                         <div class="form-group">
-                            <label>Department Name</label>
+                            <label>Department Name <span class="text-danger">*</span></label>
                             <input type="text" name="department_name" class="form-control"
                                 value="{{ old('department_name', $data->department_name) }}">
                             @error('department_name')

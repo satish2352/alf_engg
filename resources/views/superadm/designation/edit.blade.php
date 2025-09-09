@@ -19,7 +19,7 @@
                     <form action="{{ route('designations.update', $encodedId) }}" method="POST">
                         @csrf
                         <div class="form-group">
-                            <label>Designation Name</label>
+                            <label>Designation Name <span class="text-danger">*</span></label>
                             <input type="hidden" name="id" class="form-control" value="{{ old('id', $data->id) }}">
                             <input type="text" name="designation" class="form-control"
                                 value="{{ old('designation', $data->designation) }}">
@@ -30,7 +30,7 @@
 
 
                         <div class="form-group">
-                            <label>Short Description</label>
+                            <label>Short Description <span class="text-danger">*</span></label>
 
                             <input type="text" name="short_description" class="form-control"
                                 value="{{ old('short_description', $data->short_description) }}">

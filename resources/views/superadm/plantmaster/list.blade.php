@@ -34,9 +34,9 @@
                                         <td>{{ $key + 1 }}</td>
                                         <td>{{ $data->plant_code }}</td>
                                         <td>{{ $data->plant_name }}</td>
-                                        <td>{{ $data->address }}</td>
+                                        <td>{{ $data->address ?? '-' }}</td>
                                         <td>{{ $data->city }}</td>
-                                        <td>{{ $data->plant_short_name }}</td>
+                                        <td>{{ $data->plant_short_name ?? '-' }}</td>
                                         <td>
                                             <form action="{{ route('plantmaster.updatestatus') }}" method="POST"
                                                 class="d-inline-block delete-form">

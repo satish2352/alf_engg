@@ -25,25 +25,30 @@ class PlantMasterService
         }
     }
 
-    public function save($req)
-    {
+  public function save($req)
+{
+    try {
+        $data = [
+            'plant_code'       => $req->input('plant_code'),
+            'plant_name'       => $req->input('plant_name'),
+            'city'             => $req->input('city'),
+        ];
 
-
-        try {
-            $data = [
-                'plant_code' => $req->input('plant_code'),
-                'plant_name' => $req->input('plant_name'),
-                'address' => $req->input('address'),
-                'city' => $req->input('city'),
-                'plant_short_name' => $req->input('plant_short_name'),
-            ];
-            
-            return $this->repo->save($data);
-        } catch (Exception $e) {
-            Log::error("Plant Service save error: " . $e->getMessage());
-            return false;
+        if ($req->filled('address')) {
+            $data['address'] = $req->input('address');
         }
+
+        if ($req->filled('plant_short_name')) {
+            $data['plant_short_name'] = $req->input('plant_short_name');
+        }
+
+        return $this->repo->save($data);
+    } catch (\Exception $e) {
+        Log::error("Plant Service save error: " . $e->getMessage());
+        return false;
     }
+}
+
 
     public function edit($id)
     {
@@ -62,11 +67,17 @@ class PlantMasterService
             $data = [
                 'plant_code' => $req->input('plant_code'),
                 'plant_name' => $req->input('plant_name'),
-                'address' => $req->input('address'),
                 'city' => $req->input('city'),
-                'plant_short_name' => $req->input('plant_short_name'),
                 'is_active' => $req->is_active
             ];
+            if ($req->filled('address')) {
+            $data['address'] = $req->input('address');
+        }
+
+        if ($req->filled('plant_short_name')) {
+            $data['plant_short_name'] = $req->input('plant_short_name');
+        }
+
 
             return $this->repo->update($data, $id);
         } catch (Exception $e) {

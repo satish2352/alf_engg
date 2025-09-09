@@ -5,12 +5,12 @@
         <div class="col-lg-6 col-md-8 mx-auto">
             <div class="card">
                 <div class="card-body">
-                    <h4>Add Project</h4>
+                    <h4>Add Department</h4>
                     <form action="{{ route('departments.save') }}" method="POST">
                         @csrf
 
                         <div class="form-group">
-                            <label for="plant_id">Plant</label>
+                            <label for="plant_id">Select Plant <span class="text-danger">*</span></label>
                             <select name="plant_id" id="plant_id" class="form-control">
                                 <option value="">Select Plant </option>
                                 @foreach ($plants as $plant)
@@ -27,7 +27,7 @@
 
 
                         <div class="form-group">
-                            <label>Department Code</label>
+                            <label>Department Code <span class="text-danger">*</span></label>
                             <input type="text" name="department_code" class="form-control"
                                 value="{{ old('department_code') }}">
                             @error('department_code')
@@ -37,7 +37,7 @@
 
 
                         <div class="form-group">
-                            <label>Department Name</label>
+                            <label>Department Name <span class="text-danger">*</span></label>
                             <input type="text" name="department_name" class="form-control"
                                 value="{{ old('department_name') }}">
                             @error('department_name')

@@ -26,6 +26,7 @@ class PlantMasterRepository
     {
         try {
             return PlantMasters::create($data);
+            
         } catch (Exception $e) {
             Log::error("Error saving plant: " . $e->getMessage());
             return false;

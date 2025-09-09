@@ -74,7 +74,7 @@ class ProjectsController extends Controller
                 return $query->where('is_deleted', 0);
             }),
         ],
-    'project_description' => 'required|max:500',
+    // 'project_description' => 'required|max:500',
     'plant_id' => 'required',
 ], [
     'project_name.required' => 'Enter project name',
@@ -86,8 +86,8 @@ class ProjectsController extends Controller
         'project_url.unique' => 'This project URL already exists.',
         'project_url.max' => 'Project URL must not exceed 255 characters.',
 
-    'project_description.required' => 'Project short description is required.',
-    'project_description.max' => 'Project description must not exceed 500 characters.',
+    // 'project_description.required' => 'Project short description is required.',
+    // 'project_description.max' => 'Project description must not exceed 500 characters.',
 
     'plant_id.required' => 'Please select plant.',
 ]);
@@ -135,7 +135,7 @@ class ProjectsController extends Controller
 				// 	->where(fn($query) => $query->where('is_deleted', 0))
 				// 	->ignore($req->id),
 			],
-			'project_description' => 'required',
+			// 'project_description' => 'required',
 			'plant_id' => 'required',
 			'id' => 'required',
 			'is_active' => 'required'
@@ -146,7 +146,7 @@ class ProjectsController extends Controller
 			'project_url.required' => 'Enter project url',
 			// 'project_url.unique' => 'This project url already exists.',
 
-			'project_description.required' => 'Project short description required.',
+			// 'project_description.required' => 'Project short description required.',
 			'plant_id.required' => 'Please select plant.',
 			'id.required' => 'ID required',
 			'is_active.required' => 'Select active or inactive required'

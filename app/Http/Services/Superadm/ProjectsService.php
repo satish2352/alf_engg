@@ -40,9 +40,11 @@ class ProjectsService
         try {
             $data = [   'plant_id' => $req->input('plant_id'), 
                         'project_name' => $req->input('project_name'), 
-                        'project_description' => $req->input('project_description'),
                         'project_url' => $req->input('project_url')
                     ];
+                     if ($req->filled('project_description')) {
+            $data['project_description'] = $req->input('project_description');
+        }
             return $this->repo->save($data);
         } catch (Exception $e) {
             Log::error("Project Service save error: " . $e->getMessage());
@@ -68,11 +70,12 @@ class ProjectsService
             $data = [
                 'plant_id' => $req->input('plant_id'), 
                 'project_name' => $req->input('project_name'), 
-                'project_description' => $req->input('project_description'),
                 'project_url' => $req->input('project_url'),
                 'is_active' => $req->is_active
             ];
-
+            if ($req->filled('project_description')) {
+                $data['project_description'] = $req->input('project_description');
+            }
             return $this->repo->update($data, $id);
         } catch (Exception $e) {
             Log::error("Project Service update error: " . $e->getMessage());

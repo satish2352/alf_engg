@@ -42,8 +42,11 @@ class DepartmentsService
             $data = [   'plant_id' => $req->input('plant_id'), 
                         'department_code' => $req->input('department_code'),
                         'department_name' => $req->input('department_name'),
-                        'department_short_name' => $req->input('department_short_name'),
                     ];
+
+                     if ($req->filled('department_short_name')) {
+                        $data['department_short_name'] = $req->input('department_short_name');
+                    }
             return $this->repo->save($data);
         } catch (Exception $e) {
             Log::error("Department Service save error: " . $e->getMessage());
@@ -70,9 +73,11 @@ class DepartmentsService
                 'plant_id' => $req->input('plant_id'), 
                 'department_code' => $req->input('department_code'),
                 'department_name' => $req->input('department_name'),
-                'department_short_name' => $req->input('department_short_name'),
                 'is_active' => $req->is_active
             ];
+             if ($req->filled('department_short_name')) {
+                        $data['department_short_name'] = $req->input('department_short_name');
+                    }
 
             return $this->repo->update($data, $id);
         } catch (Exception $e) {

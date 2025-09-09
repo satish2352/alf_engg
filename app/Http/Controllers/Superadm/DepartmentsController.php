@@ -68,7 +68,7 @@ class DepartmentsController extends Controller
 				}),
 			],
 			'plant_id' => 'required',
-			'department_short_name' => 'required',
+			// 'department_short_name' => 'required',
 
 
 		], [
@@ -79,7 +79,7 @@ class DepartmentsController extends Controller
 			'department_name.unique' => 'This department name already exists.',
 
 			'plant_id.required' => 'Please select plant.',
-			'department_short_name.required' => 'Department short description required.',
+			// 'department_short_name.required' => 'Department short description required.',
 		]);
 
 		try {
@@ -126,7 +126,7 @@ class DepartmentsController extends Controller
 					->ignore($req->id),
 			],
 			'plant_id' => 'required',
-			'department_short_name' => 'required',
+			// 'department_short_name' => 'required',
 			'id' => 'required',
 			'is_active' => 'required'
 		], [
@@ -137,7 +137,7 @@ class DepartmentsController extends Controller
 			'department_name.unique' => 'This department name already exists.',
 
 			'plant_id.required' => 'Please select plant.',
-			'department_short_name.required' => 'Department short description required.',
+			// 'department_short_name.required' => 'Department short description required.',
 			'id.required' => 'ID required',
 			'is_active.required' => 'Select active or inactive required'
 		]);

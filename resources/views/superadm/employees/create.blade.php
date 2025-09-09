@@ -11,7 +11,7 @@
 
                         {{-- Plant --}}
                         <div class="form-group">
-                            <label for="plant_id">Select Plant</label>
+                            <label for="plant_id">Select Plant <span class="text-danger">*</span></label>
                             <select name="plant_id" id="plant_id" class="form-control">
                                 <option value="">Select Plant </option>
                                 @foreach ($plants as $plant)
@@ -28,7 +28,7 @@
 
 
                         <div class="form-group">
-                            <label for="projects_id">Select Project</label>
+                            <label for="projects_id">Select Project <span class="text-danger">*</span></label>
                             <select id="projects_id" name="projects_id[]" multiple="multiple" class="form-control">
                                 <!-- Options will be appended here by AJAX -->
                             </select>
@@ -39,7 +39,7 @@
 
 
                         <div class="form-group">
-                            <label for="department_id">Select Department</label>
+                            <label for="department_id">Select Department <span class="text-danger">*</span></label>
                             <select id="department_id" name="department_id[]" multiple="multiple" class="form-control">
                                 <!-- Options will be appended here by AJAX -->
                             </select>

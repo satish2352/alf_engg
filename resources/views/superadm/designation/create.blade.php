@@ -9,14 +9,14 @@
                     <form action="{{ route('designations.save') }}" method="POST">
                         @csrf
                         <div class="form-group">
-                            <label>Designation Name</label>
+                            <label>Designation Name <span class="text-danger">*</span></label>
                             <input type="text" name="designation" class="form-control" value="{{ old('designation') }}">
                             @error('designation')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
                         <div class="form-group">
-                            <label>Short Description</label>
+                            <label>Short Description <span class="text-danger">*</span></label>
                             <input type="text" name="short_description" class="form-control"
                                 value="{{ old('short_description') }}">
                             @error('short_description')

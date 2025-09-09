@@ -15,7 +15,7 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->string('plant_id');
             $table->string('project_name');
-            $table->string('project_description');
+            $table->string('project_description')->nullable();
             $table->string('project_url');
             $table->boolean('is_active')->default(true);
             $table->boolean('is_deleted')->default(false);
