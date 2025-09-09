@@ -40,6 +40,7 @@
                                 </tr>
                             </thead>
                             <tbody>
+                              
                                 @foreach ($employees as $key => $data)
                                     <tr>
                                         <td>{{ $key + 1 }}</td>
@@ -68,8 +69,13 @@
                                             </form>
                                         </td>
                                         <td>
-                                            <a href="{{ route('employees.edit', base64_encode($data->id)) }}"
+                                            <?php
+                                            // dd( base64_encode($data->id));
+                                            // die();
+                                            ?>
+                                            <a href="{{ route('employees.edit', $data->id) }}"
                                                 class="btn btn-primary btn-sm">Edit</a>
+
                                             <form action="{{ route('employees.delete') }}" method="POST"
                                                 class="d-inline-block delete-form">
                                                 @csrf
