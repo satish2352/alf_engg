@@ -126,8 +126,8 @@ class EmployeesController extends Controller
 	}
 	public function edit($id)
 	{
-
-		$employee = Employees::findOrFail($id);
+        $decodedId = base64_decode($id);
+		$employee = Employees::findOrFail($decodedId);
 		$plants = PlantMasters::all();
 		$departments = Departments::all();
 		$projects = Projects::all();

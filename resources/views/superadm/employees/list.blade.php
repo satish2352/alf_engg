@@ -73,7 +73,7 @@
                                             // dd( base64_encode($data->id));
                                             // die();
                                             ?>
-                                            <a href="{{ route('employees.edit', $data->id) }}"
+                                            <a href="{{ route('employees.edit', base64_encode($data->id)) }}"
                                                 class="btn btn-primary btn-sm">Edit</a>
 
                                             <form action="{{ route('employees.delete') }}" method="POST"
