@@ -35,7 +35,7 @@
                                         <td>{{ $data->project_name }}</td>
                                         <td>{{ $data->project_description }}</td>
                                         <td>{{ $data->project_url }}</td>
-                                        <td>
+                                        <td >
                                             <form action="{{ route('projects.updatestatus') }}" method="POST"
                                                 class="d-inline-block delete-form">
                                                 @csrf
@@ -50,16 +50,16 @@
                                                     value="{{ base64_encode($data->id) }}">
                                             </form>
                                         </td>
-                                        <td>
+                                        <td class="d-flex">
                                             <a href="{{ route('projects.edit', base64_encode($data->id)) }}"
-                                                class="btn btn-primary btn-sm">Edit</a>
+                                                class="btn btn-primary btn-sm mx-1">Edit</a>
                                             <form action="{{ route('projects.delete') }}" method="POST"
                                                 class="d-inline-block delete-form">
                                                 @csrf
                                                 <input type="hidden" name="id"
                                                     value="{{ base64_encode($data->id) }}">
                                                 <button type="button"
-                                                    class="btn btn-danger btn-sm delete-btn">Delete</button>
+                                                    class="btn btn-danger btn-sm delete-btn mx-1">Delete</button>
                                             </form>
                                         </td>
                                     </tr>

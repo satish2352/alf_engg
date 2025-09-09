@@ -14532,3 +14532,6 @@ input[type=checkbox]:not(:disabled).tabbed:focus ~ .lever::after {
     background-color: rgba(255, 255, 255, 0.5); }
     .switch label input[type=checkbox]:checked + .lever.switch-col-white:after {
       background-color: #ffffff; }
+      .fnt-size{
+        font-size: 16px; color:#fff;
+      }

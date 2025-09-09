@@ -68,13 +68,13 @@
                                                     value="{{ base64_encode($data->id) }}">
                                             </form>
                                         </td>
-                                        <td>
+                                        <td class="d-flex">
                                             <?php
                                             // dd( base64_encode($data->id));
                                             // die();
                                             ?>
                                             <a href="{{ route('employees.edit', base64_encode($data->id)) }}"
-                                                class="btn btn-primary btn-sm">Edit</a>
+                                                class="btn btn-primary btn-sm mx-1">Edit</a>
 
                                             <form action="{{ route('employees.delete') }}" method="POST"
                                                 class="d-inline-block delete-form">
@@ -82,7 +82,7 @@
                                                 <input type="hidden" name="id"
                                                     value="{{ base64_encode($data->id) }}">
                                                 <button type="button"
-                                                    class="btn btn-danger btn-sm delete-btn">Delete</button>
+                                                    class="btn btn-danger btn-sm delete-btn mx-1">Delete</button>
                                             </form>
                                         </td>
                                     </tr>

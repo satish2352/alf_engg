@@ -51,7 +51,8 @@ class ChangePasswordController extends Controller
         Employees::where( 'id', $userId )->update( [
             'employee_password' => bcrypt( $request->new_password ),
         ] );
-
+            Session::flush(); 
+            auth()->logout();
         return redirect()->back()->with( 'success', 'Password updated successfully!' );
     }
 }

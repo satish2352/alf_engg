@@ -50,8 +50,8 @@
 
 
                     </ul>
-                    <ul class="navbar-nav my-lg-0">
-
+                    <ul class="navbar-nav my-lg-0 d-flex justify-content-center align-items-center">
+                        <li class="fnt-size">{{ session('email_id') }}</li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href="#"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img
