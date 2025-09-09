@@ -15,8 +15,6 @@ class ProjectsRepository
         try {
             return Projects::leftJoin('plant_masters', 'projects.plant_id', '=', 'plant_masters.id')
                 ->where('projects.is_deleted', 0)
-                ->where('plant_masters.is_deleted', 0)
-                 ->where('plant_masters.is_active', 1)
                 ->orderBy('projects.id', 'desc')
                 ->select(
                     'projects.*',
