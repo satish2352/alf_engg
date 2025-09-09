@@ -9,13 +9,30 @@
         <meta http-equiv="Pragma" content="no-cache">
         <meta http-equiv="Expires" content="0">
         <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('asset/theamoriginalalf/images/logo_bg1.ico') }}">
-          
+         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
    <title> ALF </title>
    
    <link id="pagestyle" href="{{ asset('asset/theamoriginalalf/css/soft-ui-dashboard.css?v=1.0.3')}}" rel="stylesheet" />
  
    <!-- DataTables-->        
-        
+        <style>
+.input-group input.form-control {
+    padding-right: 40px; /* space for the icon */
+}
+.input-group-text {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+}
+.input-group:not(.has-validation)> :not(:last-child):not(.dropdown-toggle):not(.dropdown-menu){
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+}
+</style>
+
     </head>
     <body style="background-image: url('{{ asset('asset/theamoriginalalf/images/bg_color2.jpg') }}'); 
              background-size: cover; 
@@ -90,9 +107,13 @@
                                                 <input type="text" id="superemail" name="superemail" value="" class="form-control" placeholder="User" aria-label="user" aria-describedby="email-addon">
                                             </div>
                                             <label>Password</label>
-                                            <div class="mb-3">
-                                                <input type="password" id="superpassword" name="superpassword" value="" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="password-addon">
+                                            <div class="input-group input-group-outline mb-3">
+                                                <input type="password" id="superpassword" name="superpassword" class="form-control" placeholder="Password">
+                                                <span class="input-group-text" id="togglePassword" style="cursor: pointer; background: transparent; border: none;">
+                                                    <i class="fas fa-eye" style="color: #999;"></i>
+                                                </span>
                                             </div>
+
 
                                             
                                             <div class="text-center">
@@ -100,12 +121,12 @@
                                             </div>
                                         </form>
                                     </div>
-                                    <div class="card-footer text-center pt-0 px-lg-2 px-1">
+                                    {{-- <div class="card-footer text-center pt-0 px-lg-2 px-1">
                                         <p class="mb-4 text-sm mx-auto">
                                             Don't have an account?
                                             <a href="javascript:void(0);" class="text-info text-gradient font-weight-bold">Sign up</a>
                                         </p>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
 
@@ -115,6 +136,20 @@
                 </div>
             </section>
         </main>
-                
+             <script>
+  const togglePassword = document.querySelector('#togglePassword');
+const password = document.querySelector('#superpassword');
+
+togglePassword.addEventListener('click', function () {
+    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+    password.setAttribute('type', type);
+
+    // toggle the eye icon
+    this.querySelector('i').classList.toggle('fa-eye');
+    this.querySelector('i').classList.toggle('fa-eye-slash');
+});
+
+</script>
+   
     </body>
 </html>

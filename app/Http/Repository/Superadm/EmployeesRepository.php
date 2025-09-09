@@ -43,6 +43,7 @@ public function list()
                 'plant_masters.plant_name',
                 'designations.designation',
                 'roles.role',
+                'employees.is_active',
                 DB::raw("GROUP_CONCAT(DISTINCT departments.department_name ORDER BY departments.department_name SEPARATOR ', ') as department_names"),
                 DB::raw("GROUP_CONCAT(DISTINCT projects.project_name ORDER BY projects.project_name SEPARATOR ', ') as project_names")
             )
@@ -56,15 +57,17 @@ public function list()
                 'reporting.employee_name',
                 'plant_masters.plant_name',
                 'designations.designation',
-                'roles.role'
+                'roles.role',
+                'employees.is_active'
             )
             ->orderBy('employees.id', 'desc')
-            ->paginate(10);
+            ->get();   // 👈 replaced paginate(10) with get()
     } catch (Exception $e) {
         Log::error("Error fetching employee list: " . $e->getMessage());
         return collect(); 
     }
 }
+
 
     public function save($data)
     {

@@ -150,7 +150,7 @@
 
 
                         {{-- Reporting To --}}
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                             <label for="reporting_to">Reporting To</label>
                             <select name="reporting_to" id="reporting_to" class="form-control">
                                 <option value="">Select Reporting To </option>
@@ -158,8 +158,17 @@
                             @error('reporting_to')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
-                        </div>
-
+                        </div> --}}
+{{-- Reporting To --}}
+<div class="form-group" id="reporting_to_wrapper" style="display:none;">
+    <label for="reporting_to">Reporting To <span class="text-danger" id="reporting_to_required">*</span></label>
+    <select name="reporting_to" id="reporting_to" class="form-control">
+        <option value="">Select Reporting To </option>
+    </select>
+    @error('reporting_to')
+        <span class="text-danger">{{ $message }}</span>
+    @enderror
+</div>
 
                         <div class="form-group d-flex justify-content-end">
                             <a href="{{ route('employees.list') }}" class="btn btn-secondary mr-2">Cancel</a>
@@ -293,7 +302,7 @@
     </script>
 
 
-     <script>
+     {{-- <script>
         $(document).ready(function() {
             // Initialize multiselect first
             $('#reporting_to').multiselect({
@@ -345,5 +354,63 @@
                 });
             });
         });
-    </script>
+    </script> --}}
+
+   <script>
+$(document).ready(function() {
+    // Initialize multiselect
+    $('#reporting_to').multiselect({
+        includeSelectAllOption: true,
+        enableFiltering: true,
+        maxHeight: 300,
+        buttonWidth: '100%'
+    });
+
+    // On Plant Change
+    $('#plant_id').on('change', function() {
+        let plantId = $(this).val();
+        if (!plantId) {
+            $('#reporting_to').empty().multiselect('rebuild');
+            $('#reporting_to_wrapper').hide();
+            $('#reporting_to').prop('required', false); // remove validation
+            return;
+        }
+
+        $.ajax({
+            url: "{{ route('employees.list-ajax') }}", 
+            type: "POST", 
+            data: {
+                _token: "{{ csrf_token() }}",
+                plant_id: plantId
+            },
+            dataType: "json",
+            success: function(response) {
+                console.log(response);
+                $('#reporting_to').empty(); 
+                $('#reporting_to').append(`<option value="">Select Reporting To</option>`);
+
+                if (response.employees && response.employees.length > 0) {
+                    $.each(response.employees, function(key, employees_result) {
+                        $('#reporting_to').append(
+                            `<option value="${employees_result.id}">${employees_result.employee_name}</option>`
+                        );
+                    });
+
+                    $('#reporting_to_wrapper').show();
+                    $('#reporting_to').prop('required', true); // ✅ add validation when employees exist
+                } else {
+                    $('#reporting_to_wrapper').hide();
+                    $('#reporting_to').prop('required', false); // ✅ no validation when no employees
+                }
+
+                $('#reporting_to').multiselect('rebuild');
+            },
+            error: function(xhr) {
+                console.log(xhr.responseText);
+            }
+        });
+    });
+});
+</script>
+
 @endsection

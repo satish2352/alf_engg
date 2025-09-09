@@ -10,6 +10,8 @@ use App\Http\Controllers\Superadm\PlantMasterController;
 use App\Http\Controllers\Superadm\ProjectsController;
 use App\Http\Controllers\Superadm\DepartmentsController;
 use App\Http\Controllers\Superadm\EmployeesController;
+use App\Http\Controllers\Superadm\ChangePasswordController;
+
 
 
 
@@ -17,10 +19,15 @@ use App\Http\Controllers\Superadm\EmployeesController;
 Route::get('login', [LoginController::class, 'loginsuper'])->name('login');
 Route::post('superlogin', [LoginController::class, 'validateSuperLogin'])->name('superlogin');
 
-Route::group(['middleware' => ['SuperAdmin']], function () {
+Route::group(['middleware' => ['SuperAdmin']], function () {        
+
+  
 
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+
+      Route::get('/change-password', [ChangePasswordController::class, 'index'])->name('change-password');
+    Route::post('/update-password', [ChangePasswordController::class, 'updatePassword'])->name('update-password');
     // Role management routes
     Route::get('/roles/list', [RoleController::class, 'index'])->name('roles.list');
     Route::get('/roles/add', [RoleController::class, 'create'])->name('roles.create');

@@ -66,13 +66,14 @@ class ProjectsController extends Controller
             return $query->where('is_deleted', 0);
         }),
     ],
-    'project_url' => [
-        'required',
-        'max:255',
-        // Rule::unique('projects', 'project_url')->where(function ($query) {
-        //     return $query->where('is_deleted', 0);
-        // }),
-    ],
+     'project_url' => [
+            'required',
+            'max:255',
+            'url', // ✅ ensures it is a valid URL
+            Rule::unique('projects', 'project_url')->where(function ($query) {
+                return $query->where('is_deleted', 0);
+            }),
+        ],
     'project_description' => 'required|max:500',
     'plant_id' => 'required',
 ], [
@@ -80,9 +81,10 @@ class ProjectsController extends Controller
     'project_name.unique' => 'This project name already exists.',
     'project_name.max' => 'Project name must not exceed 255 characters.',
 
-    'project_url.required' => 'Enter project URL',
-    'project_url.unique' => 'This project URL already exists.',
-    'project_url.max' => 'Project URL must not exceed 255 characters.',
+      'project_url.required' => 'Enter project URL',
+        'project_url.url' => 'Enter a valid URL (e.g., https://example.com)',
+        'project_url.unique' => 'This project URL already exists.',
+        'project_url.max' => 'Project URL must not exceed 255 characters.',
 
     'project_description.required' => 'Project short description is required.',
     'project_description.max' => 'Project description must not exceed 500 characters.',

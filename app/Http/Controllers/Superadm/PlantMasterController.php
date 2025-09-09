@@ -46,20 +46,31 @@ class PlantMasterController extends Controller
             return $query->where('is_deleted', 0);
         }),
     ],
-    'plant_name' => 'required|max:255',
+		'plant_name' => [
+				'required',
+				'max:255',
+				'max:255',
+				'regex:/^[a-zA-Z0-9\s]+$/',
+				Rule::unique('plant_masters', 'plant_name')->where(function ($query) {
+					return $query->where('is_deleted', 0);
+				}),
+			],
     'address' => 'required',
-    'city' => 'required',
+    'city' => [
+            'required',
+            'regex:/^[a-zA-Z\s]+$/', // only letters and spaces
+        ],
     'plant_short_name' => 'nullable|max:255', 
 ], [
     'plant_code.required' => 'Enter plant code',
     'plant_code.unique' => 'This plant code already exists.',
     'plant_code.max' => 'Plant code must not exceed 255 characters.',
-
     'plant_name.required' => 'Enter plant name',
     'plant_name.max' => 'Plant name must not exceed 255 characters.',
-
+     'plant_name.regex' => 'Plant Name must contain only letters, numbers, and spaces.',
     'address.required' => 'Enter address for plant',
-    'city.required' => 'Enter city for plant',
+   'city.required' => 'Enter city for plant',
+        'city.regex' => 'City name must contain only letters and spaces.',
 
     'plant_short_name.required' => 'Enter plant short name',
 ]);
@@ -96,7 +107,10 @@ class PlantMasterController extends Controller
 			],
 			'plant_name' => 'required',
 			'address' => 'required',
-			'city' => 'required',
+			 'city' => [
+            'required',
+            'regex:/^[a-zA-Z\s]+$/', // only letters and spaces
+        ],
 			'plant_short_name' => 'required',
 			'id' => 'required',
 			'is_active' => 'required'
@@ -107,7 +121,8 @@ class PlantMasterController extends Controller
 			'id.required' => 'ID required',
 			'plant_name.required' => 'Enter plant name',
 			'address.required' => 'Enter address for plant',
-			'city.required' => 'Enter city for plant',
+			 'city.required' => 'Enter city for plant',
+        'city.regex' => 'City name must contain only letters and spaces.',
 			'plant_short_name.required' => 'Enter plant short name',
 			'is_active.required' => 'Select active or inactive required'
 		]);

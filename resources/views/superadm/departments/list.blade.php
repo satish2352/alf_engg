@@ -24,6 +24,8 @@
                                     <th>Department Code</th>
                                     <th>Department Name</th>
                                     <th>Department Description</th>
+                                     <th>Status</th>
+                                      <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>

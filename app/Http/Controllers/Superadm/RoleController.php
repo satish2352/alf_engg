@@ -42,6 +42,7 @@ class RoleController extends Controller
 			'role' => [
 				'required',
 				'max:255',
+				'regex:/^[a-zA-Z0-9\s]+$/',
 				Rule::unique('roles', 'role')->where(function ($query) {
 					return $query->where('is_deleted', 0);
 
@@ -50,6 +51,7 @@ class RoleController extends Controller
 			 'short_description' => 'required|max:255',
 		], [
 			'role.required' => 'Enter Role Name',
+			'role.regex' => 'Role must contain only letters, numbers, and spaces.',
 			'role.unique' => 'This role already exists.',
 			'role.max' => 'Role name must not exceed 255 characters.',
 			'short_description.required' => 'Enter Description',
