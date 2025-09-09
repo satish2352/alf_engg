@@ -5,7 +5,7 @@
         <div class="col-lg-6 col-md-8 mx-auto">
             <div class="card">
                 <div class="card-body">
-                    <h4>Edit Role</h4>
+                    <h4>Edit Plant</h4>
                     <form action="{{ route('plantmaster.update', $encodedId) }}" method="POST">
                         @csrf
                         <div class="form-group">

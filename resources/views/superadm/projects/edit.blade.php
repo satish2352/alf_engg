@@ -15,7 +15,7 @@
                         </div>
                     @endif
 
-                    <h4>Edit Designation</h4>
+                    <h4>Edit Project</h4>
                     <form action="{{ route('projects.update', $encodedId) }}" method="POST">
                         @csrf
 

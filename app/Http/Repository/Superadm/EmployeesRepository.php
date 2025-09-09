@@ -32,6 +32,10 @@ public function list()
                 $join->whereRaw("FIND_IN_SET(projects.id, employees.projects_id)");
             })
             ->where('employees.is_deleted', 0)
+             ->where('roles.is_deleted', 0)
+              ->where('roles.is_active', 1)
+               ->where('plant_masters.is_deleted', 0)
+                ->where('plant_masters.is_active', 1)
             ->select(
                 'employees.id',
                 'employees.employee_name',
