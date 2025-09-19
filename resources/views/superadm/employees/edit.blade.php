@@ -165,10 +165,26 @@
                         </div>
 
                         {{-- Reporting To --}}
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                             <label for="reporting_to">Reporting To</label>
                             <select name="reporting_to" id="reporting_to" class="form-control">
                                 <option value="">Select Reporting To </option>
+                            </select>
+                            @error('reporting_to')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div> --}}
+                        {{-- Reporting To --}}
+                        <div class="form-group">
+                            <label for="reporting_to">Reporting To</label>
+                            <select name="reporting_to" id="reporting_to" class="form-control">
+                                <option value="">Select Reporting To</option>
+                                @foreach ($employeesList  as $emp) {{-- Make sure you pass employees list from controller --}}
+                                    <option value="{{ $emp->id }}" 
+                                        {{ $employee->reporting_to == $emp->id ? 'selected' : '' }}>
+                                        {{ $emp->employee_name }}
+                                    </option>
+                                @endforeach
                             </select>
                             @error('reporting_to')
                                 <span class="text-danger">{{ $message }}</span>

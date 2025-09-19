@@ -76,7 +76,7 @@ class EmployeesController extends Controller
 			'designation_id'    => 'required',
 			'role_id'           => 'required',
 			'employee_code'     => 'required|string|max:50|unique:employees,employee_code',
-			'employee_name'     => 'required|string|max:255',
+			'employee_name'     => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/',
 			'employee_type'     => 'required|string',
 			'employee_email'    => 'required|email|max:255|unique:employees,employee_email',
 			'employee_user_name'=> 'required|string|max:100|unique:employees,employee_user_name',
@@ -96,6 +96,7 @@ class EmployeesController extends Controller
 			'employee_code.required' => 'Enter employee code',
 			'employee_code.unique'   => 'This employee code already exists',
 			'employee_name.required' => 'Enter employee name',
+			'employee_name.regex' => 'The employee name take only contain letters and spaces.',
 			'employee_type.required' => 'Select employee type',
 			'employee_email.required' => 'Enter employee email',
 			'employee_email.email'    => 'Enter a valid email address',
@@ -133,14 +134,16 @@ class EmployeesController extends Controller
 		$projects = Projects::all();
 		$designations = Designations::all();
 		$roles = Roles::all();
-
+ // Get employees of the same plant (or all if you want)
+    $employeesList = Employees::where('is_active', 1)->get();
 		return view('superadm.employees.edit', compact(
 			'employee',
 			'plants',
 			'departments',
 			'projects',
 			'designations',
-			'roles'
+			'roles',
+			'employeesList'
 		));
 	}
 

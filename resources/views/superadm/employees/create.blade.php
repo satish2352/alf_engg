@@ -15,10 +15,15 @@
                             <select name="plant_id" id="plant_id" class="form-control">
                                 <option value="">Select Plant </option>
                                 @foreach ($plants as $plant)
-                                    <option value="{{ $plant->id }}"
+                                   <option value="{{ $plant->id }}"
+                                        {{ isset($employee) && $employee->plant_id == $plant->id ? 'selected' : '' }}>
+                                        {{ $plant->plant_name }}
+                                   </option>
+                                    {{-- <option value="{{ $plant->id }}"
                                         {{ old('plant_id') == $plant->id ? 'selected' : '' }}>
                                         {{ $plant->plant_name }}
-                                    </option>
+                                    </option> --}}
+
                                 @endforeach
                             </select>
                             @error('plant_id')

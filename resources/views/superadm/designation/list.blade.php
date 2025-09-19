@@ -10,9 +10,9 @@
                         <a href="{{ route('designations.create') }}" class="btn btn-warning">Add Designation</a>
                     </div>
 
-                    @if (session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
-                    @endif
+                  @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" id="success-alert">{{ session('success') }}</div>
+                        @endif
 
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped datatables">
@@ -46,16 +46,23 @@
                                                 <input type="hidden" name="id" value="{{ base64_encode($data->id) }}">
                                             </form>
                                         </td>
-                                        <td>
-                                            <a href="{{ route('designations.edit', base64_encode($data->id)) }}"
-                                                class="btn btn-primary btn-sm">Edit</a>
-                                            <form action="{{ route('designations.delete') }}" method="POST"
-                                                class="d-inline-block delete-form">
+                                         <td>
+                                            <a href="{{ route('designations.edit', base64_encode($data->id)) }}" 
+                                            class="btn btn-sm btn-primary" 
+                                            data-bs-toggle="tooltip" 
+                                            data-bs-placement="top" 
+                                            title="Edit">
+                                            <i class="mdi mdi-square-edit-outline icon-medium"></i>
+                                            </a>
+                                            <form action="{{ route('designations.delete') }}" method="POST" class="d-inline-block delete-form">
                                                 @csrf
-                                                <input type="hidden" name="id"
-                                                    value="{{ base64_encode($data->id) }}">
-                                                <button type="button"
-                                                    class="btn btn-danger btn-sm delete-btn">Delete</button>
+                                                <input type="hidden" name="id" value="{{ base64_encode($data->id) }}">
+                                                <button type="button" class="btn btn-sm btn-danger delete-btn" 
+                                                        data-bs-toggle="tooltip" 
+                                                        data-bs-placement="top" 
+                                                        title="Delete">
+                                                    <i class="mdi mdi-trash-can-outline icon-medium"></i>
+                                                </button>
                                             </form>
                                         </td>
                                     </tr>

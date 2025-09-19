@@ -59,7 +59,7 @@
                                     class="profile-pic" /></a>
                             <div class="dropdown-menu dropdown-menu-right scale-up">
                                 <ul class="dropdown-user">                                    
-                                    <li><a href="{{ route('change-password') }}"><i class="fa fa-key"></i> Change password</a></li>
+                                    <li><a href="{{ route('change-password') }}"><i class="fa fa-key"></i> Change Password</a></li>
                               <li><a href="{{ route('logout') }}"><i class="fa fa-power-off"></i> Logout</a></li>
                                 </ul>
                             </div>

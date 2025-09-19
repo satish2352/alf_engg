@@ -11,7 +11,7 @@
                     </div>
 
                     @if (session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
+                        <div class="alert alert-success alert-dismissible fade show" id="success-alert">{{ session('success') }}</div>
                     @endif
 
                     <div class="table-responsive">
@@ -50,16 +50,23 @@
                                                     value="{{ base64_encode($data->id) }}">
                                             </form>
                                         </td>
-                                        <td class="d-flex">
-                                            <a href="{{ route('projects.edit', base64_encode($data->id)) }}"
-                                                class="btn btn-primary btn-sm mx-1">Edit</a>
-                                            <form action="{{ route('projects.delete') }}" method="POST"
-                                                class="d-inline-block delete-form">
+                                          <td class="d-flex">
+                                            <a href="{{ route('projects.edit', base64_encode($data->id)) }}" 
+                                            class="btn btn-sm btn-primary mr-1" 
+                                            data-bs-toggle="tooltip" 
+                                            data-bs-placement="top" 
+                                            title="Edit">
+                                            <i class="mdi mdi-square-edit-outline icon-medium"></i>
+                                            </a>
+                                            <form action="{{ route('projects.delete') }}" method="POST" class="d-inline-block delete-form">
                                                 @csrf
-                                                <input type="hidden" name="id"
-                                                    value="{{ base64_encode($data->id) }}">
-                                                <button type="button"
-                                                    class="btn btn-danger btn-sm delete-btn mx-1">Delete</button>
+                                                <input type="hidden" name="id" value="{{ base64_encode($data->id) }}">
+                                                <button type="button" class="btn btn-sm btn-danger delete-btn" 
+                                                        data-bs-toggle="tooltip" 
+                                                        data-bs-placement="top" 
+                                                        title="Delete">
+                                                    <i class="mdi mdi-trash-can-outline icon-medium"></i>
+                                                </button>
                                             </form>
                                         </td>
                                     </tr>

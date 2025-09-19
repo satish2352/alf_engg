@@ -143,7 +143,16 @@
         });
     });
 </script>
-
+ <script>
+    setTimeout(function() {
+        let alert = document.getElementById('success-alert');
+        if(alert){
+            // Bootstrap 5 dismiss
+            let bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
+        }
+    }, 3000); // 3000ms = 3 seconds
+</script>
 <script src="{{ asset('asset/plugins/popper/popper.min.js') }}"></script>
 <script src="{{ asset('asset/plugins/bootstrap/js/bootstrap.min.js') }}"></script>
 <!-- slimscrollbar scrollbar JavaScript -->

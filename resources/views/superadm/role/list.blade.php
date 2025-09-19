@@ -11,7 +11,7 @@
                     </div>
 
                     @if (session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
+                        <div class="alert alert-success alert-dismissible fade show" id="success-alert">{{ session('success') }}</div>
                     @endif
 
                     <div class="table-responsive">
@@ -45,15 +45,22 @@
                                             </form>
                                         </td>
                                         <td>
-                                            <a href="{{ route('roles.edit', base64_encode($role->id)) }}"
-                                                class="btn btn-primary btn-sm">Edit</a>
-                                            <form action="{{ route('roles.delete') }}" method="POST"
-                                                class="d-inline-block delete-form">
+                                            <a href="{{ route('roles.edit', base64_encode($role->id)) }}" 
+                                            class="btn btn-sm btn-primary" 
+                                            data-bs-toggle="tooltip" 
+                                            data-bs-placement="top" 
+                                            title="Edit">
+                                            <i class="mdi mdi-square-edit-outline icon-medium"></i>
+                                            </a>
+                                            <form action="{{ route('roles.delete') }}" method="POST" class="d-inline-block delete-form">
                                                 @csrf
-                                                <input type="hidden" name="id"
-                                                    value="{{ base64_encode($role->id) }}">
-                                                <button type="button"
-                                                    class="btn btn-danger btn-sm delete-btn">Delete</button>
+                                                <input type="hidden" name="id" value="{{ base64_encode($role->id) }}">
+                                                <button type="button" class="btn btn-sm btn-danger delete-btn" 
+                                                        data-bs-toggle="tooltip" 
+                                                        data-bs-placement="top" 
+                                                        title="Delete">
+                                                    <i class="mdi mdi-trash-can-outline icon-medium"></i>
+                                                </button>
                                             </form>
                                         </td>
                                     </tr>

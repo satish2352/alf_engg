@@ -1,5 +1,7 @@
 @extends('superadm.layout.master')
+<style>
 
+</style>
 @section('content')
     <div class="row">
         <div class="col-lg-6 col-md-8 mx-auto">
@@ -7,7 +9,7 @@
                 <h3 class="page-title">Change Password</h3>
             </div>
             @if (session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
+                <div class="alert alert-success alert-dismissible fade show" id="success-alert">{{ session('success') }}</div>
             @endif
             <div class="row">
                 <div class="col-12 grid-margin">
