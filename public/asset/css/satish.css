@@ -59,3 +59,7 @@ input:checked + .slider:before {
     justify-content: center !important;
     align-items: center !important;
 }
+.icon-padding{
+  padding: 12px !important;
+}
+.pagination { display: flex; justify-content: end !important; }

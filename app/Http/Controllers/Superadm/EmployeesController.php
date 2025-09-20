@@ -27,8 +27,6 @@ class EmployeesController extends Controller
 	{
 		$this->service = new EmployeesService();
 	}
-
-
 	public function index()
 	{
 		try {
@@ -38,7 +36,33 @@ class EmployeesController extends Controller
 			return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
 		}
 	}
+   public function ajaxList(Request $request)
+   {
+    try {
+        $search = $request->get('search');
+        $employees = $this->service->list($search);
 
+        $pagination = $employees
+            ->appends(['search' => $search])
+            ->links('pagination::bootstrap-4')
+            ->render();
+
+        return response()->json([
+            'status' => true,
+            'data' => $employees->items(),
+            'pagination' => $pagination,
+            'current_page' => $employees->currentPage(),
+            'per_page' => $employees->perPage()
+        ]);
+
+    } catch (\Exception $e) {
+        \Log::error("ajaxList error: " . $e->getMessage());
+        return response()->json([
+            'status' => false,
+            'message' => $e->getMessage(),
+        ]);
+    }
+}
 	public function create(Request $req)
 	{
 		try {
@@ -110,11 +134,11 @@ class EmployeesController extends Controller
 		]);
 
 		// Add conditional validation for reporting_to
-		$validator->sometimes('reporting_to', 'required', function ($input) {
-			return Employees::where('plant_id', $input->plant_id)
-							->where('is_deleted', 0)
-							->exists(); // only require if employees exist for that plant
-		});
+		// $validator->sometimes('reporting_to', 'required', function ($input) {
+		// 	return Employees::where('plant_id', $input->plant_id)
+		// 					->where('is_deleted', 0)
+		// 					->exists(); // only require if employees exist for that plant
+		// });
 
 		$validator->validate(); // run the validation
 
@@ -130,12 +154,13 @@ class EmployeesController extends Controller
         $decodedId = base64_decode($id);
 		$employee = Employees::findOrFail($decodedId);
 		$plants = PlantMasters::all();
-		$departments = Departments::all();
-		$projects = Projects::all();
+	    $departments = Departments::where('plant_id', $employee->plant_id)->get();
+        $projects = Projects::where('plant_id', $employee->plant_id)->get();
 		$designations = Designations::all();
 		$roles = Roles::all();
- // Get employees of the same plant (or all if you want)
-    $employeesList = Employees::where('is_active', 1)->get();
+        $employeesList = Employees::where('plant_id', $employee->plant_id)
+                              ->where('is_active', 1)
+                              ->get();
 		return view('superadm.employees.edit', compact(
 			'employee',
 			'plants',
@@ -145,25 +170,7 @@ class EmployeesController extends Controller
 			'roles',
 			'employeesList'
 		));
-	}
-
-
-	public function delete(Request $req)
-	{
-		try {
-			$req->validate([
-				'id' => 'required',
-			], [
-				'id.required' => 'ID required'
-			]);
-
-			$this->service->delete($req);
-			return redirect()->route('employees.list')->with('success', 'Department deleted successfully.');
-		} catch (Exception $e) {
-			return redirect()->back()->with('error', 'Failed to delete role: ' . $e->getMessage());
-		}
-	}
-
+	}	
 	public function update(Request $req, $id)
 	{
 
@@ -178,7 +185,6 @@ class EmployeesController extends Controller
         'employee_type'      => 'required|string',
         'employee_email'     => 'required|email|max:255',
         'employee_user_name' => 'required|string|max:100',
-        'reporting_to' => 'required',
     ];
 
     if ($req->filled('employee_password')) {
@@ -202,7 +208,6 @@ class EmployeesController extends Controller
         'employee_email.required' => 'Enter employee email',
         'employee_email.email'    => 'Enter a valid email address',
         'employee_user_name.required' => 'Enter username',
-        'reporting_to.required' => 'Select reporting to name',
         'employee_password.min'      => 'Password must be exactly 8 characters',
         'employee_password.max'      => 'Password must be exactly 8 characters',
         'employee_password.regex'    => 'Password must be exactly 8 characters and contain at least 2 digits, 5 letters, and 1 special character',
@@ -229,17 +234,55 @@ class EmployeesController extends Controller
 			return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
 		}
 	}
+	// public function delete(Request $req)
+	// {
+	// 	try {
+	// 		$req->validate([
+	// 			'id' => 'required',
+	// 		], [
+	// 			'id.required' => 'ID required'
+	// 		]);
 
+	// 		$this->service->delete($req);
+	// 		return redirect()->route('employees.list')->with('success', 'Department deleted successfully.');
+	// 	} catch (Exception $e) {
+	// 		return redirect()->back()->with('error', 'Failed to delete role: ' . $e->getMessage());
+	// 	}
+	// }
+	
+	// public function updateStatus(Request $req)
+		// {
+		// 	try {
+		// 		$this->service->updateStatus($req);
+				
+		// 		return redirect()->route('employees.list')->with('success', 'Employees status updated successfully.');
+		// 	} catch (Exception $e) {
+		// 		return redirect()->back()->with('error', 'Failed to update status: ' . $e->getMessage());
+		// 	}
+		// }
 
-	public function updateStatus(Request $req)
-	{
-		try {
-			$this->service->updateStatus($req);
-			
-			return redirect()->route('employees.list')->with('success', 'Employees status updated successfully.');
-		} catch (Exception $e) {
-			return redirect()->back()->with('error', 'Failed to update status: ' . $e->getMessage());
-		}
-	}
+public function updateStatus(Request $request)
+{
+    $result = $this->service->updateStatus($request);
+
+    if ($result) {
+        return response()->json(['status' => true, 'message' => 'Status updated successfully']);
+    } else {
+        return response()->json(['status' => false, 'message' => 'Failed to update status'], 500);
+    }
+}
+
+public function delete(Request $request)
+{
+    $result = $this->service->delete($request);
+
+    if ($result) {
+        return response()->json(['status' => true, 'message' => 'Employee deleted successfully']);
+    } else {
+        return response()->json(['status' => false, 'message' => 'Failed to delete employee'], 500);
+    }
+}
+
+	
 
 }

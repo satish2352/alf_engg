@@ -1,7 +1,7 @@
  <nav class="sidebar-nav">
      <ul id="sidebarnav">
 
-         <li> <a href="{{ route('dashboard') }}"><i class="mdi mdi-gauge"></i><span>Dashboard
+         <li> <a href="{{ route('dashboard-emp') }}"><i class="mdi mdi-gauge"></i><span>Dashboard
                  </span></a>
          </li>
 

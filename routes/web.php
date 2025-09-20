@@ -26,7 +26,7 @@ Route::group(['middleware' => ['SuperAdmin']], function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 
-      Route::get('/change-password', [ChangePasswordController::class, 'index'])->name('change-password');
+    Route::get('/change-password', [ChangePasswordController::class, 'index'])->name('change-password');
     Route::post('/update-password', [ChangePasswordController::class, 'updatePassword'])->name('update-password');
     // Role management routes
     Route::get('/roles/list', [RoleController::class, 'index'])->name('roles.list');
@@ -88,6 +88,7 @@ Route::group(['middleware' => ['SuperAdmin']], function () {
 
     // employees management routes
     Route::get('/employees/list', [EmployeesController::class, 'index'])->name('employees.list');
+    Route::get('/employees/ajax-list', [EmployeesController::class, 'ajaxList'])->name('employees.ajax'); 
     Route::get('/employees/add', [EmployeesController::class, 'create'])->name('employees.create');
     Route::post('/employees/add', [EmployeesController::class, 'save'])->name('employees.save');
     Route::get('/employees/edit/{encodedId}', [EmployeesController::class, 'edit'])->name('employees.edit');
@@ -107,6 +108,8 @@ Route::group(['middleware' => ['SuperAdmin']], function () {
 Route::group(['middleware' => ['Employee']], function () {
 
     Route::get('dashboard-emp', [EmpDashboardController::class, 'index'])->name('dashboard-emp');
+    Route::get('/change-password', [ChangePasswordController::class, 'index'])->name('change-password');
+    Route::post('/update-password', [ChangePasswordController::class, 'updatePassword'])->name('update-password');
     Route::get('logout', [LoginController::class, 'logout'])->name('logout');
 
 });

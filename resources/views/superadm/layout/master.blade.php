@@ -34,9 +34,9 @@
                 <div class="navbar-header">
                     <a class="navbar-brand" href="">
 
-                        <span>
+                        
                             <img src="{{ asset('asset/images/background/alf.jpg') }}" class="light-logo" alt="homepage"
-                                style="    height: 50px;" /></span>
+                                style="    height: 50px;" />
                     </a>
                 </div>
                 <div class="navbar-collapse">

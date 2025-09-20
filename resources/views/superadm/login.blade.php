@@ -113,20 +113,17 @@
                                                     <i class="fas fa-eye" style="color: #999;"></i>
                                                 </span>
                                             </div>
-
-
-                                            
+                                            <div class="mb-3">
+                                                <div class="g-recaptcha" data-sitekey="{{ env('RECAPTCHA_SITE_KEY') }}"></div>
+                                                @error('g-recaptcha-response')
+                                                    <span class="text-danger" style="font-size: 14px;">{{ $message }}</span>
+                                                @enderror
+                                            </div>                                            
                                             <div class="text-center">
                                                 <button type="submit" class="btn bg-gradient-info w-100 mt-4 mb-0">Sign in</button>
                                             </div>
                                         </form>
                                     </div>
-                                    {{-- <div class="card-footer text-center pt-0 px-lg-2 px-1">
-                                        <p class="mb-4 text-sm mx-auto">
-                                            Don't have an account?
-                                            <a href="javascript:void(0);" class="text-info text-gradient font-weight-bold">Sign up</a>
-                                        </p>
-                                    </div> --}}
                                 </div>
                             </div>
 
@@ -136,6 +133,7 @@
                 </div>
             </section>
         </main>
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
              <script>
   const togglePassword = document.querySelector('#togglePassword');
 const password = document.querySelector('#superpassword');

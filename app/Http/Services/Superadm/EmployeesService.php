@@ -16,16 +16,16 @@ class EmployeesService
         $this->repo = new EmployeesRepository();
     }
 
-    public function list()
-    {
-        try {
-            $data_output =  $this->repo->list();
-            return  $data_output;
-        } catch (Exception $e) {
-            Log::error("Employees Service list error: " . $e->getMessage());
-            return false;
-        }
+public function list($search = null)
+{
+    try {
+        return $this->repo->list($search);
+    } catch (Exception $e) {
+        Log::error("Employees Service list error: " . $e->getMessage());
+        return false;
     }
+}
+
 
     public function save($req)
     {
@@ -99,31 +99,57 @@ class EmployeesService
     }
 
 
-    public function delete($req)
-    {
-        try {
-            $id = base64_decode($req->id);
-            $data = ['is_deleted' => 1];
+    // public function delete($req)
+    // {
+    //     try {
+    //         $id = base64_decode($req->id);
+    //         $data = ['is_deleted' => 1];
 
-            return $this->repo->delete($data, $id);
-        } catch (Exception $e) {
-            Log::error("Employees Service delete error: " . $e->getMessage());
-            return false;
-        }
+    //         return $this->repo->delete($data, $id);
+    //     } catch (Exception $e) {
+    //         Log::error("Employees Service delete error: " . $e->getMessage());
+    //         return false;
+    //     }
+    // }
+
+    // public function updateStatus($req)
+    // {
+    //     try {
+    //         $id = base64_decode($req->id);
+    //         $data = ['is_active' => $req->is_active];
+
+    //         return $this->repo->updateStatus($data, $id);
+    //     } catch (Exception $e) {
+    //         Log::error("Employees Service updateStatus error: " . $e->getMessage());
+    //         return false;
+    //     }
+    // }
+// EmployeesService.php
+public function updateStatus($req)
+{
+    try {
+        $id = base64_decode($req->id);
+        $data = ['is_active' => $req->is_active];
+
+        return $this->repo->updateStatus($id, $data);
+    } catch (\Exception $e) {
+        \Log::error("Service updateStatus error: " . $e->getMessage());
+        return false;
     }
+}
 
-    public function updateStatus($req)
-    {
-        try {
-            $id = base64_decode($req->id);
-            $data = ['is_active' => $req->is_active];
+public function delete($req)
+{
+    try {
+        $id = base64_decode($req->id);
+        $data = ['is_deleted' => 1]; // soft delete
 
-            return $this->repo->updateStatus($data, $id);
-        } catch (Exception $e) {
-            Log::error("Employees Service updateStatus error: " . $e->getMessage());
-            return false;
-        }
+        return $this->repo->delete($id, $data);
+    } catch (\Exception $e) {
+        \Log::error("Service delete error: " . $e->getMessage());
+        return false;
     }
+}
 
     public function listajaxlist($req)
 	{  

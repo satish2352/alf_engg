@@ -152,6 +152,16 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
+
+                        <div class="form-group">
+                            <label for="reporting_to">Reporting To</label>
+                            <select name="reporting_to" id="reporting_to" class="form-control">
+                                <option value="">Select Reporting To </option>
+                            </select>
+                            @error('reporting_to')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
                         {{-- Reporting To --}}
                         {{-- <div class="form-group">
                             <label for="reporting_to">Reporting To</label>
@@ -161,9 +171,9 @@
                             @error('reporting_to')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
-                        </div> --}}
+                        </div>  --}}
                         {{-- Reporting To --}}
-                        <div class="form-group" id="reporting_to_wrapper" style="display:none;">
+                        {{-- <div class="form-group" id="reporting_to_wrapper" >
                             <label for="reporting_to">Reporting To <span class="text-danger"
                                     id="reporting_to_required">*</span></label>
                             <select name="reporting_to" id="reporting_to" class="form-control">
@@ -172,7 +182,7 @@
                             @error('reporting_to')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
-                        </div>
+                        </div> --}}
 
                         <div class="form-group d-flex justify-content-end">
                             <a href="{{ route('employees.list') }}" class="btn btn-secondary mr-2">Cancel</a>
@@ -298,7 +308,7 @@
             });
         });
     </script>
-    {{-- <script>
+   <script>
         $(document).ready(function() {
             // Initialize multiselect first
             $('#reporting_to').multiselect({
@@ -350,8 +360,8 @@
                 });
             });
         });
-    </script> --}}
-    <script>
+    </script>
+    {{-- <script>
         $(document).ready(function() {
             // Initialize multiselect
             $('#reporting_to').multiselect({
@@ -366,8 +376,8 @@
                 let plantId = $(this).val();
                 if (!plantId) {
                     $('#reporting_to').empty().multiselect('rebuild');
-                    $('#reporting_to_wrapper').hide();
-                    $('#reporting_to').prop('required', false); // remove validation
+                    // $('#reporting_to_wrapper').hide();
+                    // $('#reporting_to').prop('required', false); // remove validation
                     return;
                 }
 
@@ -392,14 +402,15 @@
                                 );
                             });
 
-                            $('#reporting_to_wrapper').show();
-                            $('#reporting_to').prop('required',
-                            true); // ✅ add validation when employees exist
-                        } else {
-                            $('#reporting_to_wrapper').hide();
-                            $('#reporting_to').prop('required',
-                            false); // ✅ no validation when no employees
-                        }
+                            // $('#reporting_to_wrapper').show();
+                            // $('#reporting_to').prop('required',
+                            // true); // ✅ add validation when employees exist
+                        // } 
+                        // else {
+                            // $('#reporting_to_wrapper').hide();
+                            // $('#reporting_to').prop('required',
+                            // false); // ✅ no validation when no employees
+                        // }
 
                         $('#reporting_to').multiselect('rebuild');
                     },
@@ -409,5 +420,5 @@
                 });
             });
         });
-    </script>
+    </script> --}}
 @endsection
