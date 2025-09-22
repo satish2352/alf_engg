@@ -52,9 +52,9 @@
                                                 <input type="hidden" name="id" value="{{ base64_encode($data->id) }}">
                                             </form>
                                         </td>
-                                          <td>
+                                          <td class="d-flex">
                                             <a href="{{ route('plantmaster.edit', base64_encode($data->id)) }}" 
-                                            class="btn btn-sm btn-primary" 
+                                            class="btn btn-sm btn-primary mr-2" 
                                             data-bs-toggle="tooltip" 
                                             data-bs-placement="top" 
                                             title="Edit">

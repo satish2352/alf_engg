@@ -53,7 +53,7 @@
                                         </td>
                                          <td class="d-flex">
                                             <a href="{{ route('departments.edit', base64_encode($data->id)) }}" 
-                                            class="btn btn-sm btn-primary" 
+                                            class="btn btn-sm btn-primary mr-2" 
                                             data-bs-toggle="tooltip" 
                                             data-bs-placement="top" 
                                             title="Edit">
