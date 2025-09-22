@@ -120,7 +120,7 @@ class EmployeesController extends Controller
 			'employee_code.required' => 'Enter employee code',
 			'employee_code.unique'   => 'This employee code already exists',
 			'employee_name.required' => 'Enter employee name',
-			'employee_name.regex' => 'The employee name take only contain letters and spaces.',
+			'employee_name.regex' => 'The employee name contain only letters and spaces.',
 			'employee_type.required' => 'Select employee type',
 			'employee_email.required' => 'Enter employee email',
 			'employee_email.email'    => 'Enter a valid email address',
