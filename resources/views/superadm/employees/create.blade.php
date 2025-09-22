@@ -72,7 +72,7 @@
                         </div>
 
                         {{-- Role --}}
-                        {{-- <div class="form-group">
+                        <div class="form-group">
                             <label for="role_id">Role <span class="text-danger">*</span></label>
                             <select name="role_id" id="role_id" class="form-control">
                                 <option value="">Select Role </option>
@@ -86,24 +86,7 @@
                             @error('role_id')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
-                        </div> --}}
-<div class="form-group">
-    <label for="role_id">Role <span class="text-danger">*</span></label>
-    <select name="role_id" id="role_id" class="form-control">
-        <option value="" {{ old('role_id') === null || old('role_id') === '' ? 'selected' : '' }}>
-            Select Role
-        </option>
-        @foreach ($roles as $role)
-            <option value="{{ $role->id }}"
-                {{ old('role_id') == $role->id ? 'selected' : '' }}>
-                {{ $role->role }}
-            </option>
-        @endforeach
-    </select>
-    @error('role_id')
-        <span class="text-danger">{{ $message }}</span>
-    @enderror
-</div>
+                        </div>
 
                         {{-- Employee Type --}}
                         <div class="form-group">
