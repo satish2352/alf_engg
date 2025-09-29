@@ -135,10 +135,10 @@ $(document).ready(function() {
                         </label>
                     </td>
                     <td>
-                        <a href="/employees/edit/${btoa(emp.id)}" class="btn btn-sm btn-primary">
+                        <a href="/employees/edit/${btoa(emp.id)}" class="btn btn-sm btn-primary mr-1" data-bs-toggle="tooltip" data-bs-placement="top">
                             <i class="mdi mdi-square-edit-outline"></i>
                         </a>
-                        <button type="button" class="btn btn-sm btn-danger delete-btn" data-id="${btoa(emp.id)}">
+                        <button type="button" class="btn btn-sm btn-danger delete-btn" data-id="${btoa(emp.id)}"  data-bs-toggle="tooltip" data-bs-placement="top">
                             <i class="mdi mdi-trash-can-outline"></i>
                         </button>
                     </td>
@@ -163,6 +163,9 @@ $(document).ready(function() {
 
                 $('#tableBody').html(renderTable(employeesData, currentPage, perPage));
                 $('#paginationLinks').html(res.pagination ?? '');
+
+                // Re-initialize Bootstrap tooltips after AJAX render
+                $('[data-bs-toggle="tooltip"]').tooltip();
             },
             error: function(xhr){
                 console.error(xhr.responseText);
@@ -214,26 +217,60 @@ $(document).ready(function() {
     });
 
     // Delete employee
+    // $(document).on('click', '.delete-btn', function(){
+    //     if(!confirm('Are you sure you want to delete this employee?')) return;
+    //     let id = $(this).data('id'); // base64 encoded
+
+    //     $.ajax({
+    //         url: '{{ route("employees.delete") }}',
+    //         type: 'POST',
+    //         data: {
+    //             _token: '{{ csrf_token() }}',
+    //             id: id
+    //         },
+    //         success: function(res){
+    //             alert(res.message);
+    //             fetchEmployees("{{ route('employees.ajax') }}", $('#searchInput').val());
+    //         },
+    //         error: function(xhr){
+    //             alert('Failed to delete employee');
+    //         }
+    //     });
+    // });
+
     $(document).on('click', '.delete-btn', function(){
-        if(!confirm('Are you sure you want to delete this employee?')) return;
         let id = $(this).data('id'); // base64 encoded
 
-        $.ajax({
-            url: '{{ route("employees.delete") }}',
-            type: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',
-                id: id
-            },
-            success: function(res){
-                alert(res.message);
-                fetchEmployees("{{ route('employees.ajax') }}", $('#searchInput').val());
-            },
-            error: function(xhr){
-                alert('Failed to delete employee');
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '{{ route("employees.delete") }}',
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        id: id
+                    },
+                    success: function(res){
+                         Swal.fire('Deleted!', res.message, 'success').then(() => {
+                            location.reload(); 
+                        });
+                    },
+                    error: function(xhr){
+                        Swal.fire('Failed!', 'Failed to delete employee', 'error');
+                    }
+                });
             }
         });
     });
+
 
 });
 </script>

@@ -107,21 +107,39 @@ class DesignationsController extends Controller
 	}
 
 
-	public function delete(Request $req)
-	{
-		try {
-			$req->validate([
-				'id' => 'required',
-			], [
-				'id.required' => 'ID required'
-			]);
+	// public function delete(Request $req)
+	// {
+	// 	try {
+	// 		$req->validate([
+	// 			'id' => 'required',
+	// 		], [
+	// 			'id.required' => 'ID required'
+	// 		]);
 
-			$this->service->delete($req);
-			return redirect()->route('designations.list')->with('success', 'Designation deleted successfully.');
-		} catch (Exception $e) {
-			return redirect()->back()->with('error', 'Failed to delete role: ' . $e->getMessage());
-		}
-	}
+	// 		$this->service->delete($req);
+	// 		return redirect()->route('designations.list')->with('success', 'Designation deleted successfully.');
+	// 	} catch (Exception $e) {
+	// 		return redirect()->back()->with('error', 'Failed to delete role: ' . $e->getMessage());
+	// 	}
+	// }
+
+	public function delete(Request $req)
+{
+    try {
+        $req->validate([
+            'id' => 'required',
+        ], [
+            'id.required' => 'ID required'
+        ]);
+
+        $this->service->delete($req);
+        return redirect()->route('designations.list')->with('success', 'Designation deleted successfully.');
+    } catch (Exception $e) {
+        // Show the custom message if designation is assigned to employees
+        return redirect()->back()->with('error', $e->getMessage());
+    }
+}
+
 
 	public function validateData(Request $req)
 	{

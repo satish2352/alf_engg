@@ -104,7 +104,7 @@
                         </div>
 
                         {{-- Employee Type --}}
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                             <label for="employee_type">Employee Type <span class="text-danger">*</span></label>
                             <select name="employee_type" id="employee_type" class="form-control">
                                 <option value="">Select Type </option>
@@ -112,6 +112,22 @@
                                 </option>
                                 <option value="test_2" {{ $employee->employee_type == 'test_2' ? 'selected' : '' }}>Test 2
                                 </option>
+                            </select>
+                            @error('employee_type')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div> --}}
+
+                        <div class="form-group">
+                            <label for="employee_type">Employee Type <span class="text-danger">*</span></label>
+                            <select name="employee_type" id="employee_type" class="form-control">
+                                <option value="">Select Type</option>
+                                @foreach ($employeeType as $type)
+                                    <option value="{{ $type->id }}"
+                                        {{ (isset($employee) && $employee->employee_type == $type->id) || old('employee_type') == $type->id ? 'selected' : '' }}>
+                                        {{ $type->type_name }}
+                                    </option>
+                                @endforeach
                             </select>
                             @error('employee_type')
                                 <span class="text-danger">{{ $message }}</span>

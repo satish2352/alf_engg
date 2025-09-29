@@ -28,6 +28,9 @@
          <li> <a href="{{ route('departments.list') }}"> <i class="mdi mdi-office-building"></i><span>
                      Departments</span></a>
          </li>
+        <li> 
+            <a href="{{ route('employee-types.list') }}"><i class="mdi mdi-account-circle"></i><span>Employee Types</span></a>
+        </li>
          <li> <a href="{{ route('employees.list') }}"> <i class="mdi mdi-account-group"></i><span>
                      Employees</span></a>
          </li>

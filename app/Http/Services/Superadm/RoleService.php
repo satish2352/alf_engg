@@ -66,18 +66,49 @@ class RoleService
         }
     }
 
+    // public function delete($req)
+    // {
+    //     try {
+    //         $id = base64_decode($req->id);
+    //         $data = ['is_deleted' => 1];
+
+    //         return $this->repo->delete($data, $id);
+    //     } catch (Exception $e) {
+    //         Log::error("RoleService delete error: " . $e->getMessage());
+    //         return false;
+    //     }
+    // }
+
     public function delete($req)
     {
         try {
             $id = base64_decode($req->id);
-            $data = ['is_deleted' => 1];
 
+            // Get role name
+            $role = $this->repo->edit($id); // assuming edit() returns role details
+            $roleName = $role->role ?? 'This role';
+
+            // Check if any employee has this role assigned
+            $employeeCount = \DB::table('employees')
+                ->where('role_id', $id)
+                ->where('is_deleted', 0)
+                ->count();
+
+            if ($employeeCount > 0) {
+                // Role is assigned to employees, cannot delete
+                throw new Exception("Cannot delete the role '{$roleName}' because it is assigned to one or more employees.");
+            }
+
+            // Soft delete role
+            $data = ['is_deleted' => 1];
             return $this->repo->delete($data, $id);
+
         } catch (Exception $e) {
-            Log::error("RoleService delete error: " . $e->getMessage());
-            return false;
+            \Log::error("RoleService delete error: " . $e->getMessage());
+            throw $e; // re-throw so controller can catch and show message
         }
     }
+
 
     public function updateStatus($req)
     {

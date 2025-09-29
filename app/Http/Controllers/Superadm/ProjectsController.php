@@ -161,6 +161,22 @@ class ProjectsController extends Controller
 	}
 
 
+	// public function delete(Request $req)
+	// {
+	// 	try {
+	// 		$req->validate([
+	// 			'id' => 'required',
+	// 		], [
+	// 			'id.required' => 'ID required'
+	// 		]);
+
+	// 		$this->service->delete($req);
+	// 		return redirect()->route('projects.list')->with('success', 'Project deleted successfully.');
+	// 	} catch (Exception $e) {
+	// 		return redirect()->back()->with('error', 'Failed to delete role: ' . $e->getMessage());
+	// 	}
+	// }
+
 	public function delete(Request $req)
 	{
 		try {
@@ -173,7 +189,7 @@ class ProjectsController extends Controller
 			$this->service->delete($req);
 			return redirect()->route('projects.list')->with('success', 'Project deleted successfully.');
 		} catch (Exception $e) {
-			return redirect()->back()->with('error', 'Failed to delete role: ' . $e->getMessage());
+			return redirect()->back()->with('error', $e->getMessage());
 		}
 	}
 

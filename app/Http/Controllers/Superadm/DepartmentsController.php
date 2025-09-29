@@ -163,7 +163,7 @@ class DepartmentsController extends Controller
 			$this->service->delete($req);
 			return redirect()->route('departments.list')->with('success', 'Department deleted successfully.');
 		} catch (Exception $e) {
-			return redirect()->back()->with('error', 'Failed to delete role: ' . $e->getMessage());
+			return redirect()->back()->with('error', $e->getMessage());
 		}
 	}
 

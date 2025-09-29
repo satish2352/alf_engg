@@ -86,18 +86,47 @@ class DepartmentsService
         }
     }
 
-    public function delete($req)
-    {
-        try {
-            $id = base64_decode($req->id);
-            $data = ['is_deleted' => 1];
+    // public function delete($req)
+    // {
+    //     try {
+    //         $id = base64_decode($req->id);
+    //         $data = ['is_deleted' => 1];
 
-            return $this->repo->delete($data, $id);
-        } catch (Exception $e) {
-            Log::error("Department Service delete error: " . $e->getMessage());
-            return false;
+    //         return $this->repo->delete($data, $id);
+    //     } catch (Exception $e) {
+    //         Log::error("Department Service delete error: " . $e->getMessage());
+    //         return false;
+    //     }
+    // }
+
+    public function delete($req)
+{
+    try {
+        $id = base64_decode($req->id);
+
+        // Get department details to show name in message
+        $department = $this->repo->edit($id); // assuming edit() returns department data
+        $departmentName = $department->department_name ?? 'This department';
+
+        // Check if any employee uses this department
+        $employeeCount = \DB::table('employees')
+            ->where('department_id', $id) // ✅ correct column
+            ->where('is_deleted', 0)
+            ->count();
+
+        if ($employeeCount > 0) {
+            throw new \Exception("Cannot delete the department '{$departmentName}' because it is assigned to one or more employees.");
         }
+
+        // If no employees use it, soft delete
+        $data = ['is_deleted' => 1];
+        return $this->repo->delete($data, $id);
+
+    } catch (\Exception $e) {
+        \Log::error("Department Service delete error: " . $e->getMessage());
+        throw $e; // rethrow so controller can show message
     }
+}
 
     public function updateStatus($req)
     {

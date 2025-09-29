@@ -86,6 +86,19 @@ class PlantMasterService
         }
     }
 
+    // public function delete($req)
+    // {
+    //     try {
+    //         $id = base64_decode($req->id);
+    //         $data = ['is_deleted' => 1];
+
+    //         return $this->repo->delete($data, $id);
+    //     } catch (Exception $e) {
+    //         Log::error("Plant Service delete error: " . $e->getMessage());
+    //         return false;
+    //     }
+    // }
+
     public function delete($req)
     {
         try {

@@ -153,6 +153,20 @@
         }
     }, 3000); // 3000ms = 3 seconds
 </script>
+
+    <script>
+        $(document).ready(function() {
+            // Hide success alert after 5 seconds
+            setTimeout(function() {
+                $('#success-alert').fadeOut('slow');
+            }, 5000);
+
+            // Hide error alert after 5 seconds
+            setTimeout(function() {
+                $('#error-alert').fadeOut('slow');
+            }, 5000);
+        });
+    </script>
 <script src="{{ asset('asset/plugins/popper/popper.min.js') }}"></script>
 <script src="{{ asset('asset/plugins/bootstrap/js/bootstrap.min.js') }}"></script>
 <!-- slimscrollbar scrollbar JavaScript -->

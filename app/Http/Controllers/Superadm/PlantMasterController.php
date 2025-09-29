@@ -50,7 +50,9 @@ class PlantMasterController extends Controller
 				'required',
 				'max:255',
 				'max:255',
-				'regex:/^[a-zA-Z0-9\s]+$/',
+				// 'regex:/^[a-zA-Z0-9\s]+$/',
+				// 'regex:/^[a-zA-Z0-9\s\-\_\&\.]+$/',
+				'regex:/^.+$/',
 				Rule::unique('plant_masters', 'plant_name')->where(function ($query) {
 					return $query->where('is_deleted', 0);
 				}),
@@ -67,7 +69,7 @@ class PlantMasterController extends Controller
     'plant_code.max' => 'Plant code must not exceed 255 characters.',
     'plant_name.required' => 'Enter plant name',
     'plant_name.max' => 'Plant name must not exceed 255 characters.',
-     'plant_name.regex' => 'Plant Name must contain only letters, numbers, and spaces.',
+     'plant_name.regex' => 'Plant Name can contain any characters.',
     // 'address.required' => 'Enter address for plant',
    'city.required' => 'Enter city for plant',
         'city.regex' => 'City name must contain only letters and spaces.',
@@ -136,6 +138,22 @@ class PlantMasterController extends Controller
 	}
 
 
+	// public function delete(Request $req)
+	// {
+	// 	try {
+	// 		$req->validate([
+	// 			'id' => 'required',
+	// 		], [
+	// 			'id.required' => 'ID required'
+	// 		]);
+
+	// 		$this->service->delete($req);
+	// 		return redirect()->route('plantmaster.list')->with('success', 'Plant details deleted successfully.');
+	// 	} catch (Exception $e) {
+	// 		return redirect()->back()->with('error', 'Failed to delete plant: ' . $e->getMessage());
+	// 	}
+	// }
+
 	public function delete(Request $req)
 	{
 		try {
@@ -145,10 +163,61 @@ class PlantMasterController extends Controller
 				'id.required' => 'ID required'
 			]);
 
+			$id = base64_decode($req->id);
+
+			// ✅ Get the plant
+			$plant = \DB::table('plant_masters')
+				->where('id', $id)
+				->where('is_deleted', 0)
+				->first();
+
+			if (!$plant) {
+				return redirect()->route('plantmaster.list')
+					->with('error', 'Plant not found or already deleted.');
+			}
+
+			// ✅ Check if employees exist for this plant
+			$employeeExists = \DB::table('employees')
+				->where('plant_id', $id)
+				->where('is_deleted', 0)
+				->exists();
+
+			if ($employeeExists) {
+				return redirect()->route('plantmaster.list')
+					->with('error', "Cannot delete the plant '{$plant->plant_name}' because employees are assigned to it.");
+			}
+
+			// ✅ Check if projects exist for this plant
+			$projectExists = \DB::table('projects')
+				->where('plant_id', $id)
+				->where('is_deleted', 0)
+				->exists();
+
+			if ($projectExists) {
+				return redirect()->route('plantmaster.list')
+					->with('error', "Cannot delete the plant '{$plant->plant_name}' because projects are assigned to it.");
+			}
+
+			// ✅ Check if departments exist for this plant
+			$departmentExists = \DB::table('departments')
+				->where('plant_id', $id)
+				->where('is_deleted', 0)
+				->exists();
+
+			if ($departmentExists) {
+				return redirect()->route('plantmaster.list')
+					->with('error', "Cannot delete the plant '{$plant->plant_name}' because departments are assigned to it.");
+			}
+
+			// ✅ If no dependencies, soft delete
 			$this->service->delete($req);
-			return redirect()->route('plantmaster.list')->with('success', 'Plant details deleted successfully.');
+
+			return redirect()->route('plantmaster.list')
+				->with('success', "Plant '{$plant->plant_name}' deleted successfully.");
+
 		} catch (Exception $e) {
-			return redirect()->back()->with('error', 'Failed to delete plant: ' . $e->getMessage());
+			return redirect()->back()
+				->with('error', 'Failed to delete plant: ' . $e->getMessage());
 		}
 	}
 

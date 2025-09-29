@@ -11,6 +11,7 @@ use App\Http\Controllers\Superadm\ProjectsController;
 use App\Http\Controllers\Superadm\DepartmentsController;
 use App\Http\Controllers\Superadm\EmployeesController;
 use App\Http\Controllers\Superadm\ChangePasswordController;
+use App\Http\Controllers\Superadm\EmployeeTypeController;
 
 
 
@@ -98,6 +99,14 @@ Route::group(['middleware' => ['SuperAdmin']], function () {
     Route::post('/employees/list-ajax', [EmployeesController::class, 'listajaxlist'])->name('employees.list-ajax');
     Route::post('/employees/update-status', [EmployeesController::class, 'updateStatus'])->name('employees.updatestatus');
 
+    // employees Type
+    Route::get('/employee-types/list', [EmployeeTypeController::class, 'index'])->name('employee-types.list');
+    Route::get('/employee-types/add', [EmployeeTypeController::class, 'create'])->name('employee-types.create');
+    Route::post('/employee-types/add', [EmployeeTypeController::class, 'save'])->name('employee-types.save');
+    Route::get('/employee-types/edit/{encodedId}', [EmployeeTypeController::class, 'edit'])->name('employee-types.edit');
+    Route::post('/employee-types/update/{encodedId}', [EmployeeTypeController::class, 'update'])->name('employee-types.update');
+    Route::post('/employee-types/delete', [EmployeeTypeController::class, 'delete'])->name('employee-types.delete');
+    Route::post('/employee-types/update-status', [EmployeeTypeController::class, 'updateStatus'])->name('employee-types.updatestatus');
 
 
     Route::get('logout', [LoginController::class, 'logout'])->name('logout');

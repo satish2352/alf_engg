@@ -110,6 +110,22 @@ class RoleController extends Controller
 	}
 
 
+	// public function delete(Request $req)
+	// {
+	// 	try {
+	// 		$req->validate([
+	// 			'id' => 'required',
+	// 		], [
+	// 			'id.required' => 'ID required'
+	// 		]);
+
+	// 		$this->service->delete($req);
+	// 		return redirect()->route('roles.list')->with('success', 'Role deleted successfully.');
+	// 	} catch (Exception $e) {
+	// 		return redirect()->back()->with('error', 'Failed to delete role: ' . $e->getMessage());
+	// 	}
+	// }
+
 	public function delete(Request $req)
 	{
 		try {
@@ -122,7 +138,8 @@ class RoleController extends Controller
 			$this->service->delete($req);
 			return redirect()->route('roles.list')->with('success', 'Role deleted successfully.');
 		} catch (Exception $e) {
-			return redirect()->back()->with('error', 'Failed to delete role: ' . $e->getMessage());
+			// Show the custom message if role is assigned to employees
+			return redirect()->back()->with('error', $e->getMessage());
 		}
 	}
 

@@ -14,6 +14,13 @@
                         <div class="alert alert-success alert-dismissible fade show" id="success-alert">{{ session('success') }}</div>
                     @endif
 
+                    @if (session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show" id="error-alert" role="alert">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
+
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped datatables">
                             <thead>
@@ -118,4 +125,5 @@
             });
         });
     </script>
+
 @endsection

@@ -10,9 +10,15 @@
                         <a href="{{ route('designations.create') }}" class="btn btn-warning">Add Designation</a>
                     </div>
 
-                  @if (session('success'))
+                    @if (session('success'))
                         <div class="alert alert-success alert-dismissible fade show" id="success-alert">{{ session('success') }}</div>
-                        @endif
+                    @endif
+
+                    @if (session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show" id="error-alert" role="alert">
+                            {{ session('error') }}
+                        </div>
+                    @endif
 
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped datatables">
@@ -21,7 +27,7 @@
                                     <th>Sr.No.</th>
                                     <th>Designation Name</th>
                                     <th>Short Description</th>
-                                     <th>Status</th>
+                                    <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>

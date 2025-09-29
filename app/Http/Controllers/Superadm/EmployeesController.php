@@ -16,6 +16,7 @@ use App\Models\
 	Roles,
 	Projects,
 	Employees,
+	EmployeeType
 }
 ;
 use Exception;
@@ -84,8 +85,13 @@ class EmployeesController extends Controller
 			$roles = Roles::where('is_deleted', 0)
 				->where('is_active', 1)
 				->orderBy('id', 'desc')
-				->get();			
-			return view('superadm.employees.create', compact('plants', 'departments', 'designations', 'roles'));
+				->get();	
+				
+			$employeeType = EmployeeType::where('is_deleted', 0)
+			->where('is_active', 1)
+			->orderBy('id', 'desc')
+			->get();	
+			return view('superadm.employees.create', compact('plants', 'departments', 'designations', 'roles', 'employeeType'));
 		} catch (Exception $e) {
 			return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
 		}
@@ -101,7 +107,7 @@ class EmployeesController extends Controller
 			'role_id'           => 'required',
 			'employee_code'     => 'required|string|max:50|unique:employees,employee_code',
 			'employee_name'     => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/',
-			'employee_type'     => 'required|string',
+			'employee_type'     => 'required',
 			'employee_email'    => 'required|email|max:255|unique:employees,employee_email',
 			// 'employee_user_name'=> 'required|string|max:100|unique:employees,employee_user_name',
 			'employee_user_name' => [
@@ -115,8 +121,8 @@ class EmployeesController extends Controller
 				'required',
 				'string',
 				'min:8',
-				'max:8',
-				'regex:/^(?=(?:.*\d){2,})(?=(?:.*[A-Za-z]){5,})(?=.*[^A-Za-z0-9])[A-Za-z\d\W]{8}$/'
+				'max:50',
+				'regex:/^(?=(?:.*\d){2,})(?=(?:.*[A-Za-z]){5,})(?=.*[^A-Za-z0-9]).+$/'
 			],
 		], [
 			'plant_id.required' => 'Select plant',
@@ -166,6 +172,7 @@ class EmployeesController extends Controller
         $projects = Projects::where('plant_id', $employee->plant_id)->get();
 		$designations = Designations::all();
 		$roles = Roles::all();
+		$employeeType = EmployeeType::all();
         $employeesList = Employees::where('plant_id', $employee->plant_id)
                               ->where('is_active', 1)
                               ->get();
@@ -176,6 +183,7 @@ class EmployeesController extends Controller
 			'projects',
 			'designations',
 			'roles',
+			'employeeType',
 			'employeesList'
 		));
 	}	
@@ -190,7 +198,7 @@ class EmployeesController extends Controller
         'role_id' => 'required',
         'employee_code'      => 'required|string|max:50',
         'employee_name'      => 'required|string|max:255',
-        'employee_type'      => 'required|string',
+        'employee_type'      => 'required',
         'employee_email'     => 'required|email|max:255',
         'employee_user_name' => 'required|string|max:100',
 		'employee_user_name' => [
@@ -207,8 +215,8 @@ class EmployeesController extends Controller
         $rules['employee_password'] = [
             'string',
             'min:8',
-            'max:8',
-            'regex:/^(?=(?:.*\d){2,})(?=(?:.*[A-Za-z]){5,})(?=.*[^A-Za-z0-9])[A-Za-z\d\W]{8}$/'
+            'max:50',
+            'regex:/^(?=(?:.*\d){2,})(?=(?:.*[A-Za-z]){5,})(?=.*[^A-Za-z0-9]).+$/'
         ];
     }
 
