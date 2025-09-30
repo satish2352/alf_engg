@@ -35,7 +35,7 @@
                      Employees</span></a>
          </li>
 
-         <li> <a href="{{ route('logout') }}"> <i class="mdi mdi-account-group"></i><span>Logout
+         <li> <a href="{{ route('logout') }}"> <i class="mdi mdi-logout"></i><span>Logout
                  </span></a>
          </li>
 

@@ -165,15 +165,39 @@ class EmployeesController extends Controller
 	}
 	public function edit($id)
 	{
-        $decodedId = base64_decode($id);
-		$employee = Employees::findOrFail($decodedId);
-		$plants = PlantMasters::all();
-	    $departments = Departments::where('plant_id', $employee->plant_id)->get();
-        $projects = Projects::where('plant_id', $employee->plant_id)->get();
-		$designations = Designations::all();
-		$roles = Roles::all();
-		$employeeType = EmployeeType::all();
-        $employeesList = Employees::where('plant_id', $employee->plant_id)
+    $decodedId = base64_decode($id);
+    $employee = Employees::where('is_deleted', 0)
+                         ->where('is_active', 1)
+                         ->findOrFail($decodedId);
+
+    $plants = PlantMasters::where('is_deleted', 0)
+                          ->where('is_active', 1)
+                          ->get();
+
+    $departments = Departments::where('plant_id', $employee->plant_id)
+                              ->where('is_deleted', 0)
+                              ->where('is_active', 1)
+                              ->get();
+
+    $projects = Projects::where('plant_id', $employee->plant_id)
+                        ->where('is_deleted', 0)
+                        ->where('is_active', 1)
+                        ->get();
+
+    $designations = Designations::where('is_deleted', 0)
+                                ->where('is_active', 1)
+                                ->get();
+
+    $roles = Roles::where('is_deleted', 0)
+                  ->where('is_active', 1)
+                  ->get();
+
+    $employeeType = EmployeeType::where('is_deleted', 0)
+                                ->where('is_active', 1)
+                                ->get();
+
+    $employeesList = Employees::where('plant_id', $employee->plant_id)
+                              ->where('is_deleted', 0)
                               ->where('is_active', 1)
                               ->get();
 		return view('superadm.employees.edit', compact(

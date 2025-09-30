@@ -241,160 +241,218 @@
     </script>
 
     {{-- <script>
-        $(document).ready(function() {
-            // Initialize multiselect first
-            $('#projects_id').multiselect({
-                includeSelectAllOption: true,
-                enableFiltering: true,
-                maxHeight: 300,
-                buttonWidth: '100%'
-            });
+    $(document).ready(function() {
+        // Initialize Reporting To multiselect
+        $('#reporting_to').multiselect({
+            includeSelectAllOption: true,
+            enableFiltering: true,
+            maxHeight: 300,
+            buttonWidth: '100%'
+        });
 
-            // On Plant Change
-            $('#plant_id').on('change', function() {
-                let plantId = $(this).val();
-                if (!plantId) {
-                    $('#projects_id').empty().multiselect('rebuild');
-                    return;
-                }
+        // On Plant Change
+        $('#plant_id').on('change', function() {
+            let plantId = $(this).val();
 
-                $.ajax({
-                    url: "{{ route('projects.list-ajax') }}", // Laravel route
-                    type: "POST", // POST because we are sending plant_id
-                    data: {
-                        _token: "{{ csrf_token() }}", // CSRF token
-                        plant_id: plantId
-                    },
-                    dataType: "json",
-                    success: function(response) {
-                        console.log(response);
-                        $('#projects_id').empty(); // clear old options
+            // If no plant selected, clear options
+            if (!plantId) {
+                $('#reporting_to').empty().append('<option value="">Select name</option>').multiselect('rebuild');
+                return;
+            }
 
-                        if (response.projects && response.projects.length > 0) {
-                            $.each(response.projects, function(key, project) {
-                                $('#projects_id').append(
-                                    `<option value="${project.id}">${project.project_name}</option>`
-                                );
-                            });
-                        } else if (response.projects.length == 0) {
-                            alert("No projects found");
-                        }
+            // Fetch employees via AJAX
+            $.ajax({
+                url: "{{ route('employees.list-ajax') }}",
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    plant_id: plantId
+                },
+                dataType: "json",
+                success: function(response) {
+                    $('#reporting_to').empty().append('<option value="">Select name</option>');
 
-                        // Refresh multiselect to show new options
-                        $('#projects_id').multiselect('rebuild');
-                    },
-                    error: function(xhr) {
-                        console.log(xhr.responseText);
+                    if (response.employees && response.employees.length > 0) {
+                        // Populate employees
+                        $.each(response.employees, function(key, emp) {
+                            $('#reporting_to').append(`<option value="${emp.id}">${emp.employee_name}</option>`);
+                        });
+                    } else {
+                        // Show SweetAlert if no employees
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Employees Missing',
+                            text: 'Please add employees before assigning Reporting To.'
+                        });
                     }
-                });
+
+                    // Refresh multiselect
+                    $('#reporting_to').multiselect('rebuild');
+                },
+                error: function(xhr) {
+                    console.log(xhr.responseText);
+                }
             });
         });
+    });
     </script> --}}
+
+<script>
+$(document).ready(function() {
+
+    // Initialize all multiselects
+    $('#projects_id, #department_id, #reporting_to').multiselect({
+        includeSelectAllOption: true,
+        enableFiltering: true,
+        maxHeight: 300,
+        buttonWidth: '100%'
+    });
+
+    // Load Employees
+    function loadEmployees(plantId) {
+        if (!plantId) {
+            $('#reporting_to').empty().append('<option value="">Select name</option>').multiselect('rebuild');
+            return $.Deferred().resolve({ employees: [] }).promise();
+        }
+
+        return $.ajax({
+            url: "{{ route('employees.list-ajax') }}",
+            type: "POST",
+            data: { _token: "{{ csrf_token() }}", plant_id: plantId },
+            dataType: "json"
+        }).done(function(response) {
+            $('#reporting_to').empty().append('<option value="">Select name</option>');
+            if (response.employees && response.employees.length > 0) {
+                $.each(response.employees, function(key, emp) {
+                    $('#reporting_to').append(`<option value="${emp.id}">${emp.employee_name}</option>`);
+                });
+            }
+            $('#reporting_to').multiselect('rebuild');
+        });
+    }
+
+    // Load Projects
+    function loadProjects(plantId) {
+        if (!plantId) {
+            $('#projects_id').empty().multiselect('rebuild');
+            return $.Deferred().resolve({ projects: [] }).promise();
+        }
+
+        return $.ajax({
+            url: "{{ route('projects.list-ajax') }}",
+            type: "POST",
+            data: { _token: "{{ csrf_token() }}", plant_id: plantId },
+            dataType: "json"
+        }).done(function(response) {
+            $('#projects_id').empty();
+            if (response.projects && response.projects.length > 0) {
+                $.each(response.projects, function(key, project) {
+                    $('#projects_id').append(`<option value="${project.id}">${project.project_name}</option>`);
+                });
+            }
+            $('#projects_id').multiselect('rebuild');
+        });
+    }
+
+    // Load Departments
+    function loadDepartments(plantId) {
+        if (!plantId) {
+            $('#department_id').empty().multiselect('rebuild');
+            return $.Deferred().resolve({ department: [] }).promise();
+        }
+
+        return $.ajax({
+            url: "{{ route('departments.list-ajax') }}",
+            type: "POST",
+            data: { _token: "{{ csrf_token() }}", plant_id: plantId },
+            dataType: "json"
+        }).done(function(response) {
+            $('#department_id').empty();
+            if (response.department && response.department.length > 0) {
+                $.each(response.department, function(key, dept) {
+                    $('#department_id').append(`<option value="${dept.id}">${dept.department_name}</option>`);
+                });
+            }
+            $('#department_id').multiselect('rebuild');
+        });
+    }
+
+    // Show alerts sequentially
+    function showAlertsSequentially(alerts, index = 0) {
+        if (index >= alerts.length) return;
+
+        Swal.fire(alerts[index]).then(() => {
+            showAlertsSequentially(alerts, index + 1);
+        });
+    }
+
+    // On Plant Change
+    $('#plant_id').on('change', function() {
+        let plantId = $(this).val();
+
+        if (!plantId) {
+            $('#projects_id, #department_id, #reporting_to').empty().multiselect('rebuild');
+            return;
+        }
+
+        $.when(loadProjects(plantId), loadDepartments(plantId), loadEmployees(plantId))
+            .done(function(projectResp, deptResp, empResp) {
+                // Extract actual data
+                projectResp = projectResp[0];
+                deptResp = deptResp[0];
+                empResp = empResp[0];
+
+                let alerts = [];
+
+                // Logic for Projects & Departments alerts
+                let projectsMissing = !projectResp.projects || projectResp.projects.length === 0;
+                let departmentsMissing = !deptResp.department || deptResp.department.length === 0;
+
+                if (projectsMissing && departmentsMissing) {
+                    alerts.push({
+                        icon: 'warning',
+                        title: 'Required Fields Missing',
+                        text: 'Please add both Projects and Departments before adding an employee.'
+                    });
+                } else {
+                    if (projectsMissing) {
+                        alerts.push({
+                            icon: 'warning',
+                            title: 'Projects Missing',
+                            text: 'Please add projects before adding an employee.'
+                        });
+                    }
+                    if (departmentsMissing) {
+                        alerts.push({
+                            icon: 'warning',
+                            title: 'Departments Missing',
+                            text: 'Please add departments before adding an employee.'
+                        });
+                    }
+                }
+
+                // Employee alert
+                if (!empResp.employees || empResp.employees.length === 0) {
+                    alerts.push({
+                        icon: 'warning',
+                        title: 'Employees Missing',
+                        text: 'Please add at least one employees before assigning Reporting To.'
+                    });
+                }
+
+                // Show all alerts sequentially
+                if (alerts.length > 0) {
+                    showAlertsSequentially(alerts);
+                }
+            });
+    });
+
+});
+</script>
+
+
+
     {{-- <script>
-        $(document).ready(function() {
-            // Initialize multiselect first
-            $('#department_id').multiselect({
-                includeSelectAllOption: true,
-                enableFiltering: true,
-                maxHeight: 300,
-                buttonWidth: '100%'
-            });
-
-            // On Plant Change
-            $('#plant_id').on('change', function() {
-                let plantId = $(this).val();
-                if (!plantId) {
-                    $('#department_id').empty().multiselect('rebuild');
-                    return;
-                }
-
-                $.ajax({
-                    url: "{{ route('departments.list-ajax') }}", // Laravel route
-                    type: "POST", // POST because we are sending plant_id
-                    data: {
-                        _token: "{{ csrf_token() }}", // CSRF token
-                        plant_id: plantId
-                    },
-                    dataType: "json",
-                    success: function(response) {
-                        console.log(response);
-                        $('#department_id').empty(); // clear old options
-
-                        if (response.department && response.department.length > 0) {
-                            $.each(response.department, function(key, department_result) {
-                                $('#department_id').append(
-                                    `<option value="${department_result.id}">${department_result.department_name}</option>`
-                                );
-                            });
-                        } else if (response.department.length == 0) {
-                            alert("No departments found");
-                        }
-
-                        // Refresh multiselect to show new options
-                        $('#department_id').multiselect('rebuild');
-                    },
-                    error: function(xhr) {
-                        console.log(xhr.responseText);
-                    }
-                });
-            });
-        });
-    </script> --}}
-   <script>
-        $(document).ready(function() {
-            // Initialize multiselect first
-            $('#reporting_to').multiselect({
-                includeSelectAllOption: true,
-                enableFiltering: true,
-                maxHeight: 300,
-                buttonWidth: '100%'
-            });
-
-            // On Plant Change
-            $('#plant_id').on('change', function() {
-                let plantId = $(this).val();
-                if (!plantId) {
-                    $('#reporting_to').empty().multiselect('rebuild');
-                    return;
-                }
-
-                $.ajax({
-                    url: "{{ route('employees.list-ajax') }}", // Laravel route
-                    type: "POST", // POST because we are sending plant_id
-                    data: {
-                        _token: "{{ csrf_token() }}", // CSRF token
-                        plant_id: plantId
-                    },
-                    dataType: "json",
-                    success: function(response) {
-                        console.log(response);
-                        $('#reporting_to').empty(); // clear old options
-                        $('#reporting_to').append(
-                                    `<option value="">select name</option>`
-                                );
-
-                        if (response.employees && response.employees.length > 0) {
-                            $.each(response.employees, function(key, employees_result) {
-                                $('#reporting_to').append(
-                                    `<option value="${employees_result.id}">${employees_result.employee_name}</option>`
-                                );
-                            });
-                        } else if (response.employees.length == 0) {
-                            alert("Please add employees before assigning Reporting To.");
-                        }
-
-                        // Refresh multiselect to show new options
-                        $('#reporting_to').multiselect('rebuild');
-                    },
-                    error: function(xhr) {
-                        console.log(xhr.responseText);
-                    }
-                });
-            });
-        });
-    </script>
-
-    <script>
     $(document).ready(function() {
 
         function loadProjects(plantId, oldProjects = []) {
@@ -477,7 +535,7 @@
         @endif
 
     });
-    </script>
+    </script> --}}
 
 
     {{-- <script>
