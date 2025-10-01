@@ -121,6 +121,40 @@ class DesignationsService
         }
     }
 
+//     public function updateStatus($req)
+// {
+//     try {
+//         $id = base64_decode($req->id);
+//         $isActive = $req->is_active; // 1 = activate, 0 = deactivate
+
+//         // If trying to deactivate the designation
+//         if ($isActive == 0) {
+//             // Fetch designation name
+//             $designation = $this->repo->edit($id);
+//             $designationName = $designation->designation ?? 'This designation';
+
+//             // Check if employees are using this designation
+//             $employeeCount = \DB::table('employees')
+//                 ->where('designation_id', $id)
+//                 ->where('is_deleted', 0)
+//                 ->count();
+
+//             if ($employeeCount > 0) {
+//                 throw new Exception("Cannot deactivate the designation '{$designationName}' because it is assigned to one or more employees.");
+//             }
+//         }
+
+//         // If allowed, update status
+//         $data = ['is_active' => $isActive];
+//         return $this->repo->updateStatus($data, $id);
+
+//     } catch (Exception $e) {
+//         \Log::error("DesignationsService updateStatus error: " . $e->getMessage());
+//         throw $e; // Let controller catch and return the message
+//     }
+// }
+
+
     public function find($id)
     {
         try {

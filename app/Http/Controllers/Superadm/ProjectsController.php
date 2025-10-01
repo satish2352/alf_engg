@@ -232,5 +232,49 @@ class ProjectsController extends Controller
     }
 }
 
+// public function updateStatus(Request $req)
+// {
+//     try {
+//         $id = base64_decode($req->id);
+
+//         // Fetch the project
+//         $project = $this->service->edit($id);
+
+//         if (!$project) {
+//             return response()->json(['status' => false, 'message' => 'Project not found'], 404);
+//         }
+
+//         $is_active = $req->is_active ? 1 : 0;
+
+//         // ✅ If trying to deactivate, check dependencies
+//         if ($is_active == 0) {
+//             $employeeExists = \DB::table('employees')
+//                 ->where('projects_id', $id)
+//                 ->where('is_deleted', 0)
+//                 ->exists();
+
+//             if ($employeeExists) {
+//                 return response()->json([
+//                     'status' => false,
+//                     'message' => "Cannot deactivate the project '{$project->project_name}' because it is assigned to one or more employees."
+//                 ], 400);
+//             }
+//         }
+
+//         // ✅ Update status
+//         $this->service->updateStatus($req);
+
+//         $statusText = $is_active ? 'activated' : 'deactivated';
+//         return response()->json([
+//             'status' => true,
+//             'message' => "Project '{$project->project_name}' status {$statusText} successfully"
+//         ]);
+
+//     } catch (\Exception $e) {
+//         return response()->json(['status' => false, 'message' => 'Failed to update status: ' . $e->getMessage()], 500);
+//     }
+// }
+
+
 
 }

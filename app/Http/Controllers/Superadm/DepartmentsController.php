@@ -206,5 +206,49 @@ class DepartmentsController extends Controller
     }
 }
 
+// public function updateStatus(Request $req)
+// {
+//     try {
+//         $id = base64_decode($req->id);
+//         $department = $this->service->edit($id);
+
+//         if (!$department) {
+//             return response()->json(['status' => false, 'message' => 'Department not found'], 404);
+//         }
+
+//         $is_active = $req->is_active ? 1 : 0;
+
+//         // ✅ If trying to deactivate, check for employees
+//         if ($is_active == 0) {
+//             $employeeExists = \DB::table('employees')
+//                 ->where('department_id', $id)
+//                 ->where('is_deleted', 0)
+//                 ->exists();
+
+//             if ($employeeExists) {
+//                 return response()->json([
+//                     'status' => false,
+//                     'message' => "Cannot deactivate the department '{$department->department_name}' because employees are assigned to it."
+//                 ], 400);
+//             }
+//         }
+
+//         // ✅ Update status
+//         $this->service->updateStatus($req);
+
+//         $statusText = $is_active ? 'activated' : 'deactivated';
+//         return response()->json([
+//             'status' => true,
+//             'message' => "Department '{$department->department_name}' status {$statusText} successfully"
+//         ]);
+
+//     } catch (\Exception $e) {
+//         return response()->json([
+//             'status' => false,
+//             'message' => 'Failed to update status: ' . $e->getMessage()
+//         ], 500);
+//     }
+// }
+
 
 }

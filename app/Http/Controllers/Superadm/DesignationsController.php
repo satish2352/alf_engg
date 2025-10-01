@@ -178,5 +178,31 @@ class DesignationsController extends Controller
     }
 }
 
+// public function updateStatus(Request $request)
+// {
+//     try {
+//         $id = base64_decode($request->id);
+//         $designation = $this->service->find($id);
+
+//         if (!$designation) {
+//             return response()->json(['status' => false, 'message' => 'Designation not found'], 404);
+//         }
+
+//         // Delegate logic to service (which now includes the restriction)
+//         $this->service->updateStatus($request);
+
+//         $statusText = $request->is_active ? 'activated' : 'deactivated';
+//         $message = "Designation '{$designation->designation}' status {$statusText} successfully";
+
+//         return response()->json(['status' => true, 'message' => $message]);
+
+//     } catch (Exception $e) {
+//         return response()->json([
+//             'status' => false,
+//             'message' => $e->getMessage()
+//         ], 400);
+//     }
+// }
+
 
 }

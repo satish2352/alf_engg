@@ -26,6 +26,7 @@ class EmpDashboardController extends Controller
 		})
 			->where('employees.is_deleted', 0)
 			->where('employees.is_active', 1)
+			->where('projects.is_active', 1)  
 			->where('employees.id', session('user_id'))
 			->select(
 				'employees.*',

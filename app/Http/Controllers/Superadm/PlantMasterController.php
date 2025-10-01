@@ -258,5 +258,64 @@ class PlantMasterController extends Controller
     }
 }
 
+// public function updateStatus(Request $request)
+// {
+//     try {
+//         $id = base64_decode($request->id);
+
+//         // Fetch the plant
+//         $plant = \DB::table('plant_masters')
+//             ->where('id', $id)
+//             ->where('is_deleted', 0)
+//             ->first();
+
+//         if (!$plant) {
+//             return response()->json(['status' => false, 'message' => 'Plant not found'], 404);
+//         }
+
+//         $is_active = $request->is_active ? 1 : 0;
+
+//         // ✅ If trying to deactivate, check dependencies
+//         if ($is_active == 0) {
+//             $employeeExists = \DB::table('employees')
+//                 ->where('plant_id', $id)
+//                 ->where('is_deleted', 0)
+//                 ->exists();
+
+//             $projectExists = \DB::table('projects')
+//                 ->where('plant_id', $id)
+//                 ->where('is_deleted', 0)
+//                 ->exists();
+
+//             $departmentExists = \DB::table('departments')
+//                 ->where('plant_id', $id)
+//                 ->where('is_deleted', 0)
+//                 ->exists();
+
+//             if ($employeeExists || $projectExists || $departmentExists) {
+//                 $message = "Cannot deactivate the plant '{$plant->plant_name}' because it has assigned ";
+//                 $parts = [];
+//                 if ($employeeExists) $parts[] = "employees";
+//                 if ($projectExists) $parts[] = "projects";
+//                 if ($departmentExists) $parts[] = "departments";
+//                 $message .= implode(', ', $parts) . ".";
+                
+//                 return response()->json(['status' => false, 'message' => $message], 400);
+//             }
+//         }
+
+//         // ✅ Update status
+//         \DB::table('plant_masters')->where('id', $id)->update(['is_active' => $is_active]);
+
+//         $statusText = $is_active ? 'activated' : 'deactivated';
+//         $message = "Plant '{$plant->plant_name}' status {$statusText} successfully";
+
+//         return response()->json(['status' => true, 'message' => $message]);
+
+//     } catch (Exception $e) {
+//         return response()->json(['status' => false, 'message' => 'Failed to update status: ' . $e->getMessage()], 500);
+//     }
+// }
+
 
 }

@@ -180,5 +180,27 @@ class RoleController extends Controller
     }
 }
 
+// public function updateStatus(Request $request)
+// {
+//     try {
+//         $id = base64_decode($request->id);
+//         $role = $this->service->find($id);
+
+//         if (!$role) {
+//             return response()->json(['status' => false, 'message' => 'Role not found'], 404);
+//         }
+
+//         $request->is_active = $request->is_active; // ensure the same value is passed
+//         $this->service->updateStatus($request);
+
+//         $statusText = $request->is_active ? 'activated' : 'deactivated';
+//         $message = "Role '{$role->role}' status {$statusText} successfully";
+
+//         return response()->json(['status' => true, 'message' => $message]);
+//     } catch (Exception $e) {
+//         return response()->json(['status' => false, 'message' => $e->getMessage()], 400);
+//     }
+// }
+
 
 }

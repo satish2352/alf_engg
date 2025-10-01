@@ -123,6 +123,40 @@ class RoleService
         }
     }
 
+//     public function updateStatus($req)
+// {
+//     try {
+//         $id = base64_decode($req->id);
+//         $isActive = $req->is_active; // 1 = activate, 0 = deactivate
+
+//         // If trying to deactivate the role
+//         if ($isActive == 0) {
+//             // Fetch role name
+//             $role = $this->repo->edit($id);
+//             $roleName = $role->role ?? 'This role';
+
+//             // Check if employees are using this role
+//             $employeeCount = \DB::table('employees')
+//                 ->where('role_id', $id)
+//                 ->where('is_deleted', 0)
+//                 ->count();
+
+//             if ($employeeCount > 0) {
+//                 throw new Exception("Cannot deactivate the role '{$roleName}' because it is assigned to one or more employees.");
+//             }
+//         }
+
+//         // If allowed, update status
+//         $data = ['is_active' => $isActive];
+//         return $this->repo->updateStatus($data, $id);
+
+//     } catch (Exception $e) {
+//         \Log::error("RoleService updateStatus error: " . $e->getMessage());
+//         throw $e; // Let the controller handle the message
+//     }
+// }
+
+
     public function find($id)
 {
     try {

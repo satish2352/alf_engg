@@ -153,5 +153,49 @@ class EmployeeTypeController extends Controller
         }
     }
 
+//     public function updateStatus(Request $req)
+// {
+//     try {
+//         $id = base64_decode($req->id);
+//         $type = $this->service->edit($id);
+
+//         if (!$type) {
+//             return response()->json(['status' => false, 'message' => 'Employee type not found'], 404);
+//         }
+
+//         $is_active = $req->is_active ? 1 : 0;
+
+//         // ✅ If trying to deactivate, check for employees
+//         if ($is_active == 0) {
+//             $employeeExists = \DB::table('employees')
+//                 ->where('employee_type', $id)
+//                 ->where('is_deleted', 0)
+//                 ->exists();
+
+//             if ($employeeExists) {
+//                 return response()->json([
+//                     'status' => false,
+//                     'message' => "Cannot deactivate the employee type '{$type->type_name}' because employees are assigned to it."
+//                 ], 400);
+//             }
+//         }
+
+//         // ✅ Update status
+//         $this->service->updateStatus($req);
+
+//         $statusText = $is_active ? 'activated' : 'deactivated';
+//         return response()->json([
+//             'status' => true,
+//             'message' => "Employee type '{$type->type_name}' status {$statusText} successfully"
+//         ]);
+
+//     } catch (\Exception $e) {
+//         return response()->json([
+//             'status' => false,
+//             'message' => 'Failed to update status: ' . $e->getMessage()
+//         ], 500);
+//     }
+// }
+
 
 }
