@@ -172,13 +172,39 @@ class DepartmentsController extends Controller
 
 	}
 
+	// public function updateStatus(Request $req)
+	// {
+	// 	try {
+	// 		$this->service->updateStatus($req);
+	// 		return redirect()->route('departments.list')->with('success', 'Department status updated successfully.');
+	// 	} catch (Exception $e) {
+	// 		return redirect()->back()->with('error', 'Failed to update status: ' . $e->getMessage());
+	// 	}
+	// }
+
 	public function updateStatus(Request $req)
-	{
-		try {
-			$this->service->updateStatus($req);
-			return redirect()->route('departments.list')->with('success', 'Department status updated successfully.');
-		} catch (Exception $e) {
-			return redirect()->back()->with('error', 'Failed to update status: ' . $e->getMessage());
-		}
-	}
+{
+    try {
+        $id = base64_decode($req->id);
+        $department = $this->service->edit($id);
+
+        if (!$department) {
+            return response()->json(['status' => false, 'message' => 'Department not found'], 404);
+        }
+
+        $is_active = $req->is_active ? 1 : 0;
+        $this->service->updateStatus($req);
+
+        $statusText = $is_active ? 'activated' : 'deactivated';
+        return response()->json([
+            'status' => true,
+            'message' => "Department '{$department->department_name}' status {$statusText} successfully"
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json(['status' => false, 'message' => $e->getMessage()], 500);
+    }
+}
+
+
 }

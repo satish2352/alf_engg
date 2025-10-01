@@ -435,8 +435,8 @@ $(document).ready(function() {
                 if (!empResp.employees || empResp.employees.length === 0) {
                     alerts.push({
                         icon: 'warning',
-                        title: 'Employees Missing',
-                        text: 'Please add at least one employees before assigning Reporting To.'
+                        title: 'Employee Missing',
+                        text: 'Please add at least one employee before assigning Reporting To.'
                     });
                 }
 

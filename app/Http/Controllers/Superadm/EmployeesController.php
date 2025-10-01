@@ -167,7 +167,7 @@ class EmployeesController extends Controller
 	{
     $decodedId = base64_decode($id);
     $employee = Employees::where('is_deleted', 0)
-                         ->where('is_active', 1)
+                        //  ->where('is_active', 1)
                          ->findOrFail($decodedId);
 
     $plants = PlantMasters::where('is_deleted', 0)
@@ -310,27 +310,45 @@ class EmployeesController extends Controller
 		// 	}
 		// }
 
-public function updateStatus(Request $request)
-{
-    $result = $this->service->updateStatus($request);
+	// public function updateStatus(Request $request)
+	// {
+	//     $result = $this->service->updateStatus($request);
 
-    if ($result) {
-        return response()->json(['status' => true, 'message' => 'Status updated successfully']);
-    } else {
-        return response()->json(['status' => false, 'message' => 'Failed to update status'], 500);
-    }
-}
+	//     if ($result) {
+	//         return response()->json(['status' => true, 'message' => 'Status updated successfully']);
+	//     } else {
+	//         return response()->json(['status' => false, 'message' => 'Failed to update status'], 500);
+	//     }
+	// }
+	public function updateStatus(Request $request)
+	{
+		$id = base64_decode($request->id);
+		$employee = Employees::find($id);
 
-public function delete(Request $request)
-{
-    $result = $this->service->delete($request);
+		if (!$employee) {
+			return response()->json(['status' => false, 'message' => 'Employee not found'], 404);
+		}
 
-    if ($result) {
-        return response()->json(['status' => true, 'message' => 'Employee deleted successfully']);
-    } else {
-        return response()->json(['status' => false, 'message' => 'Failed to delete employee'], 500);
-    }
-}
+		$employee->is_active = $request->is_active;
+		$employee->save();
+
+		$statusText = $employee->is_active ? 'activated' : 'deactivated';
+		$message = "'{$employee->employee_name}' employee record {$statusText} successfully";
+
+		return response()->json(['status' => true, 'message' => $message]);
+	}
+
+
+	public function delete(Request $request)
+	{
+		$result = $this->service->delete($request);
+
+		if ($result) {
+			return response()->json(['status' => true, 'message' => 'Employee deleted successfully']);
+		} else {
+			return response()->json(['status' => false, 'message' => 'Failed to delete employee'], 500);
+		}
+	}
 
 	
 

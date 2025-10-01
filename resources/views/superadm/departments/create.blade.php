@@ -12,7 +12,7 @@
                         <div class="form-group">
                             <label for="plant_id">Select Plant <span class="text-danger">*</span></label>
                             <select name="plant_id" id="plant_id" class="form-control">
-                                <option value="">Select Plant </option>
+                                <option value="" disabled selected>Select Plant </option>
                                 @foreach ($plants as $plant)
                                     <option value="{{ $plant->id }}"
                                         {{ old('plant_id') == $plant->id ? 'selected' : '' }}>

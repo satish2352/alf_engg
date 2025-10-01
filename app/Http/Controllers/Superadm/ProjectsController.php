@@ -198,13 +198,39 @@ class ProjectsController extends Controller
 
 	}
 
+	// public function updateStatus(Request $req)
+	// {
+	// 	try {
+	// 		$this->service->updateStatus($req);
+	// 		return redirect()->route('projects.list')->with('success', 'Project status updated successfully.');
+	// 	} catch (Exception $e) {
+	// 		return redirect()->back()->with('error', 'Failed to update status: ' . $e->getMessage());
+	// 	}
+	// }
+
 	public function updateStatus(Request $req)
-	{
-		try {
-			$this->service->updateStatus($req);
-			return redirect()->route('projects.list')->with('success', 'Project status updated successfully.');
-		} catch (Exception $e) {
-			return redirect()->back()->with('error', 'Failed to update status: ' . $e->getMessage());
-		}
-	}
+{
+    try {
+        $id = base64_decode($req->id);
+        $project = $this->service->edit($id);
+
+        if (!$project) {
+            return response()->json(['status' => false, 'message' => 'Project not found'], 404);
+        }
+
+        $is_active = $req->is_active ? 1 : 0;
+        $this->service->updateStatus($req);
+
+        $statusText = $is_active ? 'activated' : 'deactivated';
+        return response()->json([
+            'status' => true,
+            'message' => "Project '{$project->project_name}' status {$statusText} successfully"
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json(['status' => false, 'message' => $e->getMessage()], 500);
+    }
+}
+
+
 }

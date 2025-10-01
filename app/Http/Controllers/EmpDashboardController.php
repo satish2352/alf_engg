@@ -25,6 +25,7 @@ class EmpDashboardController extends Controller
 			$join->on(DB::raw("FIND_IN_SET(projects.id, employees.projects_id)"), ">", DB::raw("0"));
 		})
 			->where('employees.is_deleted', 0)
+			->where('employees.is_active', 1)
 			->where('employees.id', session('user_id'))
 			->select(
 				'employees.*',

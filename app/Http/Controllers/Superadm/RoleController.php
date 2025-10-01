@@ -148,13 +148,37 @@ class RoleController extends Controller
 
 	}
 
-	public function updateStatus(Request $req)
-	{
-		try {
-			$this->service->updateStatus($req);
-			return redirect()->route('roles.list')->with('success', 'Role status updated successfully.');
-		} catch (Exception $e) {
-			return redirect()->back()->with('error', 'Failed to update status: ' . $e->getMessage());
-		}
-	}
+	// public function updateStatus(Request $req)
+	// {
+	// 	try {
+	// 		$this->service->updateStatus($req);
+	// 		return redirect()->route('roles.list')->with('success', 'Role status updated successfully.');
+	// 	} catch (Exception $e) {
+	// 		return redirect()->back()->with('error', 'Failed to update status: ' . $e->getMessage());
+	// 	}
+	// }
+
+	public function updateStatus(Request $request)
+{
+    try {
+        $id = base64_decode($request->id);
+        $role = $this->service->find($id); // Add find() method in RoleService
+
+        if (!$role) {
+            return response()->json(['status' => false, 'message' => 'Role not found'], 404);
+        }
+
+        $role->is_active = $request->is_active;
+        $role->save();
+
+        $statusText = $role->is_active ? 'activated ' : 'deactivated ';
+        $message = "Role '{$role->role}' status {$statusText} successfully";
+
+        return response()->json(['status' => true, 'message' => $message]);
+    } catch (Exception $e) {
+        return response()->json(['status' => false, 'message' => 'Failed to update status: ' . $e->getMessage()], 500);
+    }
+}
+
+
 }

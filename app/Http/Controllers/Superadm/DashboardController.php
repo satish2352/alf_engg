@@ -10,7 +10,8 @@ use App\Models\{
     PlantMasters,
     Employees,
     Projects,
-    Departments
+    Departments,
+    EmployeeType
 };
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -35,6 +36,7 @@ class DashboardController extends Controller
                 $allProjects = Projects::where('is_deleted', 0)->count();
                 $allDepartments = Departments::where('is_deleted', 0)->count();
                 $allEmployees = Employees::where('is_deleted', 0)->count();
+                $allEmployeeTypes = EmployeeType::where('is_deleted', 0)->count();
 
                 return view('dashboard.dashboard', compact(
                     'allRoles',
@@ -42,7 +44,8 @@ class DashboardController extends Controller
                     'allPlants',
                     'allProjects',
                     'allDepartments',
-                    'allEmployees'
+                    'allEmployees',
+                    'allEmployeeTypes'
                 ));
             } else {
                 $projects = Employees::leftJoin('projects', function ($join) {

@@ -226,13 +226,37 @@ class PlantMasterController extends Controller
 
 	}
 
-	public function updateStatus(Request $req)
-	{
-		try {
-			$this->service->updateStatus($req);
-			return redirect()->route('plantmaster.list')->with('success', 'Plant details status updated successfully.');
-		} catch (Exception $e) {
-			return redirect()->back()->with('error', 'Failed to update status: ' . $e->getMessage());
-		}
-	}
+	// public function updateStatus(Request $req)
+	// {
+	// 	try {
+	// 		$this->service->updateStatus($req);
+	// 		return redirect()->route('plantmaster.list')->with('success', 'Plant details status updated successfully.');
+	// 	} catch (Exception $e) {
+	// 		return redirect()->back()->with('error', 'Failed to update status: ' . $e->getMessage());
+	// 	}
+	// }
+
+	public function updateStatus(Request $request)
+{
+    try {
+        $id = base64_decode($request->id);
+        $plant = \DB::table('plant_masters')->where('id', $id)->first();
+
+        if (!$plant) {
+            return response()->json(['status' => false, 'message' => 'Plant not found'], 404);
+        }
+
+        $is_active = $request->is_active ? 1 : 0;
+        \DB::table('plant_masters')->where('id', $id)->update(['is_active' => $is_active]);
+
+        $statusText = $is_active ? 'activated' : 'deactivated';
+        $message = "Plant '{$plant->plant_name}' status {$statusText} successfully";
+
+        return response()->json(['status' => true, 'message' => $message]);
+    } catch (Exception $e) {
+        return response()->json(['status' => false, 'message' => 'Failed to update status: ' . $e->getMessage()], 500);
+    }
+}
+
+
 }

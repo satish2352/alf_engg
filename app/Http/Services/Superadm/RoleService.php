@@ -122,4 +122,16 @@ class RoleService
             return false;
         }
     }
+
+    public function find($id)
+{
+    try {
+        return $this->repo->edit($id); // reuse existing edit() to fetch role
+    } catch (Exception $e) {
+        \Log::error("RoleService find error: " . $e->getMessage());
+        return null;
+    }
+}
+
+
 }

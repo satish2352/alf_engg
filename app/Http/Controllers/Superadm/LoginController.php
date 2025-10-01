@@ -51,11 +51,14 @@ public function validateSuperLogin(Request $req)
 
         $result = Employees::where('employee_user_name', $uname)
             ->where('is_deleted', 0)
-            ->where('is_active', 1)
             ->first();
 
         if (!$result) {
             return redirect()->back()->with('error', 'User not found, contact admin');
+        }
+
+        if ($result->is_active == 0) {
+            return redirect()->back()->with('error', 'User account is deactivated. Please contact admin.');
         }
 
         if (!Hash::check($pass, $result->employee_password)) {

@@ -78,35 +78,55 @@
     </div>
 
     <script>
-        $(document).on("change", ".toggle-status", function(e) {
-            e.preventDefault();
+    $(document).on("change", ".toggle-status", function(e) {
+        e.preventDefault();
 
-            let checkbox = $(this);
-            let form = checkbox.closest("form");
-            let is_active = checkbox.is(":checked") ? 1 : 0;
+        let checkbox = $(this);
+        let form = checkbox.closest("form");
+        let id = form.find("input[name='id']").val();
+        let is_active = checkbox.is(":checked") ? 1 : 0;
 
-            Swal.fire({
-                title: "Are you sure?",
-                text: "Do you want to change the status?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#28a745",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, change it!",
-                cancelButtonText: "No, cancel"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    if (form.find("input[name='is_active']").length) {
-                        form.find("input[name='is_active']").val(is_active);
-                    } else {
-                        form.append(`<input type="hidden" name="is_active" value="${is_active}">`);
+        Swal.fire({
+            title: "Are you sure?",
+            text: "Do you want to change the status?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#28a745",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, change it!",
+            cancelButtonText: "No, cancel"
+        }).then((result) => {
+            if(result.isConfirmed){
+                // AJAX request to update status
+                $.ajax({
+                    url: "{{ route('employee-types.updatestatus') }}",
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        id: id,
+                        is_active: is_active
+                    },
+                    success: function(res) {
+                        if(res.status) {
+                            Swal.fire("Success!", res.message, "success");
+                        } else {
+                            Swal.fire("Error!", res.message, "error");
+                            // revert checkbox state
+                            checkbox.prop("checked", !checkbox.is(":checked"));
+                        }
+                    },
+                    error: function(xhr) {
+                        Swal.fire("Error!", xhr.responseJSON?.message || "Something went wrong", "error");
+                        checkbox.prop("checked", !checkbox.is(":checked"));
                     }
-                    form.submit();
-                } else {
-                    checkbox.prop("checked", !checkbox.is(":checked"));
-                }
-            });
+                });
+            } else {
+                // revert checkbox if canceled
+                checkbox.prop("checked", !checkbox.is(":checked"));
+            }
         });
+    });
     </script>
+
 
 @endsection

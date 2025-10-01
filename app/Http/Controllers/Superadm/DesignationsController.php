@@ -146,13 +146,37 @@ class DesignationsController extends Controller
 
 	}
 
-	public function updateStatus(Request $req)
-	{
-		try {
-			$this->service->updateStatus($req);
-			return redirect()->route('designations.list')->with('success', 'Designation status updated successfully.');
-		} catch (Exception $e) {
-			return redirect()->back()->with('error', 'Failed to update status: ' . $e->getMessage());
-		}
-	}
+	// public function updateStatus(Request $req)
+	// {
+	// 	try {
+	// 		$this->service->updateStatus($req);
+	// 		return redirect()->route('designations.list')->with('success', 'Designation status updated successfully.');
+	// 	} catch (Exception $e) {
+	// 		return redirect()->back()->with('error', 'Failed to update status: ' . $e->getMessage());
+	// 	}
+	// }
+
+	public function updateStatus(Request $request)
+{
+    try {
+        $id = base64_decode($request->id);
+        $designation = $this->service->find($id); // add find() method in service
+
+        if (!$designation) {
+            return response()->json(['status' => false, 'message' => 'Designation not found'], 404);
+        }
+
+        $designation->is_active = $request->is_active;
+        $designation->save();
+
+        $statusText = $designation->is_active ? 'activated' : 'deactivated';
+        $message = "Designation '{$designation->designation}' status {$statusText} successfully";
+
+        return response()->json(['status' => true, 'message' => $message]);
+    } catch (Exception $e) {
+        return response()->json(['status' => false, 'message' => 'Failed to update status: ' . $e->getMessage()], 500);
+    }
+}
+
+
 }

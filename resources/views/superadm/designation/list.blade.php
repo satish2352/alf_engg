@@ -102,18 +102,29 @@
                 cancelButtonText: "No, cancel"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Append or update hidden input with status
-                    if (form.find("input[name='is_active']").length) {
-                        form.find("input[name='is_active']").val(is_active);
-                    } else {
-                        form.append(
-                            `<input type="hidden" name="is_active" value="${is_active}">`
-                        );
-                    }
-                    form.submit(); // submit the form
+                    $.ajax({
+                        url: "{{ route('designations.updatestatus') }}",
+                        type: "POST",
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            id: id,
+                            is_active: is_active
+                        },
+                        success: function(response) {
+                            if (response.status) {
+                                Swal.fire('Success!', response.message, 'success');
+                            } else {
+                                Swal.fire('Error!', response.message, 'error');
+                                checkbox.prop("checked", !is_active); // revert
+                            }
+                        },
+                        error: function(xhr) {
+                            Swal.fire('Error!', xhr.responseJSON?.message || 'Something went wrong', 'error');
+                            checkbox.prop("checked", !is_active); // revert
+                        }
+                    });
                 } else {
-                    // If cancelled, revert checkbox back
-                    checkbox.prop("checked", !checkbox.is(":checked"));
+                    checkbox.prop("checked", !checkbox.is(":checked")); // revert if cancelled
                 }
             });
         });

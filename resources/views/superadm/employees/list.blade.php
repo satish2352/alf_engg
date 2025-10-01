@@ -12,6 +12,10 @@
                     </a>
                 </div>
 
+                @if (session('success'))
+                    <div class="alert alert-success alert-dismissible fade show" id="success-alert">{{ session('success') }}</div>
+                @endif
+
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover">
                         <thead>
@@ -109,46 +113,113 @@
 $(document).ready(function() {
 
     // Function to render table rows
-    function renderTable(data = [], currentPage = 1, perPage = 10) {
-        let html = '';
-        if(data.length > 0){
-            data.forEach(function(emp, index){
-                // Serial number calculation per page
-                let srNo = (currentPage - 1) * perPage + index + 1;
+    // function renderTable(data = [], currentPage = 1, perPage = 10) {
+    //     let html = '';
+    //     if(data.length > 0){
+    //         data.forEach(function(emp, index){
+    //             // Serial number calculation per page
+    //             let srNo = (currentPage - 1) * perPage + index + 1;
 
-                html += `<tr>
-                    <td>${srNo}</td>
-                    <td>${emp.employee_name}</td>
-                    <td>${emp.employee_code}</td>
-                    <td>${emp.employee_email}</td>
-                    <td>${emp.employee_user_name}</td>
-                    <td>${emp.reporting_name ?? '-'}</td>
-                    <td>${emp.plant_name ?? '-'}</td>
-                    <td>${emp.project_names ?? '-'}</td>
-                    <td>${emp.department_names ?? '-'}</td>
-                    <td>${emp.designation ?? '-'}</td>
-                    <td>${emp.role ?? '-'}</td>
-                    <td>
-                        <label class="switch">
-                            <input type="checkbox" class="toggle-status" data-id="${btoa(emp.id)}" ${emp.is_active ? 'checked' : ''}>
-                            <span class="slider"></span>
-                        </label>
-                    </td>
-                    <td>
-                        <a href="/employees/edit/${btoa(emp.id)}" class="btn btn-sm btn-primary mr-1" data-bs-toggle="tooltip" data-bs-placement="top">
-                            <i class="mdi mdi-square-edit-outline"></i>
-                        </a>
-                        <button type="button" class="btn btn-sm btn-danger delete-btn" data-id="${btoa(emp.id)}"  data-bs-toggle="tooltip" data-bs-placement="top">
-                            <i class="mdi mdi-trash-can-outline"></i>
-                        </button>
-                    </td>
-                </tr>`;
-            });
-        } else {
-            html = '<tr><td colspan="13" class="text-center">No employees found.</td></tr>';
-        }
-        return html;
+    //             html += `<tr>
+    //                 <td>${srNo}</td>
+    //                 <td>${emp.employee_name}</td>
+    //                 <td>${emp.employee_code}</td>
+    //                 <td>${emp.employee_email}</td>
+    //                 <td>${emp.employee_user_name}</td>
+    //                 <td>${emp.reporting_name ?? '-'}</td>
+    //                 <td>${emp.plant_name ?? '-'}</td>
+    //                 <td>${emp.project_names ?? '-'}</td>
+    //                 <td>${emp.department_names ?? '-'}</td>
+    //                 <td>${emp.designation ?? '-'}</td>
+    //                 <td>${emp.role ?? '-'}</td>
+    //                 <td>
+    //                     <label class="switch">
+    //                         <input type="checkbox" class="toggle-status" data-id="${btoa(emp.id)}" ${emp.is_active ? 'checked' : ''}>
+    //                         <span class="slider"></span>
+    //                     </label>
+    //                 </td>
+    //                 <td>
+    //                     <a href="/employees/edit/${btoa(emp.id)}" class="btn btn-sm btn-primary mr-1" data-bs-toggle="tooltip" data-bs-placement="top">
+    //                         <i class="mdi mdi-square-edit-outline"></i>
+    //                     </a>
+    //                     <button type="button" class="btn btn-sm btn-danger delete-btn" data-id="${btoa(emp.id)}"  data-bs-toggle="tooltip" data-bs-placement="top">
+    //                         <i class="mdi mdi-trash-can-outline"></i>
+    //                     </button>
+    //                 </td>
+    //             </tr>`;
+    //         });
+    //     } else {
+    //         html = '<tr><td colspan="13" class="text-center">No employees found.</td></tr>';
+    //     }
+    //     return html;
+    // }
+
+function renderTable(data = [], currentPage = 1, perPage = 10) {
+    let html = '';
+    if (data.length > 0) {
+        data.forEach(function(emp, index) {
+            let srNo = (currentPage - 1) * perPage + index + 1;
+
+            html += `<tr>
+                <td>${srNo}</td>
+                <td>${emp.employee_name}</td>
+                <td>${emp.employee_code}</td>
+                <td>${emp.employee_email}</td>
+                <td>${emp.employee_user_name}</td>
+                <td>${emp.reporting_name ?? '-'}</td>
+                <td>${emp.plant_name ?? '-'}</td>
+                <td>${emp.project_names ?? '-'}</td>
+                <td>${emp.department_names ?? '-'}</td>
+                <td>${emp.designation ?? '-'}</td>
+                <td>${emp.role ?? '-'}</td>
+<td>
+${(emp.role != null && parseInt(emp.role) !== 0) ? `
+    <label class="switch">
+        <input type="checkbox" class="toggle-status" data-id="${btoa(emp.id)}" ${emp.is_active ? 'checked' : ''}>
+        <span class="slider"></span>
+    </label>
+` : `
+    <label class="switch">
+        <input type="checkbox" disabled>
+        <span class="slider"></span>
+    </label>
+`}
+</td>
+
+<td class="d-flex">
+${(emp.role != null && parseInt(emp.role) !== 0) ? `
+    <a href="/employees/edit/${btoa(emp.id)}" 
+        class="btn btn-sm btn-primary mr-1" 
+        data-bs-toggle="tooltip" 
+        title="Edit">
+        <i class="mdi mdi-square-edit-outline icon-medium"></i>
+    </a>
+    <button type="button" 
+        class="btn btn-sm btn-danger delete-btn" 
+        data-id="${btoa(emp.id)}"
+        data-bs-toggle="tooltip" 
+        title="Delete">
+        <i class="mdi mdi-trash-can-outline icon-medium"></i>
+    </button>
+` : `
+    <button class="btn btn-sm btn-secondary mr-1" disabled>
+        <i class="mdi mdi-square-edit-outline icon-medium"></i>
+    </button>
+    <button class="btn btn-sm btn-secondary" disabled>
+        <i class="mdi mdi-trash-can-outline icon-medium"></i>
+    </button>
+`}
+</td>
+
+            </tr>`;
+        });
+    } else {
+        html = '<tr><td colspan="13" class="text-center">No employees found.</td></tr>';
     }
+    return html;
+}
+
+
 
     // Fetch employees AJAX
     function fetchEmployees(url = "{{ route('employees.ajax') }}", search = '') {
@@ -192,28 +263,6 @@ $(document).ready(function() {
         url = url.replace("{{ route('employees.list') }}", "{{ route('employees.ajax') }}");
         let search = $('#searchInput').val();
         fetchEmployees(url, search);
-    });
-
-    // Toggle status
-    $(document).on('change', '.toggle-status', function(){
-        let id = $(this).data('id'); // base64 encoded
-        let isActive = $(this).is(':checked') ? 1 : 0;
-
-        $.ajax({
-            url: '{{ route("employees.updatestatus") }}',
-            type: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',
-                id: id,
-                is_active: isActive
-            },
-            success: function(res){
-                alert(res.message);
-            },
-            error: function(xhr){
-                alert('Failed to update status');
-            }
-        });
     });
 
     // Delete employee
@@ -267,6 +316,53 @@ $(document).ready(function() {
                         Swal.fire('Failed!', 'Failed to delete employee', 'error');
                     }
                 });
+            }
+        });
+    });
+
+    // Toggle status with confirmation
+    $(document).on('change', '.toggle-status', function(e){
+        e.preventDefault();
+
+        let checkbox = $(this);
+        let id = checkbox.data('id'); // base64 encoded
+        let isActive = checkbox.is(':checked') ? 1 : 0;
+
+        Swal.fire({
+            title: "Are you sure?",
+            text: "Do you want to change the status?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#28a745",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, change it!",
+            cancelButtonText: "No, cancel"
+        }).then((result) => {
+            if(result.isConfirmed){
+                $.ajax({
+                    url: '{{ route("employees.updatestatus") }}',
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        id: id,
+                        is_active: isActive
+                    },
+                    success: function(res){
+                        if(res.status){
+                            Swal.fire("Success!", res.message, "success");
+                        } else {
+                            Swal.fire("Error!", res.message, "error");
+                            checkbox.prop("checked", !checkbox.is(":checked")); // revert
+                        }
+                    },
+                    error: function(xhr){
+                        Swal.fire("Error!", xhr.responseJSON?.message || "Something went wrong", "error");
+                        checkbox.prop("checked", !checkbox.is(":checked")); // revert
+                    }
+                });
+            } else {
+                // If canceled, revert checkbox
+                checkbox.prop("checked", !checkbox.is(":checked"));
             }
         });
     });

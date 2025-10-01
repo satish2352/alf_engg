@@ -42,13 +42,13 @@ class EmployeeTypeController extends Controller
             'type_name' => [
                 'required',
                 'max:255',
-                'regex:/^[a-zA-Z0-9\s]+$/',
+                'regex:/^[a-zA-Z\s-]+$/', // Only letters, spaces, and hyphens,
                 Rule::unique('employee_types', 'type_name')->where(fn($query) => $query->where('is_deleted', 0)),
             ],
             'description' => 'required|max:255',
         ], [
             'type_name.required' => 'Enter Employee Type Name',
-            'type_name.regex' => 'Employee Type must contain only letters, numbers, and spaces.',
+            'type_name.regex' => 'Employee Type must contain only letters, spaces, and hyphens.',
             'type_name.unique' => 'This Employee Type already exists.',
             'type_name.max' => 'Employee Type name must not exceed 255 characters.',
             'description.required' => 'Enter Description',
@@ -80,6 +80,7 @@ class EmployeeTypeController extends Controller
             'type_name' => [
                 'required',
                 'max:255',
+                'regex:/^[a-zA-Z\s-]+$/', // Only letters, spaces, and hyphens
                 Rule::unique('employee_types', 'type_name')
                     ->where(fn($query) => $query->where('is_deleted', 0))
                     ->ignore($req->id),
@@ -89,6 +90,7 @@ class EmployeeTypeController extends Controller
             'is_active' => 'required'
         ], [
             'type_name.required' => 'Enter Employee Type Name',
+            'type_name.regex' => 'Employee Type must contain only letters, spaces, and hyphens.',
             'type_name.unique' => 'This Employee Type already exists.',
             'type_name.max' => 'Employee Type name must not exceed 255 characters.',
             'id.required' => 'ID required',
@@ -116,13 +118,40 @@ class EmployeeTypeController extends Controller
         }
     }
 
+    // public function updateStatus(Request $req)
+    // {
+    //     try {
+    //         $this->service->updateStatus($req);
+    //         return redirect()->route('employee-types.list')->with('success', 'Employee Type status updated successfully.');
+    //     } catch (Exception $e) {
+    //         return redirect()->back()->with('error', 'Failed to update status: ' . $e->getMessage());
+    //     }
+    // }
+
     public function updateStatus(Request $req)
     {
         try {
+            $id = base64_decode($req->id);
+            $type = $this->service->edit($id);
+
+            if (!$type) {
+                return response()->json(['status' => false, 'message' => 'Employee type not found'], 404);
+            }
+
+            $is_active = $req->is_active ? 1 : 0;
             $this->service->updateStatus($req);
-            return redirect()->route('employee-types.list')->with('success', 'Employee Type status updated successfully.');
-        } catch (Exception $e) {
-            return redirect()->back()->with('error', 'Failed to update status: ' . $e->getMessage());
+
+            $statusText = $is_active ? 'activated' : 'deactivated';
+
+            return response()->json([
+                'status' => true,
+                'message' => "Employee type '{$type->type_name}' status {$statusText} successfully"
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json(['status' => false, 'message' => $e->getMessage()], 500);
         }
     }
+
+
 }

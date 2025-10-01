@@ -23,7 +23,7 @@
                             <label for="plant_id">Select Plant <span class="text-danger">*</span></label>
                             <input type="hidden" name="id" class="form-control" value="{{ old('id', $data->id) }}">
                             <select name="plant_id" id="plant_id" class="form-control">
-                                <option value="">Select Plant </option>
+                                <option value="" disabled>Select Plant </option>
                                 @foreach ($plants as $plant)
                                     <option value="{{ $plant->id }}"
                                         {{ $data->plant_id == $plant->id ? 'selected' : '' }}

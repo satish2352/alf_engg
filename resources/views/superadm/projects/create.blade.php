@@ -11,15 +11,15 @@
 
                         <div class="form-group">
                             <label for="plant_id">Plant <span class="text-danger">*</span></label>
-                            <select name="plant_id" id="plant_id" class="form-control">
-                                <option value="">Select Plant </option>
-                                @foreach ($plants as $plant)
-                                    <option value="{{ $plant->id }}"
-                                        {{ old('plant_id') == $plant->id ? 'selected' : '' }}>
-                                        {{ $plant->plant_name }}
-                                    </option>
-                                @endforeach
-                            </select>
+                                <select name="plant_id" id="plant_id" class="form-control">
+                                    <option value="" disabled selected>Select Plant</option>
+                                    @foreach ($plants as $plant)
+                                        <option value="{{ $plant->id }}"
+                                            {{ old('plant_id') == $plant->id ? 'selected' : '' }}>
+                                            {{ $plant->plant_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             @error('plant_id')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror

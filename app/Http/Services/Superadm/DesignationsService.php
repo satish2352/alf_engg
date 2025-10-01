@@ -120,4 +120,16 @@ class DesignationsService
             return false;
         }
     }
+
+    public function find($id)
+    {
+        try {
+            return $this->repo->edit($id); // reuse existing edit() method
+        } catch (Exception $e) {
+            \Log::error("DesignationsService find error: " . $e->getMessage());
+            return null;
+        }
+    }
+
+
 }

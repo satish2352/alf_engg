@@ -29,7 +29,7 @@
                                     <th>Plant Name</th>
                                     <th>Department Code</th>
                                     <th>Department Name</th>
-                                    <th>Department Description</th>
+                                    <th>Department Short Name</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -106,18 +106,25 @@
                 confirmButtonText: "Yes, change it!",
                 cancelButtonText: "No, cancel"
             }).then((result) => {
-                if (result.isConfirmed) {
-                    // Append or update hidden input with status
-                    if (form.find("input[name='is_active']").length) {
-                        form.find("input[name='is_active']").val(is_active);
-                    } else {
-                        form.append(
-                            `<input type="hidden" name="is_active" value="${is_active}">`
-                        );
-                    }
-                    form.submit(); // submit the form
+                if(result.isConfirmed){
+                    $.ajax({
+                        url: "{{ route('departments.updatestatus') }}",
+                        type: "POST",
+                        data: {_token: "{{ csrf_token() }}", id: id, is_active: is_active},
+                        success: function(res){
+                            if(res.status){
+                                Swal.fire('Success!', res.message, 'success');
+                            } else {
+                                Swal.fire('Error!', res.message, 'error');
+                                checkbox.prop("checked", !is_active);
+                            }
+                        },
+                        error: function(xhr){
+                            Swal.fire('Error!', xhr.responseJSON?.message || 'Something went wrong', 'error');
+                            checkbox.prop("checked", !is_active);
+                        }
+                    });
                 } else {
-                    // If cancelled, revert checkbox back
                     checkbox.prop("checked", !checkbox.is(":checked"));
                 }
             });

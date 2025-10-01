@@ -102,11 +102,11 @@
                                             <form class="form-horizontal form-material" method="POST" id="loginform"
                         action="{{ route('superlogin') }}">
                         @csrf
-                                            <label>User name</label>
+                                            <label style="color:#fff">User name</label>
                                             <div class="mb-3">
                                                 <input type="text" id="superemail" name="superemail" value="" class="form-control" placeholder="User" aria-label="user" aria-describedby="email-addon">
                                             </div>
-                                            <label>Password</label>
+                                            <label style="color:#fff">Password</label>
                                             <div class="input-group input-group-outline mb-3">
                                                 <input type="password" id="superpassword" name="superpassword" class="form-control" placeholder="Password">
                                                 <span class="input-group-text" id="togglePassword" style="cursor: pointer; background: transparent; border: none;">
