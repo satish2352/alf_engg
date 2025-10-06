@@ -9,6 +9,12 @@
                 <form action="{{ route('employee.assignments.save') }}" method="POST">
                     @csrf
 
+                    @if(session('error'))
+                        <div class="alert alert-danger">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
                 <!-- Employee -->
                 <div class="form-group">
                     <label>Employee</label>
@@ -83,6 +89,27 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-multiselect/dist/css/bootstrap-multiselect.css">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-multiselect/dist/js/bootstrap-multiselect.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<script>
+$(document).ready(function() {
+
+    // Initially disable departments and projects selects
+    $('#department_id, #projects_id').prop('disabled', true);
+
+    // Enable them when a plant is selected
+    $('#plant_id').on('change', function() {
+        let plantSelected = $(this).val() !== '';
+        $('#department_id, #projects_id').prop('disabled', !plantSelected);
+
+        // Clear options if no plant selected
+        if (!plantSelected) {
+            $('#projects_id, #department_id').empty().multiselect('rebuild');
+        }
+    });
+
+});
+</script>
 
 <script>
 $(document).ready(function () {

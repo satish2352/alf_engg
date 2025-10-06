@@ -190,17 +190,33 @@
                             @enderror
                         </div> --}}
                         {{-- Reporting To --}}
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                             <label for="reporting_to">Reporting To</label>
                             <select name="reporting_to" id="reporting_to" class="form-control">
                                 <option value="">Select Reporting To</option>
-                                @foreach ($employeesList  as $emp) {{-- Make sure you pass employees list from controller --}}
+                                @foreach ($employeesList  as $emp) 
                                     <option value="{{ $emp->id }}" 
                                         {{ $employee->reporting_to == $emp->id ? 'selected' : '' }}>
                                         {{ $emp->employee_name }}
                                     </option>
                                 @endforeach
                             </select>
+                            @error('reporting_to')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div> --}}
+
+                        <div class="form-group">
+                            <label for="reporting_to">Reporting To</label>
+                                <select name="reporting_to" id="reporting_to" class="form-control">
+                                    <option value="">Select Reporting To</option>
+                                    @foreach ($employeesList as $emp)
+                                        <option value="{{ $emp->id }}" {{ $employee->reporting_to == $emp->id ? 'selected' : '' }}>
+                                            {{ $emp->employee_name }} - 
+                                            {{ $emp->assignedPlants->isNotEmpty() ? $emp->assignedPlants->pluck('plant_name')->join(', ') : 'No Plant Assigned' }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             @error('reporting_to')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
@@ -231,6 +247,31 @@
                 buttonWidth: '100%'
             });
         });
+
+            function loadEmployees(plantId) {
+    if (!plantId) {
+        $('#reporting_to').empty().append('<option value="">Select name</option>').multiselect('rebuild');
+        return $.Deferred().resolve({ employees: [] }).promise();
+    }
+
+    return $.ajax({
+        url: "{{ route('employees.list-ajax') }}",
+        type: "POST",
+        data: { _token: "{{ csrf_token() }}", plant_id: plantId },
+        dataType: "json"
+    }).done(function(response) {
+        $('#reporting_to').empty().append('<option value="">Select name</option>');
+        if (response.employees && response.employees.length > 0) {
+            $.each(response.employees, function(key, emp) {
+                if (emp.plant_name && emp.plant_name.length > 0) {
+                    let text = emp.employee_name + ' - ' + emp.plant_name;
+                    $('#reporting_to').append(`<option value="${emp.id}">${text}</option>`);
+                }
+            });
+        }
+        $('#reporting_to').multiselect('rebuild');
+    });
+}
     </script>
 
     <script>

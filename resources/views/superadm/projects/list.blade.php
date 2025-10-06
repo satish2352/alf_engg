@@ -1,131 +1,58 @@
-@extends('superadm.layout.master')
+ <nav class="sidebar-nav">
+     <ul id="sidebarnav">
 
-@section('content')
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
+         <li> <a href="{{ route('dashboard') }}">  <i class="mdi mdi-view-dashboard"></i><span>Dashboard
+                 </span></a>
+         </li>
 
-                    <div class="mb-3 d-flex justify-content-end">
-                        <a href="{{ route('projects.create') }}" class="btn btn-warning btn-add">Add Projects</a>
-                    </div>
+         <!--    <li> <a href="index.html"><i class="mdi mdi-gauge"></i><span >System Setup </span></a>
+                        </li> -->
 
-                    @if (session('success'))
-                        <div class="alert alert-success alert-dismissible fade show" id="success-alert">{{ session('success') }}</div>
-                    @endif
 
-                    @if (session('error'))
-                        <div class="alert alert-danger alert-dismissible fade show" id="error-alert" role="alert">
-                            {{ session('error') }}
-                        </div>
-                    @endif
+         <li> <a href="{{ route('roles.list') }}"><i class="mdi mdi-account-key"></i><span>
+                     Role</span></a>
+         </li>
 
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped datatables">
-                            <thead>
-                                <tr>
-                                    <th>Sr.No.</th>
-                                    <th>Plant Name</th>
-                                    <th>Project Name</th>
-                                    <th>Project Description</th>
-                                    <th>Project URL</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($dataAll as $key => $data)
-                                    <tr>
-                                        <td>{{ $key + 1 }}</td>
-                                        <td>{{ $data->plant_name }}</td>
-                                        <td>{{ $data->project_name }}</td>
-                                        <td>{{ $data->project_description }}</td>
-                                        <td>{{ $data->project_url }}</td>
-                                        <td >
-                                            <form action="{{ route('projects.updatestatus') }}" method="POST"
-                                                class="d-inline-block delete-form">
-                                                @csrf
-                                                <label class="switch">
-                                                    <input type="checkbox" class="toggle-status"
-                                                        data-id="{{ base64_encode($data->id) }}"
-                                                        {{ $data->is_active == '1' ? 'checked' : '' }}>
-                                                    <span class="slider"></span>
-                                                </label>
+         <li> <a href="{{ route('designations.list') }}"><i class="mdi mdi-badge-account"></i><span>
+                     Designations</span></a>
+         </li>
+        <li>
+            <a href="{{ route('financial-year.list') }}">
+                <i class="mdi mdi-calendar"></i>
+                <span>Financial Years</span>
+            </a>
+        </li>
+        <li> 
+            <a href="{{ route('employee-types.list') }}"><i class="mdi mdi-account-circle"></i><span>Employee Types</span></a>
+        </li>
 
-                                                <input type="hidden" name="id"
-                                                    value="{{ base64_encode($data->id) }}">
-                                            </form>
-                                        </td>
-                                          <td class="d-flex">
-                                            <a href="{{ route('projects.edit', base64_encode($data->id)) }}" 
-                                            class="btn btn-sm btn-primary mr-1" 
-                                            data-bs-toggle="tooltip" 
-                                            data-bs-placement="top" 
-                                            title="Edit">
-                                            <i class="mdi mdi-square-edit-outline icon-medium"></i>
-                                            </a>
-                                            <form action="{{ route('projects.delete') }}" method="POST" class="d-inline-block delete-form">
-                                                @csrf
-                                                <input type="hidden" name="id" value="{{ base64_encode($data->id) }}">
-                                                <button type="button" class="btn btn-sm btn-danger delete-btn" 
-                                                        data-bs-toggle="tooltip" 
-                                                        data-bs-placement="top" 
-                                                        title="Delete">
-                                                    <i class="mdi mdi-trash-can-outline icon-medium"></i>
-                                                </button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <script>
-        $(document).on("change", ".toggle-status", function(e) {
-            e.preventDefault();
+         <li> <a href="{{ route('plantmaster.list') }}"> <i class="mdi mdi-factory"></i><span>
+                     Plants</span></a>
+         </li>
 
-            let checkbox = $(this);
-            let form = checkbox.closest("form");
-            let id = checkbox.data("id");
-            let is_active = checkbox.is(":checked") ? 1 : 0;
+         <li> <a href="{{ route('projects.list') }}"> <i class="mdi mdi-briefcase"></i><span>
+                     Projects</span></a>
+         </li>
 
-            // Show SweetAlert confirmation
-            Swal.fire({
-                title: "Are you sure?",
-                text: "Do you want to change the status?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#28a745",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, change it!",
-                cancelButtonText: "No, cancel"
-            }).then((result) => {
-                    if(result.isConfirmed){
-                        $.ajax({
-                            url: "{{ route('projects.updatestatus') }}",
-                            type: "POST",
-                            data: {_token: "{{ csrf_token() }}", id: id, is_active: is_active},
-                            success: function(res){
-                                if(res.status){
-                                    Swal.fire('Success!', res.message, 'success');
-                                } else {
-                                    Swal.fire('Error!', res.message, 'error');
-                                    checkbox.prop("checked", !is_active);
-                                }
-                            },
-                            error: function(xhr){
-                                Swal.fire('Error!', xhr.responseJSON?.message || 'Something went wrong', 'error');
-                                checkbox.prop("checked", !is_active);
-                            }
-                        });
-                    } else {
-                        checkbox.prop("checked", !checkbox.is(":checked"));
-                    }
-            });
-        });
-    </script>
-@endsection
+         <li> <a href="{{ route('departments.list') }}"> <i class="mdi mdi-office-building"></i><span>
+                     Departments</span></a>
+         </li>
+
+         <li> <a href="{{ route('employees.list') }}"> <i class="mdi mdi-account-group"></i><span>
+                     Employees</span></a>
+         </li>
+                <li> <a href="{{ route('employee.assignments.list') }}"> 
+                    <i class="mdi mdi-account-switch"></i><span>Assign Plants</span>
+                </a></li>
+         </li>
+
+        <li> 
+            @if(session('role') == 'admin')
+                <a href="{{ route('admin.logout') }}"> <i class="mdi mdi-logout"></i><span>Logout</span></a>
+            @else
+                <a href="{{ route('emp.logout') }}"> <i class="mdi mdi-logout"></i><span>Logout</span></a>
+            @endif
+        </li>
+
+     </ul>
+ </nav>

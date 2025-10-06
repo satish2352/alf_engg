@@ -109,7 +109,7 @@
                     },
                     success: function(res) {
                         if(res.status) {
-                            Swal.fire("Success!", "Status updated", "success");
+                            Swal.fire("Success!",  res.message, "success");
                         } else {
                             Swal.fire("Error!", "Something went wrong", "error");
                             checkbox.prop("checked", !checkbox.is(":checked"));
@@ -125,5 +125,48 @@
             }
         });
     });
+
+        $(document).on("click", ".delete-btn", function(e) {
+        e.preventDefault();
+
+        let btn = $(this);
+        let form = btn.closest("form");
+        let id = form.find("input[name='id']").val();
+
+        Swal.fire({
+            title: "Are you sure?",
+            text: "Do you want to delete this financial year?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Yes, delete it!",
+            cancelButtonText: "No, cancel"
+        }).then((result) => {
+            if(result.isConfirmed){
+                $.ajax({
+                    url: form.attr("action"),
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        id: id
+                    },
+                    success: function(res) {
+                        if(res.status) {
+                            Swal.fire("Deleted!", res.message, "success");
+                            // Remove the deleted row from table
+                            btn.closest("tr").remove();
+                        } else {
+                            Swal.fire("Error!", "Something went wrong", "error");
+                        }
+                    },
+                    error: function() {
+                        Swal.fire("Error!", "Something went wrong", "error");
+                    }
+                });
+            }
+        });
+    });
+
     </script>
 @endsection

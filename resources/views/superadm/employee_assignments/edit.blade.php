@@ -21,6 +21,12 @@
                 <form action="{{ route('employee.assignments.update', $encodedId) }}" method="POST">
                     @csrf
 
+                    @if(session('error'))
+                        <div class="alert alert-danger">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
                     {{-- Employee Select --}}
                     <div class="form-group">
                         <label>Employee <span class="text-danger">*</span></label>
@@ -59,7 +65,9 @@
                     <div class="form-group">
                         <label>Projects <span class="text-danger">*</span></label>
                         @php
-                            $oldProjects = old('projects_id', explode(',', $assignment->projects_id ?? ''));
+                            // $oldProjects = old('projects_id', explode(',', $assignment->projects_id ?? ''));
+$oldProjects = old('projects_id', $assignment->projects_id);
+$oldProjects = is_array($oldProjects) ? $oldProjects : [];
                         @endphp
                         <select id="projects_id" name="projects_id[]" multiple class="form-control">
                             @foreach($projects as $project)
@@ -78,7 +86,9 @@
                     <div class="form-group">
                         <label>Departments <span class="text-danger">*</span></label>
                         @php
-                            $oldDepartments = old('department_id', explode(',', $assignment->department_id ?? ''));
+                            // $oldDepartments = old('department_id', explode(',', $assignment->department_id ?? ''));
+$oldDepartments = old('department_id', $assignment->department_id);
+$oldDepartments = is_array($oldDepartments) ? $oldDepartments : [];
                         @endphp
                         <select id="department_id" name="department_id[]" multiple class="form-control">
                             @foreach($departments as $dept)
@@ -123,6 +133,84 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+$(document).ready(function () {
+
+    // Initialize multiselect
+    $('#projects_id, #department_id').multiselect({
+        includeSelectAllOption: true,
+        enableFiltering: true,
+        maxHeight: 300,
+        buttonWidth: '100%'
+    });
+
+    // Function to load projects based on plant
+    function loadProjects(plantId, selectedProjects = []) {
+        return $.ajax({
+            url: "{{ route('projects.list-ajax') }}",
+            type: "POST",
+            data: { _token: "{{ csrf_token() }}", plant_id: plantId },
+            dataType: "json",
+            success: function(res) {
+                let options = '';
+                (res.projects || []).forEach(p => {
+                    let selected = selectedProjects.includes(String(p.id)) ? 'selected' : '';
+                    options += `<option value="${p.id}" ${selected}>${p.project_name}</option>`;
+                });
+                $('#projects_id').html(options).multiselect('rebuild');
+            }
+        });
+    }
+
+    // Function to load departments based on plant
+    function loadDepartments(plantId, selectedDepartments = []) {
+        return $.ajax({
+            url: "{{ route('departments.list-ajax') }}",
+            type: "POST",
+            data: { _token: "{{ csrf_token() }}", plant_id: plantId },
+            dataType: "json",
+            success: function(res) {
+                let options = '';
+                (res.department || []).forEach(d => {
+                    let selected = selectedDepartments.includes(String(d.id)) ? 'selected' : '';
+                    options += `<option value="${d.id}" ${selected}>${d.department_name}</option>`;
+                });
+                $('#department_id').html(options).multiselect('rebuild');
+            }
+        });
+    }
+
+    // On page load, if plant is already selected (editing case)
+    let initialPlantId = $('#plant_id').val();
+    if(initialPlantId) {
+        let selectedProjects = {!! json_encode($oldProjects) !!};
+        let selectedDepartments = {!! json_encode($oldDepartments) !!};
+        loadProjects(initialPlantId, selectedProjects);
+        loadDepartments(initialPlantId, selectedDepartments);
+    } else {
+        // Disable selects if no plant selected
+        $('#projects_id, #department_id').prop('disabled', true);
+    }
+
+    // When plant changes
+    $('#plant_id').on('change', function () {
+        let plantId = $(this).val();
+
+        if(!plantId){
+            $('#projects_id, #department_id').empty().multiselect('rebuild').prop('disabled', true);
+            return;
+        }
+
+        $('#projects_id, #department_id').prop('disabled', false);
+
+        loadProjects(plantId);
+        loadDepartments(plantId);
+    });
+
+});
+</script>
+
+
+{{-- <script>
 $(document).ready(function () {
     $('#projects_id, #department_id').multiselect({
         includeSelectAllOption: true,
@@ -179,5 +267,5 @@ $(document).ready(function () {
         });
     });
 });
-</script>
+</script> --}}
 @endsection

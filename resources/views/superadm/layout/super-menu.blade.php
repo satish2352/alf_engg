@@ -16,6 +16,15 @@
          <li> <a href="{{ route('designations.list') }}"><i class="mdi mdi-badge-account"></i><span>
                      Designations</span></a>
          </li>
+        <li>
+            <a href="{{ route('financial-year.list') }}">
+                <i class="mdi mdi-calendar"></i>
+                <span>Financial Years</span>
+            </a>
+        </li>
+        <li> 
+            <a href="{{ route('employee-types.list') }}"><i class="mdi mdi-account-circle"></i><span>Employee Types</span></a>
+        </li>
 
          <li> <a href="{{ route('plantmaster.list') }}"> <i class="mdi mdi-factory"></i><span>
                      Plant</span></a>
@@ -28,15 +37,7 @@
          <li> <a href="{{ route('departments.list') }}"> <i class="mdi mdi-office-building"></i><span>
                      Departments</span></a>
          </li>
-         <li>
-            <a href="{{ route('financial-year.list') }}">
-                <i class="mdi mdi-calendar"></i>
-                <span>Financial Years</span>
-            </a>
-        </li>
-        <li> 
-            <a href="{{ route('employee-types.list') }}"><i class="mdi mdi-account-circle"></i><span>Employee Types</span></a>
-        </li>
+
          <li> <a href="{{ route('employees.list') }}"> <i class="mdi mdi-account-group"></i><span>
                      Employees</span></a>
          </li>

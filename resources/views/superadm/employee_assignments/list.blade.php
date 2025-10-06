@@ -7,7 +7,7 @@
             <div class="card-body">
 
                 <div class="mb-3 d-flex justify-content-end">
-                    <a href="{{ route('employee.assignments.create') }}" class="btn btn-warning btn-add">Add Employee Assignment</a>
+                    <a href="{{ route('employee.assignments.create') }}" class="btn btn-warning btn-add">Assign Plants</a>
                 </div>
 
                 @if (session('success'))

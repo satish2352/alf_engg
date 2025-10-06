@@ -21,6 +21,11 @@ class EmployeePlantAssignment extends Model
         'is_deleted'
     ];
 
+    protected $casts = [
+        'department_id' => 'array',
+        'projects_id'   => 'array',
+    ];
+
     // Relationships
     public function employee() {
         return $this->belongsTo(Employees::class, 'employee_id');
@@ -31,15 +36,20 @@ class EmployeePlantAssignment extends Model
     }
 
     // Accessors for department and project names
-    public function getDepartmentsNamesAttribute() {
-        if(!$this->department_id) return '-';
-        $ids = explode(',', $this->department_id);
-        return Departments::whereIn('id', $ids)->pluck('department_name')->join(', ');
-    }
+public function getDepartmentsNamesAttribute() {
+    $ids = $this->department_id; // Already an array
+    $ids = is_array($ids) ? $ids : [];
+    if(empty($ids)) return '-';
+    return Departments::whereIn('id', $ids)->pluck('department_name')->join(', ');
+}
 
-    public function getProjectsNamesAttribute() {
-        if(!$this->projects_id) return '-';
-        $ids = explode(',', $this->projects_id);
-        return Projects::whereIn('id', $ids)->pluck('project_name')->join(', ');
-    }
+public function getProjectsNamesAttribute() {
+    $ids = $this->projects_id; // Already an array
+    $ids = is_array($ids) ? $ids : [];
+    if(empty($ids)) return '-';
+    return Projects::whereIn('id', $ids)->pluck('project_name')->join(', ');
+}
+
+
+
 }

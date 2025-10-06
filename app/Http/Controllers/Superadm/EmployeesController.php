@@ -91,7 +91,15 @@ class EmployeesController extends Controller
 			->where('is_active', 1)
 			->orderBy('id', 'desc')
 			->get();	
-			return view('superadm.employees.create', compact('plants', 'departments', 'designations', 'roles', 'employeeType'));
+
+			$employeesList = Employees::where('is_deleted', 0)
+			->where('is_active', 1)
+			// ->whereHas('assignedPlants')
+			->where('employee_name', '!=', '0')
+			->with(['assignedPlants']) // to access $emp->plant->plant_name
+			->get();
+
+			return view('superadm.employees.create', compact('plants', 'departments', 'designations', 'roles', 'employeeType','employeesList'));
 		} catch (Exception $e) {
 			return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
 		}
@@ -196,10 +204,18 @@ class EmployeesController extends Controller
                                 ->where('is_active', 1)
                                 ->get();
 
-    $employeesList = Employees::where('plant_id', $employee->plant_id)
-                              ->where('is_deleted', 0)
-                              ->where('is_active', 1)
-                              ->get();
+    // $employeesList = Employees::where('plant_id', $employee->plant_id)
+    //                           ->where('is_deleted', 0)
+    //                           ->where('is_active', 1)
+    //                           ->get();
+
+	$employeesList = Employees::where('is_deleted', 0)
+			->where('is_active', 1)
+			// ->whereHas('assignedPlants')
+			->where('employee_name', '!=', '0')
+			->with(['assignedPlants']) // to access $emp->plant->plant_name
+			->get();
+
 		return view('superadm.employees.edit', compact(
 			'employee',
 			'plants',
@@ -274,15 +290,29 @@ class EmployeesController extends Controller
 
 
 	public function listajaxlist(Request $req)
-	{
-		try {
-			$employees = $this->service->listajaxlist($req);
-			return response()->json(['employees' => $employees]);
+{
+    $employees = $this->service->listajaxlist($req);
 
-		} catch (Exception $e) {
-			return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
-		}
-	}
+    // Include plant name
+    $employees->transform(function ($employee) {
+        $employee->plant_name = $employee->plant->plant_name ?? '';
+        return $employee;
+    });
+
+    return response()->json(['employees' => $employees]);
+}
+
+
+	// public function listajaxlist(Request $req)
+	// {
+	// 	try {
+	// 		$employees = $this->service->listajaxlist($req);
+	// 		return response()->json(['employees' => $employees]);
+
+	// 	} catch (Exception $e) {
+	// 		return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
+	// 	}
+	// }
 	// public function delete(Request $req)
 	// {
 	// 	try {

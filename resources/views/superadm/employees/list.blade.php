@@ -26,9 +26,7 @@
                                 <th>Email</th>
                                 <th>User Name</th>
                                 <th>Reporting To</th>
-                                <th>Plant Name</th>
-                                <th>Project Name</th>
-                                <th>Department Name</th>
+                               
                                 <th>Designation</th>
                                 <th>Role</th>
                                 <th>Status</th>
@@ -44,9 +42,7 @@
                                 <td>{{ $data->employee_email }}</td>
                                 <td>{{ $data->employee_user_name }}</td>
                                 <td>{{ $data->reporting_name ?? '-' }}</td>
-                                <td>{{ $data->plant_name ?? '-' }}</td>
-                                <td>{{ $data->project_names ?? '-' }}</td>
-                                <td>{{ $data->department_names ?? '-' }}</td>
+                                
                                 <td>{{ $data->designation ?? '-' }}</td>
                                 <td>{{ $data->role ?? '-' }}</td>
                                 <td>
@@ -56,10 +52,7 @@
                                         <span class="slider"></span>
                                     </label>
                                      @else 
-                                      <label class="switch">
-                                        <input type="checkbox" class="toggle-status " disabled>
-                                        <span class="slider"></span>
-                                    </label>
+                                      Active
                                        @endif
                                 </td>
                                 <td class="d-flex">

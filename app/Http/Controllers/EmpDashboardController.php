@@ -23,8 +23,8 @@ class EmpDashboardController extends Controller
 
 		$projectIds = [];
 		foreach ($assignments as $assignment) {
-			if($assignment->projects_id) {
-				$projectIds = array_merge($projectIds, explode(',', $assignment->projects_id));
+			if ($assignment->projects_id) {
+				$projectIds = array_merge($projectIds, $assignment->projects_id); // ✅ already an array
 			}
 		}
 

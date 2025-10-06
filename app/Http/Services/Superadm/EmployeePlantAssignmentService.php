@@ -31,8 +31,10 @@ class EmployeePlantAssignmentService
             $data = [
                 'employee_id' => $req->employee_id,
                 'plant_id' => $req->plant_id,
-                'department_id' => implode(',', $req->department_id ?? []),
-                'projects_id' => implode(',', $req->projects_id ?? []),
+                // 'department_id' => implode(',', $req->department_id ?? []),
+                // 'projects_id' => implode(',', $req->projects_id ?? []),
+    'department_id' => json_encode($req->department_id ?? []),
+    'projects_id'   => json_encode($req->projects_id ?? []),
                 'is_active' => 1,
                 'is_deleted' => 0
             ];
@@ -54,8 +56,10 @@ public function update($req, $id)
         $data = [
             'employee_id' => $req->employee_id,
             'plant_id' => $req->plant_id,
-            'department_id' => implode(',', $req->department_id ?? []),
-            'projects_id' => implode(',', $req->projects_id ?? []),
+            // 'department_id' => implode(',', $req->department_id ?? []),
+            // 'projects_id' => implode(',', $req->projects_id ?? []),
+    'department_id' => json_encode($req->department_id ?? []),
+    'projects_id'   => json_encode($req->projects_id ?? []),
             'is_active' => $req->is_active, // ✅ allow status update
         ];
         return $this->repo->update($id, $data);
@@ -87,4 +91,21 @@ public function update($req, $id)
             return false;
         }
     }
+
+    public function exists($employeeId, $plantId, $excludeId = null)
+    {
+        $query = \DB::table('employee_plant_assignments')
+            ->where('employee_id', $employeeId)
+            ->where('plant_id', $plantId)
+            ->where('is_deleted', 0); // Only consider non-deleted assignments
+
+        if($excludeId){
+            $query->where('id', '!=', $excludeId);
+        }
+
+        return $query->exists();
+    }
+
+
+
 }

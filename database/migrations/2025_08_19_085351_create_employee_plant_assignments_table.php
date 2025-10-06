@@ -15,8 +15,8 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('employee_id');
             $table->unsignedBigInteger('plant_id');
-            $table->string('department_id')->nullable();
-            $table->string('projects_id')->nullable();
+            $table->text('department_id')->nullable();
+            $table->text('projects_id')->nullable();
             $table->boolean('is_active')->default(true);
             $table->boolean('is_deleted')->default(false);
             $table->timestamps();

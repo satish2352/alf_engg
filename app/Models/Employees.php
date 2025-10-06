@@ -15,6 +15,20 @@ class Employees extends Model
     {
         return $this->hasMany(EmployeePlantAssignment::class, 'employee_id');
     }
+
+    public function assignedPlants()
+    {
+        return $this->hasManyThrough(
+            PlantMasters::class,
+            EmployeePlantAssignment::class,
+            'employee_id',      // FK on assignment table
+            'id',               // PK on plant table
+            'id',               // PK on employees table
+            'plant_id'          // FK on assignment table to plant
+        )->where('employee_plant_assignments.is_deleted', 0)
+        ->where('plant_masters.is_active', 1);
+    }
+
 }
 
 

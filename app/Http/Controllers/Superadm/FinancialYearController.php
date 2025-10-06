@@ -34,7 +34,14 @@ class FinancialYearController extends Controller
             'year' => [
                 'required',
                 'regex:/^\d{4}-\d{4}$/',
-                Rule::unique('financial_years', 'year')->where(fn($q) => $q->where('is_deleted', 0)),
+                Rule::unique('financial_years', 'year')->where(fn($q) => $q->where('is_deleted', 0))->ignore($req->id),
+                function ($attribute, $value, $fail) {
+                    // Split the years
+                    [$start, $end] = explode('-', $value);
+                    if ((int)$start >= (int)$end) {
+                        $fail('The financial year must start with a smaller year and end with a larger year.');
+                    }
+                }
             ],
         ], [
             'year.required' => 'Enter financial year',
@@ -59,28 +66,57 @@ class FinancialYearController extends Controller
             'year' => [
                 'required',
                 'regex:/^\d{4}-\d{4}$/',
-                Rule::unique('financial_years', 'year')
-                    ->where(fn($q) => $q->where('is_deleted', 0))
-                    ->ignore($req->id),
+                Rule::unique('financial_years', 'year')->where(fn($q) => $q->where('is_deleted', 0))->ignore($req->id),
+                function ($attribute, $value, $fail) {
+                    // Split the years
+                    [$start, $end] = explode('-', $value);
+                    if ((int)$start >= (int)$end) {
+                        $fail('The financial year must start with a smaller year and end with a larger year.');
+                    }
+                }
             ],
-            'is_active' => 'required',
-            'id' => 'required',
+        ], [
+            'year.required' => 'Enter financial year',
+            'year.regex' => 'Format must be YYYY-YYYY (e.g., 2025-2026)',
+            'year.unique' => 'This financial year already exists.',
         ]);
 
-        $this->service->update($req);
-        return redirect()->route('financial-year.list')->with('success', 'Updated.');
+            // Get the old financial year before updating
+    $oldData = $this->service->edit($req->id);
+
+    $this->service->update($req);
+
+    return redirect()->route('financial-year.list')
+                     ->with('success', "Financial Year {$oldData->year} updated successfully to {$req->year}.");
     }
 
-    public function delete(Request $req)
-    {
-        $req->validate(['id' => 'required']);
-        $this->service->delete($req);
-        return redirect()->route('financial-year.list')->with('success', 'Deleted.');
-    }
+public function delete(Request $req)
+{
+    $req->validate(['id' => 'required']);
 
-    public function updateStatus(Request $req)
-    {
-        $this->service->updateStatus($req);
-        return response()->json(['status' => true]);
-    }
+    $data = $this->service->edit(base64_decode($req->id));
+    $this->service->delete($req);
+
+    return response()->json([
+        'status' => true,
+        'message' => "Financial Year {$data->year} deleted successfully."
+    ]);
+}
+
+
+public function updateStatus(Request $req)
+{
+    $id = base64_decode($req->id);
+    $data = $this->service->edit($id);
+
+    $this->service->updateStatus($req);
+
+    $statusText = $req->is_active ? 'activated' : 'deactivated';
+
+    return response()->json([
+        'status' => true,
+        'message' => "Financial Year {$data->year} {$statusText} successfully."
+    ]);
+}
+
 }
