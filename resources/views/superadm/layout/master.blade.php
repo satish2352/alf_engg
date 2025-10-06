@@ -59,8 +59,22 @@
                                     class="profile-pic" /></a>
                             <div class="dropdown-menu dropdown-menu-right scale-up">
                                 <ul class="dropdown-user">                                    
-                                    <li><a href="{{ route('change-password') }}"><i class="fa fa-key"></i> Change Password</a></li>
-                              <li><a href="{{ route('logout') }}"><i class="fa fa-power-off"></i> Logout</a></li>
+                                    {{-- <li><a href="{{ route('change-password') }}"><i class="fa fa-key"></i> Change Password</a></li> --}}
+                                    <li>
+                                        @if(session('role') == 'admin')
+                                            <a href="{{ route('admin.change-password') }}"><i class="fa fa-key"></i> Change Password</a>
+                                        @else
+                                            <a href="{{ route('employee.change-password') }}"><i class="fa fa-key"></i> Change Password</a>
+                                        @endif
+                                    </li>
+                              {{-- <li><a href="{{ route('logout') }}"><i class="fa fa-power-off"></i> Logout</a></li> --}}
+                                    <li>
+                                        @if(session('role') == 'admin')
+                                            <a href="{{ route('admin.logout') }}"><i class="fa fa-power-off"></i> Logout</a>
+                                        @else
+                                            <a href="{{ route('emp.logout') }}"><i class="fa fa-power-off"></i> Logout</a>
+                                        @endif
+                                    </li>
                                 </ul>
                             </div>
                         </li>

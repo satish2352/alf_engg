@@ -7,7 +7,7 @@
 
                 <div class="mb-3 d-flex justify-content-between">
                     <input type="text" id="searchInput" class="form-control w-50" placeholder="Search employees...">
-                    <a href="{{ route('employees.create') }}" class="btn btn-danger">
+                    <a href="{{ route('employees.create') }}" class="btn btn-danger btn-add">
                         <i class="mdi mdi-account-plus"></i> Add Employee
                     </a>
                 </div>
@@ -287,38 +287,43 @@ ${(emp.role != null && parseInt(emp.role) !== 0) ? `
     //     });
     // });
 
-    $(document).on('click', '.delete-btn', function(){
-        let id = $(this).data('id'); // base64 encoded
+$(document).on('click', '.delete-btn', function(){
+    let id = $(this).data('id'); // base64 encoded
 
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: '{{ route("employees.delete") }}',
-                    type: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        id: id
-                    },
-                    success: function(res){
-                         Swal.fire('Deleted!', res.message, 'success').then(() => {
-                            location.reload(); 
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '{{ route("employees.delete") }}',
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    id: id
+                },
+                success: function(res){
+                    if(res.status){
+                        Swal.fire('Deleted!', res.message, 'success').then(() => {
+                            location.reload();
                         });
-                    },
-                    error: function(xhr){
-                        Swal.fire('Failed!', 'Failed to delete employee', 'error');
+                    } else {
+                        Swal.fire('Failed!', res.message, 'error');
                     }
-                });
-            }
-        });
+                },
+                error: function(xhr){
+                    Swal.fire('Failed!', xhr.responseJSON?.message || 'Something went wrong', 'error');
+                }
+            });
+        }
     });
+});
+
 
     // Toggle status with confirmation
     $(document).on('change', '.toggle-status', function(e){

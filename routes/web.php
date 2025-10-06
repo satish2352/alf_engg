@@ -12,13 +12,46 @@ use App\Http\Controllers\Superadm\DepartmentsController;
 use App\Http\Controllers\Superadm\EmployeesController;
 use App\Http\Controllers\Superadm\ChangePasswordController;
 use App\Http\Controllers\Superadm\EmployeeTypeController;
+use App\Http\Controllers\Superadm\EmployeePlantAssignmentController;
+use Illuminate\Http\Request;
+use App\Models\Employees;
+use App\Models\EmployeePlantAssignment;
+use App\Models\PlantMasters;
+use App\Http\Controllers\Superadm\EmployeeLoginController;
+use App\Http\Controllers\Superadm\FinancialYearController;
 
 
 
 
 
 Route::get('login', [LoginController::class, 'loginsuper'])->name('login');
+
+Route::middleware('guest')->group(function () {
+    Route::get('login', [LoginController::class, 'loginsuper'])->name('login');
+    Route::post('superlogin', [LoginController::class, 'validateSuperLogin'])->name('superlogin');
+
+    Route::get('emp-login', [EmployeeLoginController::class, 'loginEmployee'])->name('emp.login');
+    Route::post('emp-login', [EmployeeLoginController::class, 'validateEmpLogin'])->name('emp.login.submit');
+});
+
 Route::post('superlogin', [LoginController::class, 'validateSuperLogin'])->name('superlogin');
+
+Route::get('emp-login', [EmployeeLoginController::class, 'loginEmployee'])->name('emp.login');
+Route::post('emp-login', [EmployeeLoginController::class, 'validateEmpLogin'])->name('emp.login.submit');
+Route::get('emp-logout', [EmployeeLoginController::class, 'logOut'])->name('emp.logout');
+
+Route::get('/get-plants-by-email', function (Request $req) {
+    $emp = Employees::where('employee_user_name', $req->email)->first();
+
+    if (!$emp) return response()->json([]);
+
+    $plants = EmployeePlantAssignment::where('employee_id', $emp->id)
+        ->where('is_active', 1)
+        ->pluck('plant_id');
+
+    return PlantMasters::whereIn('id', $plants)->get(['id', 'plant_name']);
+
+});
 
 Route::group(['middleware' => ['SuperAdmin']], function () {        
 
@@ -27,8 +60,10 @@ Route::group(['middleware' => ['SuperAdmin']], function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 
-    Route::get('/change-password', [ChangePasswordController::class, 'index'])->name('change-password');
-    Route::post('/update-password', [ChangePasswordController::class, 'updatePassword'])->name('update-password');
+    // Route::get('/change-password', [ChangePasswordController::class, 'index'])->name('change-password');
+    // Route::post('/update-password', [ChangePasswordController::class, 'updatePassword'])->name('update-password');
+    Route::get('/admin/change-password', [ChangePasswordController::class, 'index'])->name('admin.change-password');
+    Route::post('/admin/update-password', [ChangePasswordController::class, 'updatePassword'])->name('admin.update-password');
     // Role management routes
     Route::get('/roles/list', [RoleController::class, 'index'])->name('roles.list');
     Route::get('/roles/add', [RoleController::class, 'create'])->name('roles.create');
@@ -108,17 +143,61 @@ Route::group(['middleware' => ['SuperAdmin']], function () {
     Route::post('/employee-types/delete', [EmployeeTypeController::class, 'delete'])->name('employee-types.delete');
     Route::post('/employee-types/update-status', [EmployeeTypeController::class, 'updateStatus'])->name('employee-types.updatestatus');
 
+    // Financial Year routes
+    Route::get('/financial-year/list', [FinancialYearController::class, 'index'])->name('financial-year.list');
+    Route::get('/financial-year/add', [FinancialYearController::class, 'create'])->name('financial-year.create');
+    Route::post('/financial-year/add', [FinancialYearController::class, 'save'])->name('financial-year.save');
+    Route::get('/financial-year/edit/{encodedId}', [FinancialYearController::class, 'edit'])->name('financial-year.edit');
+    Route::post('/financial-year/update/{encodedId}', [FinancialYearController::class, 'update'])->name('financial-year.update');
+    Route::post('/financial-year/delete', [FinancialYearController::class, 'delete'])->name('financial-year.delete');
+    Route::post('/financial-year/update-status', [FinancialYearController::class, 'updateStatus'])->name('financial-year.updatestatus');
 
-    Route::get('logout', [LoginController::class, 'logout'])->name('logout');
+    
+
+    Route::get('/employee-assignments/list', [EmployeePlantAssignmentController::class, 'index'])
+        ->name('employee.assignments.list');
+
+    Route::get('/employee-assignments/add', [EmployeePlantAssignmentController::class, 'create'])
+        ->name('employee.assignments.create');
+
+    Route::post('/employee-assignments/add', [EmployeePlantAssignmentController::class, 'save'])
+        ->name('employee.assignments.save');
+
+    Route::get('/employee-assignments/edit/{encodedId}', [EmployeePlantAssignmentController::class, 'edit'])
+        ->name('employee.assignments.edit');
+
+    Route::post('/employee-assignments/update/{encodedId}', [EmployeePlantAssignmentController::class, 'update'])
+        ->name('employee.assignments.update');
+
+    Route::post('/employee-assignments/delete', [EmployeePlantAssignmentController::class, 'delete'])
+        ->name('employee.assignments.delete');
+
+    Route::post('/employee-assignments/update-status', [EmployeePlantAssignmentController::class, 'updateStatus'])
+        ->name('employee.assignments.updatestatus');
+
+
+
+    // Route::get('logout', [LoginController::class, 'logout'])->name('logout');
+    Route::get('admin/logout', [LoginController::class, 'logOut'])->name('admin.logout');
 
 });
 
 
+// Route::group(['middleware' => ['Employee']], function () {
+
+//     Route::get('dashboard-emp', [EmpDashboardController::class, 'index'])->name('dashboard-emp');
+//     Route::get('/change-password', [ChangePasswordController::class, 'index'])->name('change-password');
+//     Route::post('/update-password', [ChangePasswordController::class, 'updatePassword'])->name('update-password');
+//     Route::get('logout', [LoginController::class, 'logout'])->name('logout');
+
+// });
+
 Route::group(['middleware' => ['Employee']], function () {
-
     Route::get('dashboard-emp', [EmpDashboardController::class, 'index'])->name('dashboard-emp');
-    Route::get('/change-password', [ChangePasswordController::class, 'index'])->name('change-password');
-    Route::post('/update-password', [ChangePasswordController::class, 'updatePassword'])->name('update-password');
-    Route::get('logout', [LoginController::class, 'logout'])->name('logout');
-
+    // Route::get('/change-password', [ChangePasswordController::class, 'index'])->name('change-password');
+    // Route::post('/update-password', [ChangePasswordController::class, 'updatePassword'])->name('update-password');
+    Route::get('/employee/change-password', [ChangePasswordController::class, 'index'])->name('employee.change-password');
+    Route::post('/employee/update-password', [ChangePasswordController::class, 'updatePassword'])->name('employee.update-password');
+    // Route::get('logout', [LoginController::class, 'logout'])->name('logout');
+    Route::get('emp/logout', [EmployeeLoginController::class, 'logOut'])->name('emp.logout');
 });

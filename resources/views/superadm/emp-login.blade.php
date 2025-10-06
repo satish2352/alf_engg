@@ -31,6 +31,13 @@
     border-top-right-radius: 0.5rem;
     border-bottom-right-radius: 0.5rem;
 }
+
+select.form-control {
+    font-size: 1.05rem; /* Adjust size as needed */
+}
+#plant_id {
+    font-size: 1.05rem; /* or 18px */
+}
 </style>
 
     </head>
@@ -85,7 +92,7 @@
                                 </div>
                             </div>
                             <div class="col-sm-4 d-flex flex-column mx-auto">
-                                <div class="card card-plain mt-8">
+                                <div class="card card-plain mt-2">
                                     <div class="card-header pb-0 text-left bg-transparent text-center">
                                          
                                         <img src="{{ asset('asset/theamoriginalalf/images/logo_bg1.ico') }}" style="height: 80px;width:30%;">
@@ -99,39 +106,65 @@
                         <div class="alert alert-danger">{{ session('error') }}</div>
                     @endif
                                                                                 
-                                            <form class="form-horizontal form-material" method="POST" id="loginform"
-                        action="{{ route('superlogin') }}">
+                    <form class="form-horizontal form-material" method="POST" id="loginform" action="{{ route('emp.login.submit') }}">
                         @csrf
-                                            <label style="color:#fff">User name</label>
-                                            <div class="mb-3">
-                                                <input type="text" id="superemail" name="superemail" value="" class="form-control" placeholder="User" aria-label="user" aria-describedby="email-addon">
-                                                @error('superemail')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                            <label style="color:#fff">Password</label>
-                                            <div class="mb-3">
-                                                <div class="input-group input-group-outline">
-                                                    <input type="password" id="superpassword" name="superpassword" class="form-control" placeholder="Password">
-                                                    <span class="input-group-text" id="togglePassword" style="cursor: pointer; background: transparent; border: none;">
-                                                        <i class="fas fa-eye" style="color: #999;"></i>
-                                                    </span>
-                                                </div>
-                                                @error('superpassword')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
 
-                                            <div class="mb-3">
-                                                <div class="g-recaptcha" data-sitekey="{{ env('RECAPTCHA_SITE_KEY') }}"></div>
-                                                @error('g-recaptcha-response')
-                                                    <span class="text-danger" style="font-size: 14px;">{{ $message }}</span>
-                                                @enderror
-                                            </div>                                            
-                                            <div class="text-center">
-                                                <button type="submit" class="btn bg-gradient-info w-100 mt-4 mb-0">Sign in</button>
-                                            </div>
-                                        </form>
+                        <label style="color:#fff">User name</label>
+                        <div class="mb-3">
+                            <input type="text" id="superemail" name="superemail" class="form-control" placeholder="User" value="{{ old('superemail') }}">
+                                @error('superemail')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                        </div>
+
+                        <label style="color:#fff">Password</label>
+                        <div class="mb-3">
+                            <div class="input-group input-group-outline">
+                                <input type="password" id="superpassword" name="superpassword" class="form-control" placeholder="Password" value="{{ old('superpassword') }}">
+                                <span class="input-group-text" id="togglePassword" style="cursor: pointer; background: transparent; border: none;">
+                                    <i class="fas fa-eye" style="color: #999;"></i>
+                                </span>
+                            </div>
+                            @error('superpassword')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <label style="color:#fff">Select Financial Year</label>
+                        <div class="mb-3">
+                            <select id="financial_year_id" name="financial_year_id" class="form-control">
+                                <option value="">-- Select Year --</option>
+                                @foreach($financialYears as $fy)
+                                    <option value="{{ $fy->id }}">{{ $fy->year }}</option>
+                                @endforeach
+                            </select>
+                            @error('financial_year_id')
+                                <span class="text-danger" style="font-size: 14px;">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <label style="color:#fff">Select Plant</label>
+                        <div class="mb-3">
+                            <select id="plant_id" name="plant_id" class="form-control">
+                                <option value="">-- Select Plant --</option>
+                            </select>
+                            @error('plant_id')
+                                <span class="text-danger" style="font-size: 14px;">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="g-recaptcha" data-sitekey="{{ env('RECAPTCHA_SITE_KEY') }}"></div>
+                            @error('g-recaptcha-response')
+                                <span class="text-danger" style="font-size: 14px;">{{ $message }}</span>
+                            @enderror
+                        </div> 
+
+                        <div class="text-center">
+                            <button type="submit" class="btn bg-gradient-info w-100 mt-4 mb-0">Sign in</button>
+                        </div>
+                    </form>
+
                                     </div>
                                 </div>
                             </div>
@@ -157,6 +190,27 @@ togglePassword.addEventListener('click', function () {
 });
 
 </script>
+
+
+<script>
+document.getElementById('superemail').addEventListener('blur', function () {
+    let email = this.value;
+
+    if (!email) return;
+
+    fetch('{{ url("/get-plants-by-email") }}?email=' + email)
+        .then(res => res.json())
+        .then(data => {
+            let select = document.getElementById('plant_id');
+            select.innerHTML = `<option value="">-- Select Plant --</option>`;
+
+            data.forEach(p => {
+                select.innerHTML += `<option value="${p.id}">${p.plant_name}</option>`;
+            });
+        });
+});
+</script>
+
    
     </body>
 </html>

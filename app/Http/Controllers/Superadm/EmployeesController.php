@@ -100,9 +100,9 @@ class EmployeesController extends Controller
 	{
 		// First validate the base rules
 		$validator = Validator::make($req->all(), [
-			'plant_id'          => 'required',
-			'department_id'     => 'required',
-			'projects_id'       => 'required',
+			// 'plant_id'          => 'required',
+			// 'department_id'     => 'required',
+			// 'projects_id'       => 'required',
 			'designation_id'    => 'required',
 			'role_id'           => 'required',
 			'employee_code'     => 'required|string|max:50|unique:employees,employee_code',
@@ -125,9 +125,9 @@ class EmployeesController extends Controller
 				'regex:/^(?=(?:.*\d){2,})(?=(?:.*[A-Za-z]){5,})(?=.*[^A-Za-z0-9]).+$/'
 			],
 		], [
-			'plant_id.required' => 'Select plant',
-			'department_id.required' => 'Select department',
-			'projects_id.required' => 'Select projects',
+			// 'plant_id.required' => 'Select plant',
+			// 'department_id.required' => 'Select department',
+			// 'projects_id.required' => 'Select projects',
 			'designation_id.required' => 'Select designation',
 			'role_id.required' => 'Select role',
 			'employee_code.required' => 'Enter employee code',
@@ -215,9 +215,9 @@ class EmployeesController extends Controller
 	{
 
 		 $rules = [
-        'plant_id' => 'required',
-        'department_id' => 'required',
-        'projects_id' => 'required',
+        // 'plant_id' => 'required',
+        // 'department_id' => 'required',
+        // 'projects_id' => 'required',
         'designation_id' => 'required',
         'role_id' => 'required',
         'employee_code'      => 'required|string|max:50',
@@ -245,9 +245,9 @@ class EmployeesController extends Controller
     }
 
     $messages = [
-        'plant_id.required' => 'Select plant',
-        'department_id.required' => 'Select department',
-        'projects_id.required' => 'Select projects',
+        // 'plant_id.required' => 'Select plant',
+        // 'department_id.required' => 'Select department',
+        // 'projects_id.required' => 'Select projects',
         'designation_id.required' => 'Select designation',
         'role_id.required' => 'Select role',
         'employee_code.required' => 'Enter employee code',
@@ -339,16 +339,56 @@ class EmployeesController extends Controller
 	}
 
 
-	public function delete(Request $request)
-	{
-		$result = $this->service->delete($request);
+	// public function delete(Request $request)
+	// {
+	// 	$result = $this->service->delete($request);
 
-		if ($result) {
-			return response()->json(['status' => true, 'message' => 'Employee deleted successfully']);
-		} else {
-			return response()->json(['status' => false, 'message' => 'Failed to delete employee'], 500);
-		}
-	}
+	// 	if ($result) {
+	// 		return response()->json(['status' => true, 'message' => 'Employee deleted successfully']);
+	// 	} else {
+	// 		return response()->json(['status' => false, 'message' => 'Failed to delete employee'], 500);
+	// 	}
+	// }
+
+public function delete(Request $request)
+{
+    try {
+        $request->validate(['id' => 'required']);
+
+        $id = base64_decode($request->id);
+        $employee = Employees::find($id);
+
+        if (!$employee) {
+            return response()->json(['status' => false, 'message' => 'Employee not found'], 404);
+        }
+
+        // Check plant assignment
+        $assignmentCount = \DB::table('employee_plant_assignments')
+            ->where('employee_id', $id)
+            ->where('is_deleted', 0)
+            ->count();
+
+        if ($assignmentCount > 0) {
+            return response()->json([
+                'status' => false, 
+                'message' => "Cannot delete '{$employee->employee_name}' because they are assigned to a plant."
+            ]);
+        }
+
+        // Soft delete
+        $employee->is_deleted = 1;
+        $employee->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => "Employee '{$employee->employee_name}' deleted successfully."
+        ]);
+    } catch (\Exception $e) {
+        return response()->json(['status' => false, 'message' => $e->getMessage()], 400);
+    }
+}
+
+
 
 	
 

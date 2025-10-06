@@ -177,7 +177,7 @@ class PlantMasterController extends Controller
 			}
 
 			// ✅ Check if employees exist for this plant
-			$employeeExists = \DB::table('employees')
+			$employeeExists = \DB::table('employee_plant_assignments')
 				->where('plant_id', $id)
 				->where('is_deleted', 0)
 				->exists();

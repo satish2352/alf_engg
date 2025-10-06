@@ -28,16 +28,30 @@
          <li> <a href="{{ route('departments.list') }}"> <i class="mdi mdi-office-building"></i><span>
                      Departments</span></a>
          </li>
+         <li>
+            <a href="{{ route('financial-year.list') }}">
+                <i class="mdi mdi-calendar"></i>
+                <span>Financial Years</span>
+            </a>
+        </li>
         <li> 
             <a href="{{ route('employee-types.list') }}"><i class="mdi mdi-account-circle"></i><span>Employee Types</span></a>
         </li>
          <li> <a href="{{ route('employees.list') }}"> <i class="mdi mdi-account-group"></i><span>
                      Employees</span></a>
          </li>
-
-         <li> <a href="{{ route('logout') }}"> <i class="mdi mdi-logout"></i><span>Logout
-                 </span></a>
+                <li> <a href="{{ route('employee.assignments.list') }}"> 
+                    <i class="mdi mdi-account-switch"></i><span>Assign Plant</span>
+                </a></li>
          </li>
+
+        <li> 
+            @if(session('role') == 'admin')
+                <a href="{{ route('admin.logout') }}"> <i class="mdi mdi-logout"></i><span>Logout</span></a>
+            @else
+                <a href="{{ route('emp.logout') }}"> <i class="mdi mdi-logout"></i><span>Logout</span></a>
+            @endif
+        </li>
 
      </ul>
  </nav>

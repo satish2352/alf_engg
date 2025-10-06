@@ -21,7 +21,7 @@
                         @method('PUT')
 
                         {{-- Plant --}}
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                             <label for="plant_id">Select Plant <span class="text-danger">*</span></label>
                             <select name="plant_id" id="plant_id" class="form-control">
                                 <option value="">Select Plant</option>
@@ -35,10 +35,10 @@
                             @error('plant_id')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
-                        </div>
+                        </div> --}}
 
                         {{-- Department --}}
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                             <label for="department_id">Select Department <span class="text-danger">*</span></label>
                             <select id="department_id" name="department_id[]" multiple="multiple" class="form-control">
                                 @foreach ($departments as $dept)
@@ -51,10 +51,10 @@
                             @error('department_id')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
-                        </div>
+                        </div> --}}
 
                         {{-- Projects --}}
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                             <label for="projects_id">Select Project <span class="text-danger">*</span></label>
                             <select id="projects_id" name="projects_id[]" multiple="multiple" class="form-control">
                                 @foreach ($projects as $proj)
@@ -65,6 +65,41 @@
                                 @endforeach
                             </select>
                             @error('projects_id')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div> --}}
+
+                        <div class="form-group">
+                            <label>Employee Name <span class="text-danger">*</span></label>
+                            <input type="text" name="employee_name" class="form-control"
+                                value="{{ $employee->employee_name }}">
+                            @error('employee_name')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label for="employee_type">Employee Type <span class="text-danger">*</span></label>
+                            <select name="employee_type" id="employee_type" class="form-control">
+                                <option value="">Select Type</option>
+                                @foreach ($employeeType as $type)
+                                    <option value="{{ $type->id }}"
+                                        {{ (isset($employee) && $employee->employee_type == $type->id) || old('employee_type') == $type->id ? 'selected' : '' }}>
+                                        {{ $type->type_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('employee_type')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        {{-- Other Fields --}}
+                        <div class="form-group">
+                            <label>Employee Code <span class="text-danger">*</span></label>
+                            <input type="text" name="employee_code" class="form-control"
+                                value="{{ $employee->employee_code }}">
+                            @error('employee_code')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
@@ -117,42 +152,6 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div> --}}
-
-                        <div class="form-group">
-                            <label for="employee_type">Employee Type <span class="text-danger">*</span></label>
-                            <select name="employee_type" id="employee_type" class="form-control">
-                                <option value="">Select Type</option>
-                                @foreach ($employeeType as $type)
-                                    <option value="{{ $type->id }}"
-                                        {{ (isset($employee) && $employee->employee_type == $type->id) || old('employee_type') == $type->id ? 'selected' : '' }}>
-                                        {{ $type->type_name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('employee_type')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-
-                        {{-- Other Fields --}}
-                        <div class="form-group">
-                            <label>Employee Code <span class="text-danger">*</span></label>
-                            <input type="text" name="employee_code" class="form-control"
-                                value="{{ $employee->employee_code }}">
-                            @error('employee_code')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <div class="form-group">
-                            <label>Employee Name <span class="text-danger">*</span></label>
-                            <input type="text" name="employee_name" class="form-control"
-                                value="{{ $employee->employee_name }}">
-                            @error('employee_name')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
 
                         <div class="form-group">
                             <label>Email</label>
@@ -209,7 +208,7 @@
 
                         <div class="form-group d-flex justify-content-end">
                             <a href="{{ route('employees.list') }}" class="btn btn-secondary mr-2">Cancel</a>
-                            <button type="submit" class="btn btn-success">Update</button>
+                            <button type="submit" class="btn btn-success btn-add">Update</button>
                         </div>
 
                     </form>

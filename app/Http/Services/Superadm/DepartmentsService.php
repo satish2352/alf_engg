@@ -109,7 +109,7 @@ class DepartmentsService
         $departmentName = $department->department_name ?? 'This department';
 
         // Check if any employee uses this department
-        $employeeCount = \DB::table('employees')
+        $employeeCount = \DB::table('employee_plant_assignments')
             ->where('department_id', $id) // ✅ correct column
             ->where('is_deleted', 0)
             ->count();

@@ -106,7 +106,7 @@ class ProjectsService
         $projectName = $project->project_name ?? 'This project';
 
         // Check if any employee uses this project
-        $employeeCount = \DB::table('employees')
+        $employeeCount = \DB::table('employee_plant_assignments')
             ->where('projects_id', $id) // ✅ updated here
             ->where('is_deleted', 0)
             ->count();

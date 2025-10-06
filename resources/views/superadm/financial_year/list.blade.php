@@ -7,15 +7,19 @@
                 <div class="card-body">
 
                     <div class="mb-3 d-flex justify-content-end">
-                        <a href="{{ route('employee-types.create') }}" class="btn btn-warning btn-add">Add Employee Type</a>
+                        <a href="{{ route('financial-year.create') }}" class="btn btn-warning btn-add">Add Financial Year</a>
                     </div>
 
                     @if (session('success'))
-                        <div class="alert alert-success alert-dismissible fade show" id="success-alert">{{ session('success') }}</div>
+                        <div class="alert alert-success alert-dismissible fade show" id="success-alert">
+                            {{ session('success') }}
+                        </div>
                     @endif
 
                     @if (session('error'))
-                        <div class="alert alert-danger alert-dismissible fade show" id="error-alert">{{ session('error') }}</div>
+                        <div class="alert alert-danger alert-dismissible fade show" id="error-alert">
+                            {{ session('error') }}
+                        </div>
                     @endif
 
                     <div class="table-responsive">
@@ -23,41 +27,39 @@
                             <thead>
                                 <tr>
                                     <th>Sr.No.</th>
-                                    <th>Employee Type Name</th>
-                                    <th>Description</th>
+                                    <th>Financial Year</th>
                                     <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($employeeTypes as $key => $type)
+                                @foreach ($years as $key => $year)
                                     <tr>
                                         <td>{{ $key + 1 }}</td>
-                                        <td>{{ $type->type_name }}</td>
-                                        <td>{{ $type->description }}</td>
+                                        <td>{{ $year->year }}</td>
                                         <td>
-                                            <form action="{{ route('employee-types.updatestatus') }}" method="POST" class="d-inline-block">
+                                            <form action="{{ route('financial-year.updatestatus') }}" method="POST" class="d-inline-block">
                                                 @csrf
                                                 <label class="switch">
                                                     <input type="checkbox" class="toggle-status"
-                                                        data-id="{{ base64_encode($type->id) }}"
-                                                        {{ $type->is_active == '1' ? 'checked' : '' }}>
+                                                        data-id="{{ base64_encode($year->id) }}"
+                                                        {{ $year->is_active == '1' ? 'checked' : '' }}>
                                                     <span class="slider"></span>
                                                 </label>
-                                                <input type="hidden" name="id" value="{{ base64_encode($type->id) }}">
+                                                <input type="hidden" name="id" value="{{ base64_encode($year->id) }}">
                                             </form>
                                         </td>
                                         <td>
-                                            <a href="{{ route('employee-types.edit', base64_encode($type->id)) }}" 
+                                            <a href="{{ route('financial-year.edit', base64_encode($year->id)) }}" 
                                                class="btn btn-sm btn-primary" 
                                                data-bs-toggle="tooltip" 
                                                data-bs-placement="top" 
                                                title="Edit">
                                                <i class="mdi mdi-square-edit-outline icon-medium"></i>
                                             </a>
-                                            <form action="{{ route('employee-types.delete') }}" method="POST" class="d-inline-block delete-form">
+                                            <form action="{{ route('financial-year.delete') }}" method="POST" class="d-inline-block delete-form">
                                                 @csrf
-                                                <input type="hidden" name="id" value="{{ base64_encode($type->id) }}">
+                                                <input type="hidden" name="id" value="{{ base64_encode($year->id) }}">
                                                 <button type="button" class="btn btn-sm btn-danger delete-btn" 
                                                         data-bs-toggle="tooltip" 
                                                         data-bs-placement="top" 
@@ -97,9 +99,8 @@
             cancelButtonText: "No, cancel"
         }).then((result) => {
             if(result.isConfirmed){
-                // AJAX request to update status
                 $.ajax({
-                    url: "{{ route('employee-types.updatestatus') }}",
+                    url: "{{ route('financial-year.updatestatus') }}",
                     type: "POST",
                     data: {
                         _token: "{{ csrf_token() }}",
@@ -108,25 +109,21 @@
                     },
                     success: function(res) {
                         if(res.status) {
-                            Swal.fire("Success!", res.message, "success");
+                            Swal.fire("Success!", "Status updated", "success");
                         } else {
-                            Swal.fire("Error!", res.message, "error");
-                            // revert checkbox state
+                            Swal.fire("Error!", "Something went wrong", "error");
                             checkbox.prop("checked", !checkbox.is(":checked"));
                         }
                     },
-                    error: function(xhr) {
-                        Swal.fire("Error!", xhr.responseJSON?.message || "Something went wrong", "error");
+                    error: function() {
+                        Swal.fire("Error!", "Something went wrong", "error");
                         checkbox.prop("checked", !checkbox.is(":checked"));
                     }
                 });
             } else {
-                // revert checkbox if canceled
                 checkbox.prop("checked", !checkbox.is(":checked"));
             }
         });
     });
     </script>
-
-
 @endsection

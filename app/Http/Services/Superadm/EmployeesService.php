@@ -31,9 +31,9 @@ public function list($search = null)
     {
         try {
             $data = [
-                'plant_id' => $req->input('plant_id'),
-                'department_id' => implode(",", $req->input('department_id')),
-                'projects_id' => implode(",", $req->input('projects_id')),
+                // 'plant_id' => $req->input('plant_id'),
+                // 'department_id' => implode(",", $req->input('department_id')),
+                // 'projects_id' => implode(",", $req->input('projects_id')),
                 'designation_id' => $req->input('designation_id'),
                 'role_id' => $req->input('role_id'),
                 'employee_code' => $req->input('employee_code'),
@@ -73,9 +73,9 @@ public function list($search = null)
         // dd($req);
         try {
             $data = [
-                'plant_id' => $req->input('plant_id'),
-                'department_id' => implode(",", $req->input('department_id')),
-                'projects_id' => implode(",", $req->input('projects_id')),
+                // 'plant_id' => $req->input('plant_id'),
+                // 'department_id' => implode(",", $req->input('department_id')),
+                // 'projects_id' => implode(",", $req->input('projects_id')),
                 'designation_id' => $req->input('designation_id'),
                 'role_id' => $req->input('role_id'),
                 'employee_code' => $req->input('employee_code'),

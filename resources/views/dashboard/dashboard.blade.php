@@ -17,7 +17,7 @@
                                     <div class="card-body">
                                         <div class="d-flex flex-row">
                                             <div
-                                                class="round round-lg text-white d-inline-block text-center rounded-circle bg-info">
+                                                class="round round-lg text-white d-inline-block text-center rounded-circle bg-dashboard-info">
                                               <i class="mdi mdi-account-key mdi-36px icon-padding"></i>
                                             </div>
                                             <div class="ml-2 align-self-center">
@@ -38,7 +38,7 @@
                                     <div class="card-body">
                                         <div class="d-flex flex-row">
                                             <div
-                                                class="round round-lg text-white d-inline-block text-center rounded-circle bg-info">
+                                                class="round round-lg text-white d-inline-block text-center rounded-circle bg-dashboard-info">
                                                 <i class="mdi mdi-id-card mdi-36px icon-padding"></i>
                                             </div>
                                             <div class="ml-2 align-self-center">
@@ -59,7 +59,7 @@
                                     <div class="card-body">
                                         <div class="d-flex flex-row">
                                             <div
-                                                class="round round-lg text-white d-inline-block text-center rounded-circle bg-info">
+                                                class="round round-lg text-white d-inline-block text-center rounded-circle bg-dashboard-info">
                                                <i class="mdi mdi-factory mdi-36px icon-padding"></i>
                                             </div>
                                             <div class="ml-2 align-self-center">
@@ -81,7 +81,7 @@
                                     <div class="card-body">
                                         <div class="d-flex flex-row">
                                             <div
-                                                class="round round-lg text-white d-inline-block text-center rounded-circle bg-info">
+                                                class="round round-lg text-white d-inline-block text-center rounded-circle bg-dashboard-info">
                                                 <i class="mdi mdi-clipboard-text mdi-36px icon-padding"></i>
                                             </div>
                                             <div class="ml-2 align-self-center">
@@ -103,7 +103,7 @@
                                     <div class="card-body">
                                         <div class="d-flex flex-row">
                                             <div
-                                                class="round round-lg text-white d-inline-block text-center rounded-circle bg-info">
+                                                class="round round-lg text-white d-inline-block text-center rounded-circle bg-dashboard-info">
                                                <i class="mdi mdi-domain mdi-36px icon-padding"></i>
                                             </div>
                                             <div class="ml-2 align-self-center">
@@ -125,7 +125,7 @@
                                     <div class="card-body">
                                         <div class="d-flex flex-row">
                                             <div
-                                                class="round round-lg text-white d-inline-block text-center rounded-circle bg-info">
+                                                class="round round-lg text-white d-inline-block text-center rounded-circle bg-dashboard-info">
                                                 <i class="mdi mdi-account-group mdi-36px icon-padding"></i>
                                             </div>
                                             <div class="ml-2 align-self-center">
@@ -145,12 +145,32 @@
                                 <div class="card shadow-sm h-100">
                                     <div class="card-body">
                                         <div class="d-flex flex-row">
-                                            <div class="round round-lg text-white d-inline-block text-center rounded-circle bg-info">
+                                            <div class="round round-lg text-white d-inline-block text-center rounded-circle bg-dashboard-info">
                                                 <i class="mdi mdi-account-tie mdi-36px icon-padding"></i>
                                             </div>
                                             <div class="ml-2 align-self-center">
                                                 <h3 class="mb-0 font-weight-light">
                                                     Employee Types <strong>{{ $allEmployeeTypes }}</strong>
+                                                </h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- Financial Years -->
+                        <div class="col-lg-3 col-md-6 mb-4">
+                            <a href="{{ route('financial-year.list') }}" class="text-decoration-none text-dark">
+                                <div class="card shadow-sm h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex flex-row">
+                                            <div class="round round-lg text-white d-inline-block text-center rounded-circle bg-dashboard-info">
+                                                <i class="mdi mdi-account-tie mdi-36px icon-padding"></i>
+                                            </div>
+                                            <div class="ml-2 align-self-center">
+                                                <h3 class="mb-0 font-weight-light">
+                                                    Financial Years <strong>{{ $allfinancialyears }}</strong>
                                                 </h3>
                                             </div>
                                         </div>

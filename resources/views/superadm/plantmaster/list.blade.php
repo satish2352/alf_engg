@@ -7,7 +7,7 @@
                 <div class="card-body">
 
                     <div class="mb-3 d-flex justify-content-end">
-                        <a href="{{ route('plantmaster.create') }}" class="btn btn-warning">Add Plant Details</a>
+                        <a href="{{ route('plantmaster.create') }}" class="btn btn-warning btn-add">Add Plant Details</a>
                     </div>
 
                     @if (session('success'))

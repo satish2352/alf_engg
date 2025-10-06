@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('employees', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('plant_id')->nullable();
-            $table->string('department_id')->nullable();
-            $table->string('projects_id')->nullable();
+            // $table->string('plant_id')->nullable();
+            // $table->string('department_id')->nullable();
+            // $table->string('projects_id')->nullable();
             $table->string('designation_id')->nullable();
             $table->string('role_id');
             $table->string('employee_code')->nullable();

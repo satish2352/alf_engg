@@ -20,14 +20,14 @@ class LoginController extends Controller
    {
       return view('superadm.login');
    }
-public function validateSuperLogin(Request $req)
+    public function validateSuperLogin(Request $req)
     {
         $req->validate([
-            'superemail' => 'required|email',
+            'superemail' => 'required|string',
             'superpassword' => 'required',
             'g-recaptcha-response' => 'required',
         ], [
-            'superemail.required' => 'Enter email address',
+            'superemail.required' => 'Enter user name',
             'superemail.email' => 'Enter a proper email address',
             'superpassword.required' => 'Enter password',
             'g-recaptcha-response.required' => 'Please verify that you are not a robot',
@@ -49,31 +49,27 @@ public function validateSuperLogin(Request $req)
         $uname = $req->input('superemail');
         $pass = $req->input('superpassword');
 
-        $result = Employees::where('employee_user_name', $uname)
-            ->where('is_deleted', 0)
-            ->first();
+        $user = Employees::where('employee_user_name', $uname)
+                         ->where('is_deleted', 0)
+                         ->first();
 
-        if (!$result) {
-            return redirect()->back()->with('error', 'User not found, contact admin');
+        if (!$user) return redirect()->back()->with('error', 'User not found, contact admin');
+        if ($user->is_active == 0) return redirect()->back()->with('error', 'User account is deactivated');
+
+        if (!Hash::check($pass, $user->employee_password)) {
+            return redirect()->back()->with('error', 'User credentials not matching');
         }
 
-        if ($result->is_active == 0) {
-            return redirect()->back()->with('error', 'User account is deactivated. Please contact admin.');
-        }
+        // ✅ Set session
+        Session::put('user_id', $user->id);
+        Session::put('role_id', $user->role_id);
+        // Session::put('role', $user->role_id == 0 ? 'admin' : 'notadmin');
+        Session::put('role', $user->role_id == 0 ? 'admin' : 'employee');
+        Session::put('email_id', $user->employee_email);
+        Session::put('department_id', explode(",", $user->department_id));
+        Session::put('projects_id', explode(",", $user->projects_id));
 
-        if (!Hash::check($pass, $result->employee_password)) {
-            return redirect()->back()->with('error', 'User credentials not matching with records');
-        }
-
-        // Set session
-        Session::put('user_id', $result->id);
-        Session::put('role_id', $result->role_id);
-        Session::put('role', $result->role_id == 0 ? 'admin' : 'notadmin');
-        Session::put('email_id', $result->employee_email);
-        Session::put('department_id', explode(",", $result->department_id));
-        Session::put('projects_id', explode(",", $result->projects_id));
-
-        return $result->role_id == 0 ? redirect('dashboard') : redirect('dashboard-emp');
+        return $user->role_id == 0 ? redirect('dashboard') : redirect('dashboard-emp');
     }
    // public function validateSuperLogin(Request $req)
    // {
@@ -128,10 +124,25 @@ public function validateSuperLogin(Request $req)
    //    );
    // }
 
-   public function logOut(Request $req)
-   {
-      $req->session()->flush();
-      return redirect('login');
-   }
+//    public function logOut(Request $req)
+//    {
+//       $req->session()->flush();
+//       return redirect('login');
+//    }
+
+public function logOut(Request $req)
+{
+    $role = $req->session()->get('role'); // should now work
+    $req->session()->flush();
+
+    if ($role === 'admin') {
+        return redirect()->route('login'); // admin login page
+    } else {
+        return redirect()->route('emp.login'); // employee login page
+    }
+}
+
+
+
 
 }

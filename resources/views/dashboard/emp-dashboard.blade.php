@@ -11,12 +11,14 @@
                         @foreach ($projects as $project)
                             <div class="col-lg-4 col-md-6 mb-4">
 
-                                <a href="{{ $project->project_url }}?plant_no={{$project->plant_id}}&emp_code={{$project->employee_code}}" class="text-decoration-none text-dark">
+                                {{-- <a href="{{ $project->project_url }}?plant_no={{$project->plant_id}}&emp_code={{ session('emp_code') }}&fy_id={{ session('emp_financial_year_id') }}"> --}}
+                                <a href="{{ $project->project_url }}?plant_no={{ $project->plant_id }}&emp_code={{ $project->emp_code }}&fy={{ $project->financialYear->year }}">
+
                                     <div class="card shadow-sm h-100">
                                         <div class="card-body">
                                             <div class="d-flex flex-row">
                                                 <div
-                                                    class="round round-lg text-white d-inline-block text-center rounded-circle bg-info">
+                                                    class="round round-lg text-white d-inline-block text-center rounded-circle bg-dashboard-info">
                                                     <i class="mdi mdi-id-card mdi-36px icon-padding"></i>
                                                 </div>
                                                 <div class="ml-2 align-self-center">

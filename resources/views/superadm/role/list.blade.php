@@ -7,7 +7,7 @@
                 <div class="card-body">
 
                     <div class="mb-3 d-flex justify-content-end">
-                        <a href="{{ route('roles.create') }}" class="btn btn-warning">Add Role</a>
+                        <a href="{{ route('roles.create') }}" class="btn btn-add">Add Role</a>
                     </div>
 
                     @if (session('success'))

@@ -42,7 +42,7 @@
 
                         <div class="form-group d-flex justify-content-end">
                             <a href="{{ route('employee-types.list') }}" class="btn btn-secondary mr-2">Cancel</a>
-                            <button type="submit" class="btn btn-success">Update</button>
+                            <button type="submit" class="btn btn-success btn-add">Update</button>
                         </div>
                     </form>
                 </div>
