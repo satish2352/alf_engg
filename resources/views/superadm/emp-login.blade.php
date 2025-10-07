@@ -130,6 +130,16 @@ select.form-control {
                             @enderror
                         </div>
 
+                        <label style="color:#fff">Select Plant</label>
+                        <div class="mb-3">
+                            <select id="plant_id" name="plant_id" class="form-control">
+                                <option value="">-- Select Plant --</option>
+                            </select>
+                            @error('plant_id')
+                                <span class="text-danger" style="font-size: 14px;">{{ $message }}</span>
+                            @enderror
+                        </div>
+
                         <label style="color:#fff">Select Financial Year</label>
                         <div class="mb-3">
                             <select id="financial_year_id" name="financial_year_id" class="form-control">
@@ -139,16 +149,6 @@ select.form-control {
                                 @endforeach
                             </select>
                             @error('financial_year_id')
-                                <span class="text-danger" style="font-size: 14px;">{{ $message }}</span>
-                            @enderror
-                        </div>
-
-                        <label style="color:#fff">Select Plant</label>
-                        <div class="mb-3">
-                            <select id="plant_id" name="plant_id" class="form-control">
-                                <option value="">-- Select Plant --</option>
-                            </select>
-                            @error('plant_id')
                                 <span class="text-danger" style="font-size: 14px;">{{ $message }}</span>
                             @enderror
                         </div>
