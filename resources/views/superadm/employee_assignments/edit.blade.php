@@ -105,7 +105,7 @@ $oldDepartments = is_array($oldDepartments) ? $oldDepartments : [];
 
                     {{-- Status --}}
                     <div class="form-group">
-                        <label>Status</label>
+                        <label>Status <span class="text-danger">*</span></label>
                         <select name="is_active" class="form-control">
                             <option value="1" {{ old('is_active', $assignment->is_active) == 1 ? 'selected' : '' }}>Active</option>
                             <option value="0" {{ old('is_active', $assignment->is_active) == 0 ? 'selected' : '' }}>Inactive</option>
@@ -143,7 +143,6 @@ $(document).ready(function () {
         buttonWidth: '100%'
     });
 
-    // Function to load projects based on plant
     function loadProjects(plantId, selectedProjects = []) {
         return $.ajax({
             url: "{{ route('projects.list-ajax') }}",
@@ -157,11 +156,14 @@ $(document).ready(function () {
                     options += `<option value="${p.id}" ${selected}>${p.project_name}</option>`;
                 });
                 $('#projects_id').html(options).multiselect('rebuild');
+
+                if(res.projects.length === 0){
+                    Swal.fire({icon:'warning', title:'Projects Missing', text:'Please add projects before assigning.'});
+                }
             }
         });
     }
 
-    // Function to load departments based on plant
     function loadDepartments(plantId, selectedDepartments = []) {
         return $.ajax({
             url: "{{ route('departments.list-ajax') }}",
@@ -175,39 +177,42 @@ $(document).ready(function () {
                     options += `<option value="${d.id}" ${selected}>${d.department_name}</option>`;
                 });
                 $('#department_id').html(options).multiselect('rebuild');
+
+                if(res.department.length === 0){
+                    Swal.fire({icon:'warning', title:'Departments Missing', text:'Please add departments before assigning.'});
+                }
             }
         });
     }
 
-    // On page load, if plant is already selected (editing case)
-    let initialPlantId = $('#plant_id').val();
-    if(initialPlantId) {
-        let selectedProjects = {!! json_encode($oldProjects) !!};
-        let selectedDepartments = {!! json_encode($oldDepartments) !!};
-        loadProjects(initialPlantId, selectedProjects);
-        loadDepartments(initialPlantId, selectedDepartments);
+    // On page load: check for old values or existing assignment
+    let initialPlant = $('#plant_id').val();
+    let selectedProjects = {!! json_encode($oldProjects) !!};
+    let selectedDepartments = {!! json_encode($oldDepartments) !!};
+
+    if(initialPlant){
+        $('#projects_id, #department_id').prop('disabled', false);
+        loadProjects(initialPlant, selectedProjects);
+        loadDepartments(initialPlant, selectedDepartments);
     } else {
-        // Disable selects if no plant selected
         $('#projects_id, #department_id').prop('disabled', true);
     }
 
-    // When plant changes
+    // On plant change
     $('#plant_id').on('change', function () {
         let plantId = $(this).val();
-
         if(!plantId){
             $('#projects_id, #department_id').empty().multiselect('rebuild').prop('disabled', true);
             return;
         }
-
         $('#projects_id, #department_id').prop('disabled', false);
-
         loadProjects(plantId);
         loadDepartments(plantId);
     });
 
 });
 </script>
+
 
 
 {{-- <script>

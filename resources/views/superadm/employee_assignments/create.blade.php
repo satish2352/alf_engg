@@ -17,7 +17,7 @@
 
                 <!-- Employee -->
                 <div class="form-group">
-                    <label>Employee</label>
+                    <label>Employee <span class="text-danger">*</span></label>
                     <select name="employee_id" class="form-control">
                         <option value="">Select Employee</option>
                         @foreach($employees as $emp)
@@ -33,7 +33,7 @@
 
                 <!-- Plant -->
                 <div class="form-group">
-                    <label>Plant</label>
+                    <label>Plant <span class="text-danger">*</span></label>
                     <select name="plant_id" id="plant_id" class="form-control">
                         <option value="">Select Plant</option>
                         @foreach($plants as $plant)
@@ -49,7 +49,7 @@
 
                 <!-- Projects (multi-select) -->
                 <div class="form-group">
-                    <label>Projects</label>
+                    <label>Projects <span class="text-danger">*</span></label>
                     <select id="projects_id" name="projects_id[]" multiple class="form-control">
                         @foreach($projects as $project)
                             <option value="{{ $project->id }}" {{ in_array($project->id, old('projects_id', [])) ? 'selected' : '' }}>
@@ -64,7 +64,7 @@
 
                 <!-- Departments (multi-select) -->
                 <div class="form-group">
-                    <label>Departments</label>
+                    <label>Departments <span class="text-danger">*</span></label>
                     <select id="department_id" name="department_id[]" multiple class="form-control">
                         @foreach($departments as $dept)
                             <option value="{{ $dept->id }}" {{ in_array($dept->id, old('department_id', [])) ? 'selected' : '' }}>
@@ -181,6 +181,40 @@ $(document).ready(function () {
             }
         });
     });
+
+    $(document).ready(function () {
+
+    function setOldSelections(selectId, oldValues) {
+        selectId.val(oldValues).multiselect('rebuild');
+    }
+
+    let oldPlant = "{{ old('plant_id') }}";
+    let oldProjects = @json(old('projects_id', []));
+    let oldDepartments = @json(old('department_id', []));
+
+    if(oldPlant) {
+        $('#department_id, #projects_id').prop('disabled', false);
+
+        $.when(loadProjects(oldPlant), loadDepartments(oldPlant)).done(function(projectResp, deptResp) {
+            let projects = projectResp[0].projects || [];
+            let departments = deptResp[0].department || [];
+
+            $('#projects_id').empty();
+            $('#department_id').empty();
+
+            projects.forEach(p => $('#projects_id').append(`<option value="${p.id}">${p.project_name}</option>`));
+            departments.forEach(d => $('#department_id').append(`<option value="${d.id}">${d.department_name}</option>`));
+
+            $('#projects_id, #department_id').multiselect('rebuild');
+
+            // Set old selected values
+            setOldSelections($('#projects_id'), oldProjects);
+            setOldSelections($('#department_id'), oldDepartments);
+        });
+    }
+
+});
+
 
 });
 </script>
