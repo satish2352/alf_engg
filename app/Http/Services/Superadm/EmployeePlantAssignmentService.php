@@ -33,8 +33,8 @@ class EmployeePlantAssignmentService
                 'plant_id' => $req->plant_id,
                 // 'department_id' => implode(',', $req->department_id ?? []),
                 // 'projects_id' => implode(',', $req->projects_id ?? []),
-    'department_id' => json_encode($req->department_id ?? []),
-    'projects_id'   => json_encode($req->projects_id ?? []),
+'department_id' => $req->department_id ?? [],
+'projects_id'   => $req->projects_id ?? [],
                 'is_active' => 1,
                 'is_deleted' => 0
             ];
@@ -58,8 +58,8 @@ public function update($req, $id)
             'plant_id' => $req->plant_id,
             // 'department_id' => implode(',', $req->department_id ?? []),
             // 'projects_id' => implode(',', $req->projects_id ?? []),
-    'department_id' => json_encode($req->department_id ?? []),
-    'projects_id'   => json_encode($req->projects_id ?? []),
+'department_id' => $req->department_id ?? [],
+'projects_id'   => $req->projects_id ?? [],
             'is_active' => $req->is_active, // ✅ allow status update
         ];
         return $this->repo->update($id, $data);

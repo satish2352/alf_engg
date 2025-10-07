@@ -25,29 +25,59 @@ class PlantMasterService
         }
     }
 
-  public function save($req)
+//   public function save($req)
+// {
+//     try {
+//         $data = [
+//             'plant_code'       => $req->input('plant_code'),
+//             'plant_name'       => $req->input('plant_name'),
+//             'city'             => $req->input('city'),
+//         ];
+
+//         if ($req->filled('address')) {
+//             $data['address'] = $req->input('address');
+//         }
+
+//         if ($req->filled('plant_short_name')) {
+//             $data['plant_short_name'] = $req->input('plant_short_name');
+//         }
+
+//         return $this->repo->save($data);
+//     } catch (\Exception $e) {
+//         Log::error("Plant Service save error: " . $e->getMessage());
+//         return false;
+//     }
+// }
+
+public function save($data)
 {
     try {
-        $data = [
-            'plant_code'       => $req->input('plant_code'),
-            'plant_name'       => $req->input('plant_name'),
-            'city'             => $req->input('city'),
+        // Build insert data
+        $insertData = [
+            'plant_code'       => $data['plant_code'],
+            'plant_name'       => $data['plant_name'],
+            'city'             => $data['city'],
+            'created_by'       => $data['created_by'],
+            'is_active'        => $data['is_active'] ?? 1,
         ];
 
-        if ($req->filled('address')) {
-            $data['address'] = $req->input('address');
+        // Optional fields
+        if (!empty($data['address'])) {
+            $insertData['address'] = $data['address'];
         }
 
-        if ($req->filled('plant_short_name')) {
-            $data['plant_short_name'] = $req->input('plant_short_name');
+        if (!empty($data['plant_short_name'])) {
+            $insertData['plant_short_name'] = $data['plant_short_name'];
         }
 
-        return $this->repo->save($data);
+        // Save using repository
+        return $this->repo->save($insertData);
     } catch (\Exception $e) {
         Log::error("Plant Service save error: " . $e->getMessage());
         return false;
     }
 }
+
 
 
     public function edit($id)
@@ -60,17 +90,54 @@ class PlantMasterService
         }
     }
 
-    public function update($req)
-    {
-        try {
-            $id = $req->id;
-            $data = [
-                'plant_code' => $req->input('plant_code'),
-                'plant_name' => $req->input('plant_name'),
-                'city' => $req->input('city'),
-                'is_active' => $req->is_active
-            ];
-            if ($req->filled('address')) {
+    // public function update($req)
+    // {
+    //     try {
+    //         $id = $req->id;
+    //         $data = [
+    //             'plant_code' => $req->input('plant_code'),
+    //             'plant_name' => $req->input('plant_name'),
+    //             'city' => $req->input('city'),
+    //             'is_active' => $req->is_active
+    //         ];
+    //         if ($req->filled('address')) {
+    //         $data['address'] = $req->input('address');
+    //     }
+
+    //     if ($req->filled('plant_short_name')) {
+    //         $data['plant_short_name'] = $req->input('plant_short_name');
+    //     }
+
+
+    //         return $this->repo->update($data, $id);
+    //     } catch (Exception $e) {
+    //         Log::error("Plant Service update error: " . $e->getMessage());
+    //         return false;
+    //     }
+    // }
+
+public function update($req)
+{
+    try {
+        $id = $req->id;
+        $currentUser = session('employee_user_name'); // logged-in username
+
+        // Fetch existing record
+        $existing = \DB::table('plant_masters')->where('id', $id)->first();
+
+        $data = [
+            'plant_code' => $req->input('plant_code'),
+            'plant_name' => $req->input('plant_name'),
+            'city'       => $req->input('city'),
+            'is_active'  => $req->is_active,
+        ];
+
+        // ✅ Always update created_by with the latest logged-in user
+        // (if empty or already has a value — both cases)
+        $data['created_by'] = $currentUser;
+
+        // Optional fields
+        if ($req->filled('address')) {
             $data['address'] = $req->input('address');
         }
 
@@ -78,13 +145,13 @@ class PlantMasterService
             $data['plant_short_name'] = $req->input('plant_short_name');
         }
 
-
-            return $this->repo->update($data, $id);
-        } catch (Exception $e) {
-            Log::error("Plant Service update error: " . $e->getMessage());
-            return false;
-        }
+        return $this->repo->update($data, $id);
+    } catch (Exception $e) {
+        \Log::error("Plant Service update error: " . $e->getMessage());
+        return false;
     }
+}
+
 
     // public function delete($req)
     // {

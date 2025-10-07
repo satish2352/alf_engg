@@ -11,11 +11,11 @@
                 </div>
 
                 @if (session('success'))
-                    <div class="alert alert-success alert-dismissible fade show">{{ session('success') }}</div>
+                    <div class="alert alert-success alert-dismissible fade show" id="success-alert">{{ session('success') }}</div>
                 @endif
 
                 @if (session('error'))
-                    <div class="alert alert-danger alert-dismissible fade show">{{ session('error') }}</div>
+                    <div class="alert alert-danger alert-dismissible fade show" id="error-alert">{{ session('error') }}</div>
                 @endif
 
                 <div class="table-responsive">

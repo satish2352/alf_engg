@@ -66,6 +66,7 @@ class LoginController extends Controller
         // Session::put('role', $user->role_id == 0 ? 'admin' : 'notadmin');
         Session::put('role', $user->role_id == 0 ? 'admin' : 'employee');
         Session::put('email_id', $user->employee_email);
+        Session::put('employee_user_name', $user->employee_user_name);
         Session::put('department_id', explode(",", $user->department_id));
         Session::put('projects_id', explode(",", $user->projects_id));
 

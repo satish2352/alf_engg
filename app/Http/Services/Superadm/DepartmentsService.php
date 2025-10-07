@@ -35,24 +35,47 @@ class DepartmentsService
         }
     }
 
-    public function save($req)
+    // public function save($req)
+    // {
+
+    //     try {
+    //         $data = [   'plant_id' => $req->input('plant_id'), 
+    //                     'department_code' => $req->input('department_code'),
+    //                     'department_name' => $req->input('department_name'),
+    //                 ];
+
+    //                  if ($req->filled('department_short_name')) {
+    //                     $data['department_short_name'] = $req->input('department_short_name');
+    //                 }
+    //         return $this->repo->save($data);
+    //     } catch (Exception $e) {
+    //         Log::error("Department Service save error: " . $e->getMessage());
+    //         return false;
+    //     }
+    // }
+
+    public function save(array $data)
     {
-
         try {
-            $data = [   'plant_id' => $req->input('plant_id'), 
-                        'department_code' => $req->input('department_code'),
-                        'department_name' => $req->input('department_name'),
-                    ];
+            $insertData = [
+                'plant_id'        => $data['plant_id'],
+                'department_code' => $data['department_code'],
+                'department_name' => $data['department_name'],
+                'created_by'      => $data['created_by'] ?? auth()->id(),
+                'is_active'       => $data['is_active'] ?? 1,
+            ];
 
-                     if ($req->filled('department_short_name')) {
-                        $data['department_short_name'] = $req->input('department_short_name');
-                    }
-            return $this->repo->save($data);
+            if (!empty($data['department_short_name'])) {
+                $insertData['department_short_name'] = $data['department_short_name'];
+            }
+
+            return $this->repo->save($insertData);
         } catch (Exception $e) {
             Log::error("Department Service save error: " . $e->getMessage());
             return false;
         }
     }
+
 
     public function edit($id)
     {
@@ -64,27 +87,60 @@ class DepartmentsService
         }
     }
 
+    // public function update($req)
+    // {
+
+    //     try {
+    //         $id = $req->id;
+    //         $data = [
+    //             'plant_id' => $req->input('plant_id'), 
+    //             'department_code' => $req->input('department_code'),
+    //             'department_name' => $req->input('department_name'),
+    //             'is_active' => $req->is_active
+    //         ];
+    //          if ($req->filled('department_short_name')) {
+    //                     $data['department_short_name'] = $req->input('department_short_name');
+    //                 }
+
+    //         return $this->repo->update($data, $id);
+    //     } catch (Exception $e) {
+    //         Log::error("Department Service update error: " . $e->getMessage());
+    //         return false;
+    //     }
+    // }
+
     public function update($req)
-    {
+{
+    try {
+        $id = $req->id;
+        $currentUser = session('employee_user_name'); // from session
 
-        try {
-            $id = $req->id;
-            $data = [
-                'plant_id' => $req->input('plant_id'), 
-                'department_code' => $req->input('department_code'),
-                'department_name' => $req->input('department_name'),
-                'is_active' => $req->is_active
-            ];
-             if ($req->filled('department_short_name')) {
-                        $data['department_short_name'] = $req->input('department_short_name');
-                    }
+        // Fetch existing department record
+        $existing = \DB::table('departments')->where('id', $id)->first();
 
-            return $this->repo->update($data, $id);
-        } catch (Exception $e) {
-            Log::error("Department Service update error: " . $e->getMessage());
-            return false;
+        $data = [
+            'plant_id'         => $req->input('plant_id'),
+            'department_code'  => $req->input('department_code'),
+            'department_name'  => $req->input('department_name'),
+            'is_active'        => $req->is_active,
+        ];
+
+        // ✅ Always update created_by with the current logged-in user
+        // (if empty or already has value — both cases)
+        $data['created_by'] = $currentUser;
+
+        // Optional field
+        if ($req->filled('department_short_name')) {
+            $data['department_short_name'] = $req->input('department_short_name');
         }
+
+        return $this->repo->update($data, $id);
+    } catch (Exception $e) {
+        Log::error("Department Service update error: " . $e->getMessage());
+        return false;
     }
+}
+
 
     // public function delete($req)
     // {

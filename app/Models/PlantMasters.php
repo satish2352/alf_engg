@@ -8,7 +8,7 @@ class PlantMasters extends Model
 {
     public $table = 'plant_masters';
     public $timestamps = true;
-    protected $fillable = ['plant_code','plant_name','address','city','plant_short_name', 'is_active'];
+    protected $fillable = ['plant_code','plant_name','address','city','plant_short_name', 'created_by', 'is_active'];
     
     public function departments()
     {

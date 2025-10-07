@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->string('city');
             $table->string('plant_short_name')->nullable();
+            $table->string('created_by')->nullable();
             $table->boolean('is_active')->default(true);
             $table->boolean('is_deleted')->default(false);
             $table->timestamps();

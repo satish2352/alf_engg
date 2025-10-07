@@ -31,6 +31,8 @@
                                     <th>Plant Address</th>
                                     <th>Plant City</th>
                                     <th>Plant Short Name</th>
+                                    <th>Created By</th>
+                                    <th>Created Date</th>
                                     <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
@@ -44,6 +46,12 @@
                                         <td>{{ $data->address ?? '-' }}</td>
                                         <td>{{ $data->city }}</td>
                                         <td>{{ $data->plant_short_name ?? '-' }}</td>
+                                        <td>{{ $data->created_by ?? '-' }}</td>
+                                        <td>
+                                            {{ $data->created_at 
+                                                ? $data->created_at->setTimezone('Asia/Kolkata')->format('d-m-Y h:i:s A') 
+                                                : '-' }}
+                                        </td>
                                         <td>
                                             <form action="{{ route('plantmaster.updatestatus') }}" method="POST"
                                                 class="d-inline-block delete-form">

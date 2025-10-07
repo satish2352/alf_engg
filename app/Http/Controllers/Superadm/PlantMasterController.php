@@ -79,8 +79,19 @@ class PlantMasterController extends Controller
 
 
 		try {
-			$this->service->save($req);
-			return redirect()->route('plantmaster.list')->with('success', 'Plant details added successfully.');
+			// $this->service->save($req);
+			// return redirect()->route('plantmaster.list')->with('success', 'Plant details added successfully.');
+		$createdBy = session('employee_user_name'); // or whatever session key
+		$data = array_merge($req->all(), ['created_by' => $createdBy]);
+
+		$result = $this->service->save($data);
+
+		if (!$result) {
+			return redirect()->back()->withInput()->with('error', 'Failed to insert plant details.');
+		}
+
+		return redirect()->route('plantmaster.list')->with('success', 'Plant details added successfully.');
+
 		} catch (Exception $e) {
 			return redirect()->back()->withInput()->with('error', 'Something went wrong: ' . $e->getMessage());
 		}

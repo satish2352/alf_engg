@@ -30,6 +30,8 @@
                                     <th>Department Code</th>
                                     <th>Department Name</th>
                                     <th>Department Short Name</th>
+                                    <th>Created By</th>
+                                    <th>Created Date</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -42,6 +44,12 @@
                                         <td>{{ $data->department_code }}</td>
                                         <td>{{ $data->department_name }}</td>
                                         <td>{{ $data->department_short_name }}</td>
+                                        <td>{{ $data->created_by ?? '-' }}</td>
+                                        <td>
+                                            {{ $data->created_at 
+                                                ? $data->created_at->setTimezone('Asia/Kolkata')->format('d-m-Y h:i:s A') 
+                                                : '-' }}
+                                        </td>
                                         <td>
                                             <form action="{{ route('departments.updatestatus') }}" method="POST"
                                                 class="d-inline-block delete-form">

@@ -83,8 +83,19 @@ class DepartmentsController extends Controller
 		]);
 
 		try {
-			$this->service->save($req);
+			// $this->service->save($req);
+			// return redirect()->route('departments.list')->with('success', 'Department added successfully.');
+			$createdBy = session('email_id'); // or whatever session key
+			$data = array_merge($req->all(), ['created_by' => $createdBy]);
+
+			$result = $this->service->save($data);
+
+			if (!$result) {
+				return redirect()->back()->withInput()->with('error', 'Failed to insert department details.');
+			}
+
 			return redirect()->route('departments.list')->with('success', 'Department added successfully.');
+
 		} catch (Exception $e) {
 			return redirect()->back()->withInput()->with('error', 'Something went wrong: ' . $e->getMessage());
 		}
