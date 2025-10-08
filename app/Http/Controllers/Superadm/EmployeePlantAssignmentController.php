@@ -8,6 +8,7 @@ use App\Http\Services\Superadm\EmployeePlantAssignmentService;
 use App\Models\Employees;
 use App\Models\PlantMasters;
 use App\Models\Departments;
+use App\Models\EmployeePlantAssignment;
 use App\Models\Projects;
 use Illuminate\Support\Facades\Validator;
 use Exception;
@@ -192,12 +193,16 @@ class EmployeePlantAssignmentController extends Controller
         }
     }
 
-    public function export(Request $request)
+public function export()
 {
-    $search = $request->query('search');
-    $fileName = 'Employee_Assignments_' . now()->format('d-m-Y_H-i-s') . '.xlsx';
+    $assignments = EmployeePlantAssignment::where('is_deleted', 0)->get();
 
-    return Excel::download(new EmployeePlantAssignmentsExport($search), $fileName);
+    if($assignments->isEmpty()){
+        return redirect()->back()->with('error', 'No data available to export.');
+    }
+
+    return Excel::download(new EmployeePlantAssignmentExport, 'EmployeeAssignments.xlsx');
 }
+
 
 }

@@ -36,6 +36,12 @@
                     <div class="alert alert-success alert-dismissible fade show" id="success-alert">{{ session('success') }}</div>
                 @endif
 
+                @if (session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show" id="error-alert" role="alert">
+                        {{ session('error') }}
+                    </div>
+                @endif
+
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover table-striped datatables">
                         <thead>
@@ -371,15 +377,48 @@ $(document).on('click', '.delete-btn', function(){
         e.preventDefault();
 
         // Get search value from input
-        let searchValue = $('#searchInput').val();
+        // let searchValue = $('#searchInput').val();
 
-        // Construct export URL with search query
-        let url = "{{ route('employees.export') }}"; // Make sure this route exists
-        if(searchValue){
+        // // Construct export URL with search query
+        // let url = "{{ route('employees.export') }}"; // Make sure this route exists
+        // if(searchValue){
+        //     url += '?search=' + encodeURIComponent(searchValue);
+        // }
+
+                       // ✅ Get all rows from the table
+        const rows = $("table.datatables tbody tr");
+        let hasData = false;
+
+        // ✅ Loop to check if actual data rows exist
+        rows.each(function() {
+            const cellText = $(this).find("td:first").text().trim().toLowerCase();
+            if (cellText !== "no data available" && cellText !== "no matching records found" && cellText !== "no employees found" && cellText !== "") {
+                hasData = true;
+                return false; // Exit loop early if data found
+            }
+        });
+
+                // ✅ If no data rows exist, show SweetAlert warning
+        if (!hasData) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'No data available!',
+                text: 'There is no data in the table to export.',
+                confirmButtonColor: '#3085d6'
+            });
+            return false;
+        }
+
+        // ✅ If data exists → get search filter value (for filtered export)
+        let searchValue = $('.dataTables_filter input').val();
+
+        // ✅ Construct the export URL dynamically
+        let url = "{{ route('employees.export') }}";
+        if (searchValue) {
             url += '?search=' + encodeURIComponent(searchValue);
         }
 
-        window.location.href = url;
+        window.location.href = url; // Controller handles empty check
     });
 });
 

@@ -8,9 +8,8 @@
 
                 <div class="mb-3 d-flex justify-content-end">
                     <a href="{{ route('employee.assignments.create') }}" class="btn btn-warning btn-add mr-2">Assign Plants</a>
-                    <a id="exportExcelBtn" class="btn btn-warning btn-add" style="cursor: pointer;">
-                        Export Excel
-                    </a>
+                    <a href="{{ route('employee.assignments.export') }}" 
+                    class="btn btn-warning btn-export btn-add">Download Excel</a>
                 </div>
 
                 @if (session('success'))
@@ -234,17 +233,37 @@ $(document).ready(function(){
 </script>
 
 <script>
-$(document).ready(function(){
-    $('#exportExcelBtn').click(function(e){
-        e.preventDefault();
-        let searchValue = $('.dataTables_filter input').val();
-        let url = "{{ route('employee.assignments.export') }}";
-        if(searchValue){
-            url += '?search=' + encodeURIComponent(searchValue);
+$(document).on('click', '.btn-export', function(e){
+    e.preventDefault();
+    const exportUrl = $(this).attr('href');
+
+    // Get table body rows
+    const rows = $("table.datatables tbody tr");
+    let hasData = false;
+
+    rows.each(function() {
+        const cellText = $(this).find("td:first").text().trim().toLowerCase();
+        if (cellText !== "no data available" && cellText !== "no matching records found" && cellText !== "") {
+            hasData = true;
+            return false; // exit loop
         }
-        window.location.href = url;
     });
+
+    if (!hasData) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'No data available!',
+            text: 'There is no data in the table to export.',
+            confirmButtonColor: '#3085d6'
+        });
+        return false;
+    }
+
+    // ✅ Proceed with export if data exists
+    window.location.href = exportUrl;
 });
 </script>
+
+
 
 @endsection

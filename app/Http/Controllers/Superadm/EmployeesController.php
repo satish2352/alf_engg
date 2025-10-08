@@ -304,11 +304,28 @@ class EmployeesController extends Controller
     return response()->json(['employees' => $employees]);
 }
 
+// public function export(Request $request)
+// {
+//     $search = $request->get('search');
+//     return Excel::download(new EmployeesExport($search), 'employees.xlsx');
+// }
+
 public function export(Request $request)
 {
     $search = $request->get('search');
-    return Excel::download(new EmployeesExport($search), 'employees.xlsx');
+
+    // Get the filtered employees from the service
+    $employees = $this->service->list($search);
+
+    // Check if there are any records
+    if ($employees->isEmpty()) {
+        return redirect()->back()->with('error', 'No data available to export.');
+    }
+
+    // Export using EmployeesExport, pass the search/filter if needed
+    return Excel::download(new EmployeesExport($search), 'Employees.xlsx');
 }
+
 
 
 	// public function listajaxlist(Request $req)

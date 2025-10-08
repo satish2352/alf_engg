@@ -273,12 +273,20 @@ class PlantMasterController extends Controller
 
 public function export(Request $request)
 {
-    $search = $request->query('search');
+    // Fetch all plants that are not deleted
+    $plants = \DB::table('plant_masters')->where('is_deleted', 0)->get();
+
+    // Check if any data exists
+    if ($plants->isEmpty()) {
+        return redirect()->back()->with('error', 'No data available to export.');
+    }
 
     $fileName = 'plants_' . date('Y_m_d') . '.xlsx';
 
-    return Excel::download(new PlantsExport($search), $fileName);
+    // Export using the PlantsExport class
+    return Excel::download(new PlantsExport, $fileName);
 }
+
 
 
 // public function updateStatus(Request $request)

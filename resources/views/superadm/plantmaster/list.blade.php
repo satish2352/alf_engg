@@ -142,24 +142,50 @@
         });
     </script>
 
-    <script>
-    $(document).ready(function() {
-        $('#exportExcelBtn').click(function(e){
-            e.preventDefault();
+<script>
+$(document).ready(function() {
+    $('#exportExcelBtn').click(function(e){
+        e.preventDefault();
 
-            // Get search value from datatable search input
-            let searchValue = $('.dataTables_filter input').val();
+        // ✅ Get all rows from the table
+        const rows = $("table.datatables tbody tr");
+        let hasData = false;
 
-            // Redirect to export route with search query
-            let url = "{{ route('plantmaster.export') }}";
-            if(searchValue){
-                url += '?search=' + encodeURIComponent(searchValue);
+        // ✅ Loop to check if actual data rows exist
+        rows.each(function() {
+            const cellText = $(this).find("td:first").text().trim().toLowerCase();
+            if (cellText !== "no data available" && cellText !== "no matching records found" && cellText !== "") {
+                hasData = true;
+                return false; // Exit loop early if data found
             }
-
-            window.location.href = url;
         });
+
+        // ✅ If no data rows exist, show SweetAlert warning
+        if (!hasData) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'No data available!',
+                text: 'There is no data in the table to export.',
+                confirmButtonColor: '#3085d6'
+            });
+            return false;
+        }
+
+        // ✅ If data exists → get search filter value (for filtered export)
+        let searchValue = $('.dataTables_filter input').val();
+
+        // ✅ Construct the export URL dynamically
+        let url = "{{ route('plantmaster.export') }}";
+        if (searchValue) {
+            url += '?search=' + encodeURIComponent(searchValue);
+        }
+
+        // ✅ Proceed to download Excel file
+        window.location.href = url;
     });
+});
 </script>
+
 
 
 @endsection

@@ -222,9 +222,28 @@ class DepartmentsController extends Controller
 public function export(Request $request)
 {
     $search = $request->query('search');
+
+    // Fetch data manually to check if any exists
+    $query = \DB::table('departments')->where('is_deleted', 0);
+
+    if ($search) {
+        $query->where(function($q) use ($search) {
+            $q->where('department_name', 'like', "%$search%")
+              ->orWhere('department_code', 'like', "%$search%");
+        });
+    }
+
+    $departments = $query->get();
+
+    if ($departments->isEmpty()) {
+        return redirect()->back()->with('error', 'No data available to export.');
+    }
+
     $fileName = 'departments_' . date('Y_m_d') . '.xlsx';
     return Excel::download(new DepartmentsExport($search), $fileName);
 }
+
+
 
 // public function updateStatus(Request $req)
 // {
