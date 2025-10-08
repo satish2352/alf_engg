@@ -8,6 +8,8 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Validation\Rule;
 use App\Models\PlantMasters;
 use Exception;
+use App\Exports\DepartmentsExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DepartmentsController extends Controller
 {
@@ -215,6 +217,13 @@ class DepartmentsController extends Controller
     } catch (\Exception $e) {
         return response()->json(['status' => false, 'message' => $e->getMessage()], 500);
     }
+}
+
+public function export(Request $request)
+{
+    $search = $request->query('search');
+    $fileName = 'departments_' . date('Y_m_d') . '.xlsx';
+    return Excel::download(new DepartmentsExport($search), $fileName);
 }
 
 // public function updateStatus(Request $req)

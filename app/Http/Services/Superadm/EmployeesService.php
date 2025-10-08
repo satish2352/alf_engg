@@ -3,9 +3,11 @@ namespace App\Http\Services\Superadm;
 
 use Illuminate\Http\Request;
 use App\Http\Repository\Superadm\EmployeesRepository;
+use App\Models\Employees;
 use Exception;
 use Log;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class EmployeesService
 {
@@ -19,10 +21,29 @@ class EmployeesService
 public function list($search = null)
 {
     try {
-        return $this->repo->list($search);
+        $query = Employees::where('is_deleted', 0)
+            ->with(['plant', 'department', 'designation', 'role'])
+            ->orderBy('id', 'desc');
+
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('employee_name', 'like', "%{$search}%")
+                  ->orWhere('employee_code', 'like', "%{$search}%")
+                  ->orWhere('employee_email', 'like', "%{$search}%")
+                  ->orWhere('employee_user_name', 'like', "%{$search}%");
+            });
+        }
+
+        return $query->paginate(10);
+
     } catch (Exception $e) {
         Log::error("Employees Service list error: " . $e->getMessage());
-        return false;
+
+        // Return an empty paginator to avoid errors in the view
+        return new LengthAwarePaginator([], 0, 10, 1, [
+            'path' => request()->url(),
+            'query' => request()->query(),
+        ]);
     }
 }
 

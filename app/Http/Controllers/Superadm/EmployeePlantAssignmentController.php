@@ -162,7 +162,7 @@ class EmployeePlantAssignmentController extends Controller
 
             return response()->json([
                 'status'=>true,
-                'message'=> "$employeeName's assignment for $plantName plant has been deleted successfully."
+                'message'=> "$employeeName assignment for $plantName plant has been deleted successfully."
             ]);
         } catch(Exception $e) {
             return response()->json(['status'=>false,'message'=>'Error deleting assignment: '.$e->getMessage()]);

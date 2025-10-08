@@ -7,7 +7,8 @@
                 <div class="card-body">
 
                     <div class="mb-3 d-flex justify-content-end">
-                        <a href="{{ route('departments.create') }}" class="btn btn-warning btn-add">Add Department</a>
+                        <a href="{{ route('departments.create') }}" class="btn btn-warning btn-add mr-2">Add Department</a>
+                        <button id="exportExcelBtn" class="btn btn-success btn-add" style="cursor: pointer;">Export Excel</button>
                     </div>
 
                     @if (session('success'))
@@ -138,4 +139,24 @@
             });
         });
     </script>
+
+    <script>
+    $(document).ready(function() {
+        $('#exportExcelBtn').click(function(e){
+            e.preventDefault();
+
+            // Get search value from datatable search input
+            let searchValue = $('.dataTables_filter input').val();
+
+            // Redirect to export route with search query
+            let url = "{{ route('departments.export') }}";
+            if(searchValue){
+                url += '?search=' + encodeURIComponent(searchValue);
+            }
+
+            window.location.href = url;
+        });
+    });
+</script>
+
 @endsection

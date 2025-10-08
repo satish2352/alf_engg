@@ -17,7 +17,7 @@
                 @endif
 
                 <div class="table-responsive">
-                    <table class="table table-bordered table-hover table-striped datatables">
+                    <table class="table table-responsive table-bordered table-hover table-striped datatables">
                         <thead>
                             <tr>
                                 <th>Sr. No.</th>
@@ -43,10 +43,10 @@
                                 <td>{{ $data->employee_user_name }}</td>
                                 <td>{{ $data->reporting_name ?? '-' }}</td>
                                 
-                                <td>{{ $data->designation ?? '-' }}</td>
-                                <td>{{ $data->role ?? '-' }}</td>
+                                <td>{{ $data->designation->designation ?? '-' }}</td>
+                                <td>{{ $data->role->role ?? '-' }}</td>
                                 <td>
-                                    @if ($data->role != 0)
+                                    @if (!empty($data->role) && $data->role->id != 0)
                                     <label class="switch">
                                         <input type="checkbox" class="toggle-status " data-id="{{ base64_encode($data->id) }}" {{ $data->is_active ? 'checked' : '' }}>
                                         <span class="slider"></span>
@@ -56,7 +56,7 @@
                                        @endif
                                 </td>
                                 <td class="d-flex">
-                                    @if ($data->role != 0)
+                                    @if (!empty($data->role) && $data->role->id != 0)
                                         {{-- Edit Button --}}
                                         <a href="{{ route('employees.edit', base64_encode($data->id)) }}" 
                                             class="btn btn-sm btn-primary mr-1" 
@@ -160,11 +160,9 @@ function renderTable(data = [], currentPage = 1, perPage = 10) {
                 <td>${emp.employee_email}</td>
                 <td>${emp.employee_user_name}</td>
                 <td>${emp.reporting_name ?? '-'}</td>
-                <td>${emp.plant_name ?? '-'}</td>
-                <td>${emp.project_names ?? '-'}</td>
-                <td>${emp.department_names ?? '-'}</td>
-                <td>${emp.designation ?? '-'}</td>
-                <td>${emp.role ?? '-'}</td>
+                
+                <td>${emp.designation?.designation ?? '-'}</td>
+                <td>${emp.role?.role ?? '-'}</td>
 <td>
 ${(emp.role != null && parseInt(emp.role) !== 0) ? `
     <label class="switch">
@@ -257,28 +255,6 @@ ${(emp.role != null && parseInt(emp.role) !== 0) ? `
         let search = $('#searchInput').val();
         fetchEmployees(url, search);
     });
-
-    // Delete employee
-    // $(document).on('click', '.delete-btn', function(){
-    //     if(!confirm('Are you sure you want to delete this employee?')) return;
-    //     let id = $(this).data('id'); // base64 encoded
-
-    //     $.ajax({
-    //         url: '{{ route("employees.delete") }}',
-    //         type: 'POST',
-    //         data: {
-    //             _token: '{{ csrf_token() }}',
-    //             id: id
-    //         },
-    //         success: function(res){
-    //             alert(res.message);
-    //             fetchEmployees("{{ route('employees.ajax') }}", $('#searchInput').val());
-    //         },
-    //         error: function(xhr){
-    //             alert('Failed to delete employee');
-    //         }
-    //     });
-    // });
 
 $(document).on('click', '.delete-btn', function(){
     let id = $(this).data('id'); // base64 encoded

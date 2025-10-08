@@ -29,6 +29,28 @@ class Employees extends Model
         ->where('plant_masters.is_active', 1);
     }
 
+    public function plant()
+{
+    // If employees table has 'plant_id' directly
+    return $this->belongsTo(PlantMasters::class, 'plant_id', 'id');
+}
+
+public function department()
+{
+    return $this->belongsTo(Departments::class, 'department_id', 'id');
+}
+
+public function designation()
+{
+    return $this->belongsTo(Designations::class, 'designation_id', 'id');
+}
+
+public function role()
+{
+    return $this->belongsTo(Roles::class, 'role_id', 'id');
+}
+
+
 }
 
 

@@ -7,6 +7,8 @@ use App\Http\Services\Superadm\PlantMasterService;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Validation\Rule;
 use Exception;
+use App\Exports\PlantsExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PlantMasterController extends Controller
 {
@@ -268,6 +270,16 @@ class PlantMasterController extends Controller
         return response()->json(['status' => false, 'message' => 'Failed to update status: ' . $e->getMessage()], 500);
     }
 }
+
+public function export(Request $request)
+{
+    $search = $request->query('search');
+
+    $fileName = 'plants_' . date('Y_m_d') . '.xlsx';
+
+    return Excel::download(new PlantsExport($search), $fileName);
+}
+
 
 // public function updateStatus(Request $request)
 // {

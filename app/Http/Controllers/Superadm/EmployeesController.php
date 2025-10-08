@@ -123,7 +123,7 @@ class EmployeesController extends Controller
 				'string',
 				'max:100',
 				'unique:employees,employee_user_name',
-				'regex:/^(?=(?:.*\d){2,})(?=(?:.*[A-Za-z]){3,})(?=.*[^A-Za-z0-9]).+$/'
+				// 'regex:/^(?=(?:.*\d){2,})(?=(?:.*[A-Za-z]){3,})(?=.*[^A-Za-z0-9]).+$/'
 			],
 			'employee_password' => [
 				'required',
@@ -148,7 +148,7 @@ class EmployeesController extends Controller
 			'employee_email.unique'   => 'This email is already registered',
 			'employee_user_name.required' => 'Enter username',
 			'employee_user_name.unique'   => 'This username is already taken',
-			'employee_user_name.regex' => 'Username must contain at least 2 digits, 3 letters, and 1 special character',
+			// 'employee_user_name.regex' => 'Username must contain at least 2 digits, 3 letters, and 1 special character',
 			'employee_password.required' => 'Enter employee password',
 			'employee_password.min'      => 'Password must be exactly 8 characters',
 			'employee_password.max'      => 'Password must be exactly 8 characters',
@@ -247,7 +247,7 @@ class EmployeesController extends Controller
             'max:100',
             // if updating, ignore current user's username for uniqueness
             Rule::unique('employees', 'employee_user_name')->ignore($id),
-            'regex:/^(?=(?:.*\d){2,})(?=(?:.*[A-Za-z]){3,})(?=.*[^A-Za-z0-9]).+$/'
+            // 'regex:/^(?=(?:.*\d){2,})(?=(?:.*[A-Za-z]){3,})(?=.*[^A-Za-z0-9]).+$/'
         ],
     ];
 
@@ -272,7 +272,7 @@ class EmployeesController extends Controller
         'employee_email.required' => 'Enter employee email',
         'employee_email.email'    => 'Enter a valid email address',
         'employee_user_name.required' => 'Enter username',
-		'employee_user_name.regex'    => 'Username must contain at least 2 digits, 3 letters, and 1 special character',
+		// 'employee_user_name.regex'    => 'Username must contain at least 2 digits, 3 letters, and 1 special character',
         'employee_password.min'      => 'Password must be exactly 8 characters',
         'employee_password.max'      => 'Password must be exactly 8 characters',
         'employee_password.regex'    => 'Password must be exactly 8 characters and contain at least 2 digits, 5 letters, and 1 special character',

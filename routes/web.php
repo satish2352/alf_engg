@@ -95,6 +95,9 @@ Route::group(['middleware' => ['SuperAdmin']], function () {
     Route::post('/plantmaster/delete', [PlantMasterController::class, 'delete'])->name('plantmaster.delete');
     Route::post('/plantmaster/update-status', [PlantMasterController::class, 'updateStatus'])->name('plantmaster.updatestatus');
 
+    Route::get('/plantmaster/export', [PlantMasterController::class, 'export'])->name('plantmaster.export');
+
+
 
 
 
@@ -120,6 +123,9 @@ Route::group(['middleware' => ['SuperAdmin']], function () {
     Route::post('/departments/delete', [DepartmentsController::class, 'delete'])->name('departments.delete');
     Route::post('/departments/update-status', [DepartmentsController::class, 'updateStatus'])->name('departments.updatestatus');
     Route::post('/departments/list-ajax', [DepartmentsController::class, 'listajaxlist'])->name('departments.list-ajax');
+
+
+    Route::get('/departments/export', [DepartmentsController::class, 'export'])->name('departments.export');
 
 
     // employees management routes
