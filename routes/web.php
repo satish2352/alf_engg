@@ -149,6 +149,9 @@ Route::group(['middleware' => ['SuperAdmin']], function () {
     Route::post('/employee-types/delete', [EmployeeTypeController::class, 'delete'])->name('employee-types.delete');
     Route::post('/employee-types/update-status', [EmployeeTypeController::class, 'updateStatus'])->name('employee-types.updatestatus');
 
+    Route::get('employees/export', [EmployeesController::class, 'export'])->name('employees.export');
+
+
     // Financial Year routes
     Route::get('/financial-year/list', [FinancialYearController::class, 'index'])->name('financial-year.list');
     Route::get('/financial-year/add', [FinancialYearController::class, 'create'])->name('financial-year.create');
@@ -180,6 +183,9 @@ Route::group(['middleware' => ['SuperAdmin']], function () {
 
     Route::post('/employee-assignments/update-status', [EmployeePlantAssignmentController::class, 'updateStatus'])
         ->name('employee.assignments.updatestatus');
+
+    Route::get('/employee-assignments/export', [EmployeePlantAssignmentController::class, 'export'])
+    ->name('employee.assignments.export');
 
 
 

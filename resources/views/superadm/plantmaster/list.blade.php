@@ -8,7 +8,7 @@
 
                     <div class="mb-3 d-flex justify-content-end">
                         <a href="{{ route('plantmaster.create') }}" class="btn btn-warning btn-add mr-2">Add Plant Details</a>
-                        <a id="exportExcelBtn" class="btn btn-success btn-add" style="cursor: pointer;">Export Excel</a>
+                        <a id="exportExcelBtn" class="btn btn-warning btn-add" style="cursor: pointer;">Export Excel</a>
                     </div>
 
                     @if (session('success'))

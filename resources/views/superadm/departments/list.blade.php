@@ -8,7 +8,7 @@
 
                     <div class="mb-3 d-flex justify-content-end">
                         <a href="{{ route('departments.create') }}" class="btn btn-warning btn-add mr-2">Add Department</a>
-                        <button id="exportExcelBtn" class="btn btn-success btn-add" style="cursor: pointer;">Export Excel</button>
+                        <button id="exportExcelBtn" class="btn btn-warning btn-add" style="cursor: pointer;">Export Excel</button>
                     </div>
 
                     @if (session('success'))

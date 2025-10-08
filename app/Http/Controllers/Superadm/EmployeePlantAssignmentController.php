@@ -11,6 +11,8 @@ use App\Models\Departments;
 use App\Models\Projects;
 use Illuminate\Support\Facades\Validator;
 use Exception;
+use App\Exports\EmployeePlantAssignmentsExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class EmployeePlantAssignmentController extends Controller
 {
@@ -189,4 +191,13 @@ class EmployeePlantAssignmentController extends Controller
             return response()->json(['status'=>false,'message'=>'Error updating status: '.$e->getMessage()]);
         }
     }
+
+    public function export(Request $request)
+{
+    $search = $request->query('search');
+    $fileName = 'Employee_Assignments_' . now()->format('d-m-Y_H-i-s') . '.xlsx';
+
+    return Excel::download(new EmployeePlantAssignmentsExport($search), $fileName);
+}
+
 }

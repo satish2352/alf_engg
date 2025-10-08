@@ -7,7 +7,10 @@
             <div class="card-body">
 
                 <div class="mb-3 d-flex justify-content-end">
-                    <a href="{{ route('employee.assignments.create') }}" class="btn btn-warning btn-add">Assign Plants</a>
+                    <a href="{{ route('employee.assignments.create') }}" class="btn btn-warning btn-add mr-2">Assign Plants</a>
+                    <a id="exportExcelBtn" class="btn btn-warning btn-add" style="cursor: pointer;">
+                        Export Excel
+                    </a>
                 </div>
 
                 @if (session('success'))
@@ -227,6 +230,20 @@ $(document).ready(function(){
 
 
 
+});
+</script>
+
+<script>
+$(document).ready(function(){
+    $('#exportExcelBtn').click(function(e){
+        e.preventDefault();
+        let searchValue = $('.dataTables_filter input').val();
+        let url = "{{ route('employee.assignments.export') }}";
+        if(searchValue){
+            url += '?search=' + encodeURIComponent(searchValue);
+        }
+        window.location.href = url;
+    });
 });
 </script>
 

@@ -45,8 +45,10 @@ class DepartmentsExport implements FromCollection, WithHeadings, WithStyles, Wit
 
         $departments = $query->get();
 
-        return $departments->map(function($dept) {
+        $srNo = 1;
+        return $departments->map(function($dept) use (&$srNo) {
             return [
+                'Sr No'       => $srNo++,
                 'Plant Name'            => $dept->plant_name,
                 'Department Code'       => $dept->department_code,
                 'Department Name'       => $dept->department_name,
@@ -65,6 +67,7 @@ class DepartmentsExport implements FromCollection, WithHeadings, WithStyles, Wit
     public function headings(): array
     {
         return [
+            'Sr No',
             'Plant Name',
             'Department Code',
             'Department Name',

@@ -5,11 +5,31 @@
         <div class="card">
             <div class="card-body">
 
-                <div class="mb-3 d-flex justify-content-between">
+                {{-- <div class="mb-3 d-flex justify-content-between">
                     <input type="text" id="searchInput" class="form-control w-50" placeholder="Search employees...">
                     <a href="{{ route('employees.create') }}" class="btn btn-danger btn-add">
                         <i class="mdi mdi-account-plus"></i> Add Employee
                     </a>
+                    <a id="exportExcelBtn" class="btn btn-danger btn-add cursor-pointer" 
+                        style="cursor:pointer;" 
+                        title="Export Excel">
+                        <i class="mdi mdi-file-excel"></i> Export Excel
+                    </a>
+                </div> --}}
+
+                <div class="mb-3 d-flex justify-content-between align-items-center">
+                    <input type="text" id="searchInput" class="form-control w-50" placeholder="Search employees...">
+
+                    <div class="d-flex gap-2">
+                        <a href="{{ route('employees.create') }}" class="btn btn-danger btn-add mr-2">
+                            <i class="mdi mdi-account-plus"></i> Add Employee
+                        </a>
+                        <a id="exportExcelBtn" class="btn btn-danger btn-add cursor-pointer" 
+                            style="cursor:pointer;" 
+                            title="Export Excel">
+                            <i class="mdi mdi-file-excel"></i> Export Excel
+                        </a>
+                    </div>
                 </div>
 
                 @if (session('success'))
@@ -17,7 +37,7 @@
                 @endif
 
                 <div class="table-responsive">
-                    <table class="table table-responsive table-bordered table-hover table-striped datatables">
+                    <table class="table table-bordered table-hover table-striped datatables">
                         <thead>
                             <tr>
                                 <th>Sr. No.</th>
@@ -343,6 +363,26 @@ $(document).on('click', '.delete-btn', function(){
 
 
 });
+</script>
+
+<script>
+    $(document).ready(function() {
+    $('#exportExcelBtn').click(function(e){
+        e.preventDefault();
+
+        // Get search value from input
+        let searchValue = $('#searchInput').val();
+
+        // Construct export URL with search query
+        let url = "{{ route('employees.export') }}"; // Make sure this route exists
+        if(searchValue){
+            url += '?search=' + encodeURIComponent(searchValue);
+        }
+
+        window.location.href = url;
+    });
+});
+
 </script>
 
 

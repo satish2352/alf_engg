@@ -45,8 +45,10 @@ class PlantsExport implements FromCollection, WithHeadings, WithStyles, WithEven
             'is_active'
         )->get();
 
-        return $plants->map(function($plant) {
+        $srNo = 1;
+        return $plants->map(function($plant) use (&$srNo) {
             return [
+                'Sr No'       => $srNo++,
                 'Plant Code'       => $plant->plant_code,
                 'Plant Name'       => $plant->plant_name,
                 'Address'          => $plant->address ?? '-',
@@ -66,6 +68,7 @@ class PlantsExport implements FromCollection, WithHeadings, WithStyles, WithEven
     public function headings(): array
     {
         return [
+            'Sr No',
             'Plant Code',
             'Plant Name',
             'Address',

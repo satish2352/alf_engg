@@ -7,6 +7,8 @@ use App\Http\Services\Superadm\EmployeesService;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
+use App\Exports\EmployeesExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 use App\Models\
 {
@@ -300,6 +302,12 @@ class EmployeesController extends Controller
     });
 
     return response()->json(['employees' => $employees]);
+}
+
+public function export(Request $request)
+{
+    $search = $request->get('search');
+    return Excel::download(new EmployeesExport($search), 'employees.xlsx');
 }
 
 
