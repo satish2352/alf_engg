@@ -18,9 +18,9 @@ class DatabaseSeeder extends Seeder
 
         Employees::create(
             [
-                'plant_id' => 0,
-                'department_id' => 0,
-                'projects_id' => 0,
+                // 'plant_id' => 0,
+                // 'department_id' => 0,
+                // 'projects_id' => 0,
                 'designation_id' => 0,
                 'role_id' => 0,
                 'employee_code' => 0,
