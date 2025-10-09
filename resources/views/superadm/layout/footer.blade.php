@@ -101,24 +101,51 @@
 
 
 <script>
-    $(document).ready(function() {
-        console.log("jQuery version:", $.fn.jquery);
-        $('.datatables').DataTable({
-            responsive: true,
-            pageLength: 10, // show 10 by default
-            ordering: true,
-            language: {
-                search: "Search:",
-                lengthMenu: "Show _MENU_ entries",
-                info: "Showing _START_ to _END_ of _TOTAL_ rows",
-                paginate: {
-                    next: "Next",
-                    previous: "Previous"
-                }
+$(document).ready(function() {
+    if ($.fn.DataTable.isDataTable('.datatables')) {
+        $('.datatables').DataTable().destroy();
+    }
+
+    var table = $('.datatables').DataTable({
+        responsive: false,  // we are using scrollX for wide tables
+        scrollX: true,
+        autoWidth: false,
+        pageLength: 10,
+        ordering: true,
+        language: {
+            search: "Search:",
+            lengthMenu: "Show _MENU_ entries",
+            info: "Showing _START_ to _END_ of _TOTAL_ rows",
+            paginate: {
+                next: "Next",
+                previous: "Previous"
             }
-        });
+        }
     });
 
+    // ✅ Adjust header widths on resize / zoom
+    function adjustTable() {
+        table.columns.adjust().draw(false);
+    }
+
+    let resizeTimer;
+    $(window).on('resize orientationchange', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(adjustTable, 300);
+    });
+
+    // ✅ Fix header disappearing issue (wait until DOM is ready)
+    setTimeout(adjustTable, 500);
+
+    // ✅ Detect zoom changes
+    let oldZoom = window.devicePixelRatio;
+    setInterval(function() {
+        if (window.devicePixelRatio !== oldZoom) {
+            oldZoom = window.devicePixelRatio;
+            adjustTable();
+        }
+    }, 600);
+});
     // SweetAlert Delete Confirmation
     $(document).ready(function() {
         document.querySelectorAll('.delete-btn').forEach(button => {

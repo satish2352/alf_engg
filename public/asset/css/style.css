@@ -1212,9 +1212,17 @@ pre {
   .offset-xl-11 {
     margin-left: 91.66667%; } }
 
+    /* table below pagination vivek css */
+    .dataTables_info{
+      margin-top: 1rem !important;
+    }
+    .dataTables_paginate{
+      margin-top: 1rem !important;
+    }
+
 .table {
   width: 100%;
-  margin-bottom: 1rem;
+  /* margin-bottom: 1rem; */
   color: #67757c; }
   .table th,
   .table td {
