@@ -1,14 +1,28 @@
 @extends('superadm.layout.master')
 
 @section('content')
+<style>
+    .dropdown-item.active, .dropdown-item-custom:active {
+        background-color: #952419;
+    }
+</style>
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
 
                     <div class="mb-3 d-flex justify-content-end">
-                        <a href="{{ route('departments.create') }}" class="btn btn-warning btn-add mr-2">Add Department</a>
-                        <button id="exportExcelBtn" class="btn btn-warning btn-add" style="cursor: pointer;">Export Excel</button>
+                        <div class="btn-group mr-2">
+                            <button type="button" class="btn btn-warning btn-add dropdown-toggle" data-toggle="dropdown">
+                                Export
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item dropdown-item-custom export-btn" data-type="excel" href="#">Excel</a>
+                                <a class="dropdown-item dropdown-item-custom export-btn" data-type="pdf" href="#">PDF</a>
+                            </div>
+                        </div>
+                        <a href="{{ route('departments.create') }}" class="btn btn-warning btn-add">Add Department</a>
+                        {{-- <button id="exportExcelBtn" class="btn btn-warning btn-add" style="cursor: pointer;">Export Excel</button> --}}
                     </div>
 
                     @if (session('success'))
@@ -142,17 +156,12 @@
 
 <script>
 $(document).ready(function() {
-    $('#exportExcelBtn').click(function(e){
+    $('.export-btn').click(function(e){
         e.preventDefault();
 
-        // let searchValue = $('.dataTables_filter input').val();
-        // let url = "{{ route('departments.export') }}";
+        const type = $(this).data('type'); // excel or pdf
 
-        // if(searchValue){
-        //     url += '?search=' + encodeURIComponent(searchValue);
-        // }
-
-                // ✅ Get all rows from the table
+        // ✅ Get all rows from the table
         const rows = $("table.datatables tbody tr");
         let hasData = false;
 
@@ -165,7 +174,7 @@ $(document).ready(function() {
             }
         });
 
-                // ✅ If no data rows exist, show SweetAlert warning
+        // ✅ If no data rows exist, show SweetAlert warning
         if (!hasData) {
             Swal.fire({
                 icon: 'warning',
@@ -176,19 +185,21 @@ $(document).ready(function() {
             return false;
         }
 
-        // ✅ If data exists → get search filter value (for filtered export)
+        // ✅ Get search filter value (for filtered export)
         let searchValue = $('.dataTables_filter input').val();
 
         // ✅ Construct the export URL dynamically
-        let url = "{{ route('departments.export') }}";
+        let url = "{{ route('departments.export') }}" + '?type=' + type;
         if (searchValue) {
-            url += '?search=' + encodeURIComponent(searchValue);
+            url += '&search=' + encodeURIComponent(searchValue);
         }
 
-        window.location.href = url; // Controller handles empty check
+        // ✅ Redirect to controller for export
+        window.location.href = url;
     });
 });
 </script>
+
 
 
 

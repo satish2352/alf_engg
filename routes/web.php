@@ -21,7 +21,14 @@ use App\Http\Controllers\Superadm\EmployeeLoginController;
 use App\Http\Controllers\Superadm\FinancialYearController;
 
 
+Route::get('/clear-cache', function () {
+    Artisan::call('optimize:clear');
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('view:clear');
 
+    return "<h3>✅ All Laravel caches cleared successfully!</h3>";
+})->name('clear.cache');
 
 
 Route::get('login', [LoginController::class, 'loginsuper'])->name('login');

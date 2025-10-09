@@ -9,6 +9,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 use App\Exports\EmployeesExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 use App\Models\
 {
@@ -312,18 +313,39 @@ class EmployeesController extends Controller
 
 public function export(Request $request)
 {
-    $search = $request->get('search');
+    $search = $request->query('search');
+    $type = $request->query('type') ?? 'excel'; // default to Excel
 
-    // Get the filtered employees from the service
-    $employees = $this->service->list($search);
+    // Get employees with optional search
+    $query = Employees::where('is_deleted', 0)
+        ->with(['designation', 'role', 'plant']); // eager load relations
 
-    // Check if there are any records
+    if ($search) {
+        $query->where(function($q) use ($search) {
+            $q->where('employee_name', 'like', "%$search%")
+              ->orWhere('employee_code', 'like', "%$search%")
+              ->orWhere('employee_user_name', 'like', "%$search%");
+        });
+    }
+
+    $employees = $query->get();
+
     if ($employees->isEmpty()) {
         return redirect()->back()->with('error', 'No data available to export.');
     }
 
-    // Export using EmployeesExport, pass the search/filter if needed
-    return Excel::download(new EmployeesExport($search), 'Employees.xlsx');
+    if ($type === 'excel') {
+        $fileName = 'employees_' . date('Y_m_d') . '.xlsx';
+        return Excel::download(new EmployeesExport($search), $fileName);
+    }
+
+    if ($type === 'pdf') {
+        $pdf = Pdf::loadView('superadm.employees.employees_pdf', compact('employees'))
+                  ->setPaper('A4', 'landscape'); // for better width
+        return $pdf->download('employees_' . date('Y_m_d') . '.pdf');
+    }
+
+    return redirect()->back()->with('error', 'Invalid export type.');
 }
 
 

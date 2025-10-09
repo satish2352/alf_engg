@@ -1,15 +1,29 @@
 @extends('superadm.layout.master')
 
 @section('content')
+<style>
+    .dropdown-item.active, .dropdown-item-custom:active {
+        background-color: #952419;
+    }
+</style>
 <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-body">
 
                 <div class="mb-3 d-flex justify-content-end">
-                    <a href="{{ route('employee.assignments.create') }}" class="btn btn-warning btn-add mr-2">Assign Plants</a>
-                    <a href="{{ route('employee.assignments.export') }}" 
-                    class="btn btn-warning btn-export btn-add">Download Excel</a>
+                    <div class="btn-group mr-2">
+                        <button type="button" class="btn btn-warning btn-add dropdown-toggle" data-toggle="dropdown">
+                            Export
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item dropdown-item-custom btn-export" href="{{ route('employee.assignments.export', ['type'=>'excel']) }}">Excel</a>
+                            <a class="dropdown-item dropdown-item-custom btn-export" href="{{ route('employee.assignments.export', ['type'=>'pdf']) }}">PDF</a>
+                        </div>
+                    </div>
+                    <a href="{{ route('employee.assignments.create') }}" class="btn btn-warning btn-add">Assign Plants</a>
+                    {{-- <a href="{{ route('employee.assignments.export') }}" 
+                    class="btn btn-warning btn-export btn-add">Download Excel</a> --}}
                 </div>
 
                 @if (session('success'))
@@ -237,15 +251,15 @@ $(document).on('click', '.btn-export', function(e){
     e.preventDefault();
     const exportUrl = $(this).attr('href');
 
-    // Get table body rows
-    const rows = $("table.datatables tbody tr");
+    // Get visible rows after DataTable search/filter
+    const rows = $("table.datatables tbody tr:visible");
     let hasData = false;
 
     rows.each(function() {
-        const cellText = $(this).find("td:first").text().trim().toLowerCase();
-        if (cellText !== "no data available" && cellText !== "no matching records found" && cellText !== "") {
+        const firstCell = $(this).find("td:first").text().trim().toLowerCase();
+        if (firstCell !== "" && firstCell !== "no data available" && firstCell !== "no matching records found") {
             hasData = true;
-            return false; // exit loop
+            return false; // stop loop
         }
     });
 
@@ -253,13 +267,13 @@ $(document).on('click', '.btn-export', function(e){
         Swal.fire({
             icon: 'warning',
             title: 'No data available!',
-            text: 'There is no data in the table to export.',
+            text: 'There is no matching record to export.',
             confirmButtonColor: '#3085d6'
         });
         return false;
     }
 
-    // ✅ Proceed with export if data exists
+    // ✅ If data exists, proceed
     window.location.href = exportUrl;
 });
 </script>

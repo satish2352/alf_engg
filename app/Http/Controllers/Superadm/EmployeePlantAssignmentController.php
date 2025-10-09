@@ -12,8 +12,9 @@ use App\Models\EmployeePlantAssignment;
 use App\Models\Projects;
 use Illuminate\Support\Facades\Validator;
 use Exception;
-use App\Exports\EmployeePlantAssignmentsExport;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\EmployeePlantAssignmentsExport;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class EmployeePlantAssignmentController extends Controller
 {
@@ -193,15 +194,26 @@ class EmployeePlantAssignmentController extends Controller
         }
     }
 
-public function export()
+public function export(Request $request)
 {
+    $type = $request->query('type', 'excel'); // default excel
+
+    // Get assignments (consider adding search filters later if needed)
     $assignments = EmployeePlantAssignment::where('is_deleted', 0)->get();
 
-    if($assignments->isEmpty()){
+    if ($assignments->isEmpty()) {
         return redirect()->back()->with('error', 'No data available to export.');
     }
 
-    return Excel::download(new EmployeePlantAssignmentExport, 'EmployeeAssignments.xlsx');
+    if ($type === 'excel') {
+        return Excel::download(new EmployeePlantAssignmentsExport, 'EmployeeAssignments.xlsx');
+    }
+
+    $pdf = Pdf::loadView('superadm.employee_assignments.assignments_pdf', compact('assignments'))
+            ->setPaper('A4', 'landscape');
+    return $pdf->download('EmployeeAssignments.pdf');
+
+    return redirect()->back()->with('error', 'Invalid export type.');
 }
 
 

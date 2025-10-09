@@ -1,5 +1,10 @@
 @extends('superadm.layout.master')
 @section('content')
+<style>
+    .dropdown-item.active, .dropdown-item-custom:active {
+        background-color: #952419;
+    }
+</style>
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -21,14 +26,23 @@
                     <input type="text" id="searchInput" class="form-control w-50" placeholder="Search employees...">
 
                     <div class="d-flex gap-2">
-                        <a href="{{ route('employees.create') }}" class="btn btn-danger btn-add mr-2">
+                    <div class="btn-group mr-2">
+                        <button type="button" class="btn btn-warning btn-add dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Export
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item export-link" href="#" data-type="excel">Excel</a>
+                            <a class="dropdown-item export-link" href="#" data-type="pdf">PDF</a>
+                        </div>
+                    </div>
+                        <a href="{{ route('employees.create') }}" class="btn btn-danger btn-add">
                             <i class="mdi mdi-account-plus"></i> Add Employee
                         </a>
-                        <a id="exportExcelBtn" class="btn btn-danger btn-add cursor-pointer" 
+                        {{-- <a id="exportExcelBtn" class="btn btn-danger btn-add cursor-pointer" 
                             style="cursor:pointer;" 
                             title="Export Excel">
                             <i class="mdi mdi-file-excel"></i> Export Excel
-                        </a>
+                        </a> --}}
                     </div>
                 </div>
 
@@ -372,53 +386,50 @@ $(document).on('click', '.delete-btn', function(){
 </script>
 
 <script>
-    $(document).ready(function() {
-    $('#exportExcelBtn').click(function(e){
+$(document).ready(function() {
+    $('.export-link').click(function(e){
         e.preventDefault();
+        let type = $(this).data('type'); // excel or pdf
 
-        // Get search value from input
-        // let searchValue = $('#searchInput').val();
+        // Collect values of all text inputs (your search boxes)
+        let searchValues = [];
+        $('input[type="text"]').each(function(){
+            let val = $(this).val().trim();
+            searchValues.push(val);
+        });
 
-        // // Construct export URL with search query
-        // let url = "{{ route('employees.export') }}"; // Make sure this route exists
-        // if(searchValue){
-        //     url += '?search=' + encodeURIComponent(searchValue);
-        // }
-
-                       // ✅ Get all rows from the table
-        const rows = $("table.datatables tbody tr");
+        // Check visible rows in the table (after Datatable filtering)
+        let visibleRows = $("table.datatables tbody tr:visible");
         let hasData = false;
 
-        // ✅ Loop to check if actual data rows exist
-        rows.each(function() {
-            const cellText = $(this).find("td:first").text().trim().toLowerCase();
-            if (cellText !== "no data available" && cellText !== "no matching records found" && cellText !== "no employees found" && cellText !== "") {
+        visibleRows.each(function() {
+            let rowText = $(this).text().trim().toLowerCase();
+            if(rowText && !rowText.includes('no employees found')) {
                 hasData = true;
-                return false; // Exit loop early if data found
+                return false; // stop loop
             }
         });
 
-                // ✅ If no data rows exist, show SweetAlert warning
-        if (!hasData) {
+        if(!hasData) {
             Swal.fire({
                 icon: 'warning',
                 title: 'No data available!',
-                text: 'There is no data in the table to export.',
-                confirmButtonColor: '#3085d6'
+                text: 'There is no data in the table to export.'
             });
             return false;
         }
 
-        // ✅ If data exists → get search filter value (for filtered export)
         let searchValue = $('.dataTables_filter input').val();
 
         // ✅ Construct the export URL dynamically
-        let url = "{{ route('employees.export') }}";
+        let url = "{{ route('departments.export') }}" + '?type=' + type;
         if (searchValue) {
-            url += '?search=' + encodeURIComponent(searchValue);
+            url += '&search=' + encodeURIComponent(searchValue);
         }
 
-        window.location.href = url; // Controller handles empty check
+        
+        // Redirect to export
+        window.location.href = url;
     });
 });
 

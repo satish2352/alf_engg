@@ -10,6 +10,7 @@ use App\Models\PlantMasters;
 use Exception;
 use App\Exports\DepartmentsExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class DepartmentsController extends Controller
 {
@@ -222,14 +223,18 @@ class DepartmentsController extends Controller
 public function export(Request $request)
 {
     $search = $request->query('search');
+    $type = $request->query('type') ?? 'excel'; // optional type for pdf/excel
 
-    // Fetch data manually to check if any exists
-    $query = \DB::table('departments')->where('is_deleted', 0);
+    $query = \DB::table('departments')
+        ->join('plant_masters', 'departments.plant_id', '=', 'plant_masters.id')
+        ->where('departments.is_deleted', 0) // 👈 fully qualified
+        ->select('departments.*', 'plant_masters.plant_name');
 
     if ($search) {
         $query->where(function($q) use ($search) {
-            $q->where('department_name', 'like', "%$search%")
-              ->orWhere('department_code', 'like', "%$search%");
+            $q->where('departments.department_name', 'like', "%$search%")
+              ->orWhere('departments.department_code', 'like', "%$search%")
+              ->orWhere('plant_masters.plant_name', 'like', "%$search%");
         });
     }
 
@@ -239,9 +244,20 @@ public function export(Request $request)
         return redirect()->back()->with('error', 'No data available to export.');
     }
 
-    $fileName = 'departments_' . date('Y_m_d') . '.xlsx';
-    return Excel::download(new DepartmentsExport($search), $fileName);
+    if ($type == 'excel') {
+        $fileName = 'departments_' . date('Y_m_d') . '.xlsx';
+        return Excel::download(new DepartmentsExport($search), $fileName);
+    }
+
+    if ($type == 'pdf') {
+        $pdf = Pdf::loadView('superadm.departments.pdf', compact('departments'))
+                  ->setPaper('A4', 'landscape'); // for better width
+        return $pdf->download('departments_' . date('Y_m_d') . '.pdf');
+    }
+
+    return redirect()->back()->with('error', 'Invalid export type.');
 }
+
 
 
 

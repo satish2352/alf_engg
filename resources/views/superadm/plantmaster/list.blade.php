@@ -1,14 +1,29 @@
 @extends('superadm.layout.master')
 
 @section('content')
+<style>
+    .dropdown-item.active, .dropdown-item-custom:active {
+        background-color: #952419;
+    }
+</style>
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
 
                     <div class="mb-3 d-flex justify-content-end">
-                        <a href="{{ route('plantmaster.create') }}" class="btn btn-warning btn-add mr-2">Add Plant Details</a>
-                        <a id="exportExcelBtn" class="btn btn-warning btn-add" style="cursor: pointer;">Export Excel</a>
+                        <div class="btn-group mr-2">
+                            <button type="button" class="btn btn-warning btn-add dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Export
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item dropdown-item-custom export-btn" data-type="excel" href="#">Excel</a>
+                                <a class="dropdown-item dropdown-item-custom export-btn" data-type="pdf" href="#">PDF</a>
+                            </div>
+                        </div>
+
+                        <a href="{{ route('plantmaster.create') }}" class="btn btn-warning btn-add">Add Plant Details</a>
+                        {{-- <a id="exportExcelBtn" class="btn btn-warning btn-add" style="cursor: pointer;">Export Excel</a> --}}
                     </div>
 
                     @if (session('success'))
@@ -144,23 +159,21 @@
 
 <script>
 $(document).ready(function() {
-    $('#exportExcelBtn').click(function(e){
+    $('.export-btn').click(function(e){
         e.preventDefault();
 
-        // ✅ Get all rows from the table
+        const type = $(this).data('type'); // excel or pdf
         const rows = $("table.datatables tbody tr");
         let hasData = false;
 
-        // ✅ Loop to check if actual data rows exist
         rows.each(function() {
             const cellText = $(this).find("td:first").text().trim().toLowerCase();
             if (cellText !== "no data available" && cellText !== "no matching records found" && cellText !== "") {
                 hasData = true;
-                return false; // Exit loop early if data found
+                return false;
             }
         });
 
-        // ✅ If no data rows exist, show SweetAlert warning
         if (!hasData) {
             Swal.fire({
                 icon: 'warning',
@@ -171,20 +184,17 @@ $(document).ready(function() {
             return false;
         }
 
-        // ✅ If data exists → get search filter value (for filtered export)
         let searchValue = $('.dataTables_filter input').val();
-
-        // ✅ Construct the export URL dynamically
-        let url = "{{ route('plantmaster.export') }}";
+        let url = "{{ route('plantmaster.export') }}" + '?type=' + type;
         if (searchValue) {
-            url += '?search=' + encodeURIComponent(searchValue);
+            url += '&search=' + encodeURIComponent(searchValue);
         }
 
-        // ✅ Proceed to download Excel file
         window.location.href = url;
     });
 });
 </script>
+
 
 
 

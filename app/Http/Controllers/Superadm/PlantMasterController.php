@@ -9,6 +9,7 @@ use Illuminate\Validation\Rule;
 use Exception;
 use App\Exports\PlantsExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PlantMasterController extends Controller
 {
@@ -273,18 +274,39 @@ class PlantMasterController extends Controller
 
 public function export(Request $request)
 {
-    // Fetch all plants that are not deleted
-    $plants = \DB::table('plant_masters')->where('is_deleted', 0)->get();
+    $search = $request->search;
+    $type = $request->type ?? 'excel'; // default to excel
 
-    // Check if any data exists
+    $query = \DB::table('plant_masters')->where('is_deleted', 0);
+
+    if ($search) {
+        $query->where(function($q) use ($search) {
+            $q->where('plant_code', 'like', "%{$search}%")
+              ->orWhere('plant_name', 'like', "%{$search}%")
+              ->orWhere('address', 'like', "%{$search}%")
+              ->orWhere('city', 'like', "%{$search}%")
+              ->orWhere('plant_short_name', 'like', "%{$search}%");
+        });
+    }
+
+    $plants = $query->get();
+
     if ($plants->isEmpty()) {
         return redirect()->back()->with('error', 'No data available to export.');
     }
 
-    $fileName = 'plants_' . date('Y_m_d') . '.xlsx';
+    if ($type == 'excel') {
+        $fileName = 'plants_' . date('Y_m_d') . '.xlsx';
+        return Excel::download(new PlantsExport($search), $fileName);
+    }
 
-    // Export using the PlantsExport class
-    return Excel::download(new PlantsExport, $fileName);
+	if ($type == 'pdf') {
+		$pdf = Pdf::loadView('superadm.plantmaster.pdf', compact('plants'))
+				->setPaper('A4', 'landscape'); // <-- Landscape for wide tables
+		return $pdf->download('plants_' . date('Y_m_d') . '.pdf');
+	}
+
+    return redirect()->back()->with('error', 'Invalid export type.');
 }
 
 
