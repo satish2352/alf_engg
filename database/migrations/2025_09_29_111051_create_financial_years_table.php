@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('financial_years', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('year')->unique();   // Example: 2025-2026
+            $table->string('year');   // Example: 2025-2026
             $table->boolean('is_active')->default(true);
             $table->boolean('is_deleted')->default(false);
             $table->timestamps();
