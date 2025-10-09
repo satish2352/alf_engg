@@ -10,6 +10,7 @@
                         <a href="{{ route('financial-year.create') }}" class="btn btn-warning btn-add">Add Financial Year</a>
                     </div>
 
+                    <div id="alert-container">
                     @if (session('success'))
                         <div class="alert alert-success alert-dismissible fade show" id="success-alert">
                             {{ session('success') }}
@@ -21,6 +22,7 @@
                             {{ session('error') }}
                         </div>
                     @endif
+                    </div>
 
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped datatables">
@@ -126,47 +128,70 @@
         });
     });
 
-        $(document).on("click", ".delete-btn", function(e) {
-        e.preventDefault();
+$(document).on("click", ".delete-btn", function(e) {
+    e.preventDefault();
 
-        let btn = $(this);
-        let form = btn.closest("form");
-        let id = form.find("input[name='id']").val();
+    let btn = $(this);
+    let form = btn.closest("form");
+    let id = form.find("input[name='id']").val();
 
-        Swal.fire({
-            title: "Are you sure?",
-            text: "Do you want to delete this financial year?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#d33",
-            cancelButtonColor: "#3085d6",
-            confirmButtonText: "Yes, delete it!",
-            cancelButtonText: "No, cancel"
-        }).then((result) => {
-            if(result.isConfirmed){
-                $.ajax({
-                    url: form.attr("action"),
-                    type: "POST",
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        id: id
-                    },
-                    success: function(res) {
-                        if(res.status) {
-                            Swal.fire("Deleted!", res.message, "success");
-                            // Remove the deleted row from table
-                            btn.closest("tr").remove();
-                        } else {
-                            Swal.fire("Error!", "Something went wrong", "error");
-                        }
-                    },
-                    error: function() {
-                        Swal.fire("Error!", "Something went wrong", "error");
+    Swal.fire({
+        title: "Are you sure?",
+        text: "Do you want to delete this financial year?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, cancel"
+    }).then((result) => {
+        if(result.isConfirmed){
+            $.ajax({
+                url: form.attr("action"),
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    id: id
+                },
+                success: function(res) {
+                    if(res.status) {
+                        // Remove deleted row
+                        btn.closest("tr").remove();
+
+                        // Show Bootstrap alert above table
+                        $("#alert-container").html(
+                            `<div class="alert alert-success alert-dismissible fade show" id="success-alert">
+                                ${res.message}
+                             </div>`
+                        );
+                            setTimeout(() => {
+        $("#alert-container .alert").alert('close');
+    }, 5000);
+                    } else {
+                        $("#alert-container").html(
+                            `<div class="alert alert-danger alert-dismissible fade show" id="error-alert">
+                                Something went wrong
+                             </div>`
+                        );
+                            setTimeout(() => {
+        $("#alert-container .alert").alert('close');
+    }, 5000);
                     }
-                });
-            }
-        });
+                },
+                error: function() {
+                    $("#alert-container").html(
+                        `<div class="alert alert-danger alert-dismissible fade show" id="error-alert">
+                            Something went wrong
+                         </div>`
+                    );
+                        setTimeout(() => {
+        $("#alert-container .alert").alert('close');
+    }, 5000);
+                }
+            });
+        }
     });
+});
 
     </script>
 @endsection
