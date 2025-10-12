@@ -318,6 +318,7 @@ public function export(Request $request)
 
     // Get employees with optional search
     $query = Employees::where('is_deleted', 0)
+		->where('id', '!=', 1)  // Exclude record with ID = 1
         ->with(['designation', 'role', 'plant']); // eager load relations
 
     if ($search) {

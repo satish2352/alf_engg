@@ -20,6 +20,7 @@ class EmployeesExport implements FromCollection, WithHeadings, WithStyles, WithE
 
     public function collection(){
         $query = Employees::where('is_deleted', 0)
+            ->where('id', '!=', 1) // Exclude record with ID = 1
             ->with(['designation', 'role']);
 
         if($this->search){
