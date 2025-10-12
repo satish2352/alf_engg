@@ -422,7 +422,7 @@ $(document).ready(function() {
         let searchValue = $('.dataTables_filter input').val();
 
         // ✅ Construct the export URL dynamically
-        let url = "{{ route('departments.export') }}" + '?type=' + type;
+        let url = "{{ route('employees.export') }}" + '?type=' + type;
         if (searchValue) {
             url += '&search=' + encodeURIComponent(searchValue);
         }

@@ -39,7 +39,7 @@
                                     <td>{{ $role->short_description }}</td>
 
                                     <td>
-                                        @if ($role->id != 1)
+                                        @if ($role->id != 0)
                                             <form action="{{ route('roles.updatestatus') }}" method="POST"
                                                 class="d-inline-block delete-form">
                                                 @csrf
@@ -57,7 +57,7 @@
                                     </td>
 
                                     <td>
-                                        @if ($role->id != 1)
+                                        @if ($role->id != 0)
                                             <a href="{{ route('roles.edit', base64_encode($role->id)) }}" 
                                                 class="btn btn-sm btn-primary" 
                                                 data-bs-toggle="tooltip" 

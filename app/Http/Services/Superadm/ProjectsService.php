@@ -107,7 +107,8 @@ class ProjectsService
 
         // Check if any employee uses this project
         $employeeCount = \DB::table('employee_plant_assignments')
-            ->where('projects_id', $id) // ✅ updated here
+            // ->where('projects_id', $id) // ✅ updated here
+            ->whereRaw('JSON_CONTAINS(projects_id, ?)', [json_encode((string)$id)])
             ->where('is_deleted', 0)
             ->count();
 

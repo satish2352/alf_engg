@@ -166,7 +166,8 @@ class DepartmentsService
 
         // Check if any employee uses this department
         $employeeCount = \DB::table('employee_plant_assignments')
-            ->where('department_id', $id) // ✅ correct column
+            // ->where('department_id', $id) // ✅ correct column
+            ->whereRaw('JSON_CONTAINS(projects_id, ?)', [json_encode((string)$id)])
             ->where('is_deleted', 0)
             ->count();
 
