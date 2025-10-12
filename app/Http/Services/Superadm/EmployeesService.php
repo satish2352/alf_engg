@@ -22,6 +22,7 @@ public function list($search = null)
 {
     try {
         $query = Employees::where('is_deleted', 0)
+            ->where('id', '!=', 1)  // ID 1 do not show
             ->with(['plant', 'department', 'designation', 'role'])
             ->orderBy('id', 'desc');
 

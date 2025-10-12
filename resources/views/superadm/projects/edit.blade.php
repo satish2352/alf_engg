@@ -5,7 +5,7 @@
         <div class="col-lg-6 col-md-8 mx-auto">
             <div class="card">
                 <div class="card-body">
-                    @if ($errors->any())
+                    {{-- @if ($errors->any())
                         <div class="alert alert-danger">
                             <ul>
                                 @foreach ($errors->all() as $error)
@@ -13,7 +13,7 @@
                                 @endforeach
                             </ul>
                         </div>
-                    @endif
+                    @endif --}}
 
                     <h4>Edit Project</h4>
                     <form action="{{ route('projects.update', $encodedId) }}" method="POST">

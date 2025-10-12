@@ -4,6 +4,9 @@
     .dropdown-item.active, .dropdown-item-custom:active {
         background-color: #952419;
     }
+    #DataTables_Table_0_filter{
+        display: none;
+    }
 </style>
 <div class="row">
     <div class="col-12">
@@ -31,8 +34,8 @@
                             Export
                         </button>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item export-link" href="#" data-type="excel">Excel</a>
-                            <a class="dropdown-item export-link" href="#" data-type="pdf">PDF</a>
+                            <a class="dropdown-item dropdown-item-custom export-link" href="#" data-type="excel">Excel</a>
+                            <a class="dropdown-item dropdown-item-custom export-link" href="#" data-type="pdf">PDF</a>
                         </div>
                     </div>
                         <a href="{{ route('employees.create') }}" class="btn btn-danger btn-add">
