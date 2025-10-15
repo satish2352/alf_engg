@@ -200,14 +200,14 @@ function renderTable(data = [], currentPage = 1, perPage = 10) {
                 <td>${srNo}</td>
                 <td>${emp.employee_name}</td>
                 <td>${emp.employee_code}</td>
-                <td>${emp.employee_email}</td>
-                <td>${emp.employee_user_name}</td>
-                <td>${emp.reporting_name ?? '-'}</td>
+                <td>${emp.employee_email || '-'}</td>
+                <td>${emp.employee_user_name || '-'}</td>
+                <td>${emp.reporting_name || '-'}</td>
                 
-                <td>${emp.designation?.designation ?? '-'}</td>
-                <td>${emp.role?.role ?? '-'}</td>
+                <td>${emp.designation?.designation || '-'}</td>
+                <td>${emp.role?.role || '-'}</td>
 <td>
-${(emp.role != null && parseInt(emp.role) !== 0) ? `
+${(emp.role && emp.role.id != 0) ? `
     <label class="switch">
         <input type="checkbox" class="toggle-status" data-id="${btoa(emp.id)}" ${emp.is_active ? 'checked' : ''}>
         <span class="slider"></span>
@@ -222,7 +222,7 @@ ${(emp.role != null && parseInt(emp.role) !== 0) ? `
 
 <td class="d-flex">
 ${(emp.role != null && parseInt(emp.role) !== 0) ? `
-    <a href="/employees/edit/${btoa(emp.id)}" 
+    <a href="{{ url('employees/edit') }}/${btoa(emp.id)}"
         class="btn btn-sm btn-primary mr-1" 
         data-bs-toggle="tooltip" 
         title="Edit">
@@ -248,7 +248,7 @@ ${(emp.role != null && parseInt(emp.role) !== 0) ? `
             </tr>`;
         });
     } else {
-        html = '<tr><td colspan="13" class="text-center">No employees found.</td></tr>';
+        html = '<tr><td colspan="10" class="text-center">No employees found.</td></tr>';
     }
     return html;
 }

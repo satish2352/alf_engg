@@ -55,7 +55,8 @@
                                 @foreach ($dataAll as $key => $data)
                                     <tr>
                                         <td>{{ $key + 1 }}</td>
-                                        <td> {{ $data->plant_name }}</td>
+                                        {{-- <td> {{ $data->plant_name }}</td> --}}
+                                        <td>{{ $data->plant_code ?? '-' }} - {{ $data->plant_name }}</td>
                                         <td>{{ $data->department_code }}</td>
                                         <td>{{ $data->department_name }}</td>
                                         <td>{{ $data->department_short_name }}</td>
@@ -201,7 +202,31 @@ $(document).ready(function() {
 </script>
 
 
+    <script>
+        // Delegated event for delete buttons
+        $(document).on("click", ".delete-btn", function (e) {
+            e.preventDefault();
 
+            let button = $(this);
+            let form = button.closest("form");
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "This record will be deleted!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#28a745",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!",
+                cancelButtonText: "No, cancel"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+
+    </script>
 
 
 

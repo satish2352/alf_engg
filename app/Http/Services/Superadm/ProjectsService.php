@@ -25,20 +25,44 @@ class ProjectsService
         }
     }
 
+    // public function listajaxlist($req)
+	// {  
+	// 	 try {
+    //         return $this->repo->listajaxlist($req['plant_id']);
+    //     } catch (Exception $e) {
+    //         Log::error("Project Service list error: " . $e->getMessage());
+    //         return false;
+    //     }
+	// }
+
     public function listajaxlist($req)
-	{  
-		 try {
-            return $this->repo->listajaxlist($req['plant_id']);
+    {  
+        try {
+            $plantId = $req['plant_id'] ?? null; // get plant_id from request
+
+            if (!$plantId) {
+                return collect(); // return empty collection if no plant_id
+            }
+
+            return \App\Models\Projects::where('is_deleted', 0)
+                ->where('is_active', 1)
+                // ->whereJsonContains('plant_id', (int)$plantId) // ✅ match JSON array
+                ->whereJsonContains('plant_id', (string)$plantId)
+                ->get(['id', 'project_name']);
+                
         } catch (Exception $e) {
             Log::error("Project Service list error: " . $e->getMessage());
             return false;
         }
-	}
+    }
+
 
     public function save($req)
     {
         try {
-            $data = [   'plant_id' => $req->input('plant_id'), 
+            $data = [   
+                        // 'plant_id' => $req->input('plant_id'), 
+                        'plant_id' => json_encode($req->input('plant_id')),
                         'project_name' => $req->input('project_name'), 
                         'project_url' => $req->input('project_url')
                     ];
@@ -68,7 +92,8 @@ class ProjectsService
         try {
             $id = $req->id;
             $data = [
-                'plant_id' => $req->input('plant_id'), 
+                // 'plant_id' => $req->input('plant_id'), 
+                'plant_id' => json_encode($req->input('plant_id')),
                 'project_name' => $req->input('project_name'), 
                 'project_url' => $req->input('project_url'),
                 'is_active' => $req->is_active

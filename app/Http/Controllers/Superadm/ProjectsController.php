@@ -30,14 +30,32 @@ class ProjectsController extends Controller
 	}
 
 
+	// public function listajaxlist(Request $req)
+	// {
+	// 	try {
+	// 		$projects = $this->service->listajaxlist($req);
+	// 		return response()->json(['projects' => $projects]);
+
+	// 	} catch (Exception $e) {
+	// 		return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
+	// 	}
+	// }
+
 	public function listajaxlist(Request $req)
 	{
 		try {
-			$projects = $this->service->listajaxlist($req);
+			$plantId = $req->plant_id;
+
+			$projects = \App\Models\Projects::where('is_deleted', 0)
+				->where('is_active', 1)
+				// ->whereJsonContains('plant_id', (int)$plantId) // ✅ JSON_CONTAINS
+				->whereJsonContains('plant_id', (string)$plantId)
+				->get(['id','project_name']);
+
 			return response()->json(['projects' => $projects]);
 
 		} catch (Exception $e) {
-			return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
+			return response()->json(['projects' => [], 'error' => $e->getMessage()]);
 		}
 	}
 
@@ -75,7 +93,9 @@ class ProjectsController extends Controller
             }),
         ],
     // 'project_description' => 'required|max:500',
-    'plant_id' => 'required',
+    // 'plant_id' => 'required',
+	'plant_id' => 'required|array',
+	'plant_id.*' => 'exists:plant_masters,id',
 ], [
     'project_name.required' => 'Enter project name',
     'project_name.unique' => 'This project name already exists.',
@@ -90,6 +110,7 @@ class ProjectsController extends Controller
     // 'project_description.max' => 'Project description must not exceed 500 characters.',
 
     'plant_id.required' => 'Please select plant.',
+	'plant_id.array' => 'Invalid plant data.',
 ]);
 
 
@@ -113,6 +134,7 @@ class ProjectsController extends Controller
 
 			$id = base64_decode($encodedId);
 			$data = $this->service->edit($id);
+			$data->plant_id = json_decode($data->plant_id, true);
 			return view('superadm.projects.edit', compact('data', 'encodedId','plants'));
 		} catch (Exception $e) {
 			return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
@@ -138,13 +160,15 @@ class ProjectsController extends Controller
 			'project_url' => [
 				'required',
 				'max:255',
-				'url', 
-				Rule::unique('projects', 'project_url')->where(function ($query) {
-					return $query->where('is_deleted', 0);
-				}),
+				'url',
+				Rule::unique('projects', 'project_url')
+					->where(fn($query) => $query->where('is_deleted', 0))
+					->ignore($req->id),
 			],
 			// 'project_description' => 'required',
-			'plant_id' => 'required',
+			// 'plant_id' => 'required',
+			'plant_id' => 'required|array',
+			'plant_id.*' => 'exists:plant_masters,id',
 			'id' => 'required',
 			'is_active' => 'required'
 		], [

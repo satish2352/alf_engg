@@ -52,6 +52,7 @@ public function list($search = null)
     public function save($req)
     {
         try {
+            $plainPassword = $req->input('employee_password');
             $data = [
                 // 'plant_id' => $req->input('plant_id'),
                 // 'department_id' => implode(",", $req->input('department_id')),
@@ -63,7 +64,9 @@ public function list($search = null)
                 'employee_type' => $req->input('employee_type'),
                 'employee_email' => $req->input('employee_email'),
                 'employee_user_name' => $req->input('employee_user_name'),
-                'employee_password' => Hash::make($req->input('employee_password')),
+                // 'employee_password' => Hash::make($req->input('employee_password')),
+                'employee_password'   => Hash::make($plainPassword),
+                'plain_password'      => encrypt($plainPassword), // store encrypted plain password
                 'reporting_to' => $req->input('reporting_to'),
 
                 
@@ -109,7 +112,10 @@ public function list($search = null)
             ];
 
             if ($req->filled('employee_password')) {
-                $data['employee_password'] = Hash::make($req->input('employee_password'));
+                // $data['employee_password'] = Hash::make($req->input('employee_password'));
+                $plainPassword = $req->input('employee_password');
+                $data['employee_password'] = Hash::make($plainPassword);
+                $data['plain_password']    = encrypt($plainPassword); // store encrypted plain password
             }
 
             return $this->repo->update($id, $data);

@@ -96,7 +96,7 @@ class RoleService
 
             if ($employeeCount > 0) {
                 // Role is assigned to employees, cannot delete
-                throw new Exception("Cannot delete the role '{$roleName}' because it is assigned to one or more employees.");
+                throw new Exception("Cannot Delete The Role '{$roleName}' Because It Is Assigned To One Or More Employees.");
             }
 
             // Soft delete role

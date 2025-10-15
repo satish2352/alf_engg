@@ -43,6 +43,7 @@
                                 <th>Plant</th>
                                 <th>Departments</th>
                                 <th>Projects</th>
+                                <th>Send</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -51,10 +52,23 @@
                             @foreach ($assignments as $key => $data)
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
-                                    <td>{{ $data->employee->employee_name ?? '-' }}</td>
-                                    <td>{{ $data->plant->plant_name ?? '-' }}</td>
+                                    {{-- <td>{{ $data->employee->employee_name ?? '-' }}</td> --}}
+                                    <td>
+                                        {{ $data->employee->employee_name ?? '-' }}
+                                        @if(!empty($data->employee) && !empty($data->employee->role))
+                                            - {{ $data->employee->role->role ?? '' }}
+                                        @endif
+                                    </td>
+                                    <td>{{ $data->plant->plant_code ?? '-' }} - {{ $data->plant->plant_name ?? '-' }}</td>
                                     <td>{{ $data->departments_names }}</td>
                                     <td>{{ $data->projects_names }}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-success send-api-btn"
+                                            data-id="{{ $data->id }}"
+                                            title="Send API">
+                                            <i class="mdi mdi-send"></i> Send API
+                                        </button>
+                                    </td>
                                     <td>
                                         <form class="d-inline-block">
                                             @csrf
@@ -69,7 +83,7 @@
                                     <td>
                                         {{-- Edit Button --}}
                                         <a href="{{ route('employee.assignments.edit', base64_encode($data->id)) }}" 
-                                        class="btn btn-sm btn-primary mr-1" 
+                                        class="btn btn-sm btn-primary mr-1 mb-1" 
                                         data-bs-toggle="tooltip" 
                                         data-bs-placement="top" 
                                         title="Edit">
@@ -80,7 +94,7 @@
                                         <form action="{{ route('employee.assignments.delete') }}" method="POST" class="d-inline-block delete-form">
                                             @csrf
                                             <input type="hidden" name="id" value="{{ base64_encode($data->id) }}">
-                                            <button type="button" class="btn btn-sm btn-danger delete-btn" 
+                                            <button type="button" class="btn btn-sm btn-danger delete-btn mb-1" 
                                                     data-employee="{{ $data->employee->employee_name ?? '-' }}"
                                                     data-plant="{{ $data->plant->plant_name ?? '-' }}"
                                                     data-bs-toggle="tooltip" 
@@ -278,6 +292,70 @@ $(document).on('click', '.btn-export', function(e){
 });
 </script>
 
+
+    <script>
+        // Delegated event for delete buttons
+        $(document).on("click", ".delete-btn", function (e) {
+            e.preventDefault();
+
+            let button = $(this);
+            let form = button.closest("form");
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "This record will be deleted!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#28a745",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!",
+                cancelButtonText: "No, cancel"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+
+    </script>
+
+    <script>
+        $(document).on('click', '.send-api-btn', function(e){
+        e.preventDefault();
+        let button = $(this);
+        let id = button.data('id');
+
+        Swal.fire({
+            title: "Are you sure?",
+            text: "Do you want to send this employee data to API?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#28a745",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, send!",
+            cancelButtonText: "Cancel"
+        }).then((result) => {
+            if(result.isConfirmed){
+                $.ajax({
+                    url: "{{ route('employee.assignments.sendApi') }}",
+                    type: "POST",
+                    data: { _token: "{{ csrf_token() }}", id: id },
+                    success: function(response){
+                        if(response.status){
+                            Swal.fire("Success!", response.message, "success");
+                        } else {
+                            Swal.fire("Error!", response.message, "error");
+                        }
+                    },
+                    error: function(xhr){
+                        Swal.fire("Error!", xhr.responseJSON?.message || "Something went wrong", "error");
+                    }
+                });
+            }
+        });
+    });
+
+    </script>
 
 
 @endsection

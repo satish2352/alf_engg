@@ -1,6 +1,9 @@
 @extends('superadm.layout.master')
 
 @section('content')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    
 <div class="row">
     <div class="col-lg-6 col-md-8 mx-auto">
         <div class="card">
@@ -30,12 +33,12 @@
                     {{-- Employee Select --}}
                     <div class="form-group">
                         <label>Employee <span class="text-danger">*</span></label>
-                        <select name="employee_id" class="form-control">
+                        <select name="employee_id" id="employee_select" class="form-control">
                             <option value="">Select Employee</option>
                             @foreach($employees as $emp)
                                 <option value="{{ $emp->id }}" 
                                     {{ old('employee_id', $assignment->employee_id) == $emp->id ? 'selected' : '' }}>
-                                    {{ $emp->employee_name }}
+                                    {{ $emp->employee_name }} - {{ $emp->role->role ?? 'No Role' }}
                                 </option>
                             @endforeach
                         </select>
@@ -52,7 +55,7 @@
                             @foreach($plants as $plant)
                                 <option value="{{ $plant->id }}" 
                                     {{ old('plant_id', $assignment->plant_id) == $plant->id ? 'selected' : '' }}>
-                                    {{ $plant->plant_name }}
+                                    {{ $plant->plant_code }} - {{ $plant->plant_name }} 
                                 </option>
                             @endforeach
                         </select>
@@ -213,6 +216,15 @@ $(document).ready(function () {
 });
 </script>
 
+<script>
+$(document).ready(function() {
+    $('#employee_select').select2({
+        placeholder: 'Search Employee',
+        allowClear: true,
+        width: '100%'
+    });
+});
+</script>
 
 
 {{-- <script>

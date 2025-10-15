@@ -12432,6 +12432,8 @@ sidebar navigation
         padding: 8px 35px 8px 15px;
         display: block;
         font-size: 15px;
+        /* new css w */
+        font-weight: 400; 
         border-radius: 4px;
         white-space: nowrap; }
         .sidebar-nav ul li a.active, .sidebar-nav ul li a:hover {
@@ -14557,3 +14559,79 @@ input[type=checkbox]:not(:disabled).tabbed:focus ~ .lever::after {
       .fnt-size{
         font-size: 16px; color:#fff;
       }
+
+    .card-project{
+        box-shadow: 0 1rem 3rem rgba(0, 0, 0, .175) !important;
+      }
+
+    .card-radius{
+      border-radius: 0.5rem !important;
+    }
+
+.bg-role         { background-color: #E8EEF5; color: #1D3A5F; border-radius: 0.5rem; }
+.bg-designation  { background-color: #e9e7f2; color: #15444A; border-radius: 0.5rem; }
+.bg-plants       { background-color: #E9F3EB; color: #1E4626; border-radius: 0.5rem; }
+.bg-projects     { background-color: #F7EFE6; color: #5A3E1B; border-radius: 0.5rem; }
+.bg-department   { background-color: #F1E9F5; color: #3D3060; border-radius: 0.5rem; }
+.bg-employees    { background-color: #f3b57d5e; color: #333333; border-radius: 0.5rem; }
+.bg-employee-type{ background-color: #F8F6E7; color: #554C14; border-radius: 0.5rem; }
+.bg-financial    { background-color: #eedbf1; color: #4E2E20; border-radius: 0.5rem; }
+.bg-assignment   { background-color: #d6f7f485; color: #2D2A57; border-radius: 0.5rem; }
+
+.bg-color-1 { background-color: #E8EEF5; color: #1D3A5F; border-radius: 0.5rem; }   /* Steel Blue Tint */
+.bg-color-2 { background-color: #E9F3EB; color: #1E4626; border-radius: 0.5rem; }   /* Industrial Green */
+.bg-color-3 { background-color: #ECEBF5; color: #2D2A57; border-radius: 0.5rem; }   /* Cool Grey */
+.bg-color-4 { background-color: #F7EFE6; color: #5A3E1B; border-radius: 0.5rem; }   /* Sand */
+.bg-color-5 { background-color: #E7F0F2; color: #15444A; border-radius: 0.5rem; }   /* Teal Grey */
+.bg-color-6 { background-color: #F1E9F5; color: #3D3060; border-radius: 0.5rem; }   /* Lavender Grey */
+.bg-color-7 { background-color: #F0F0F0; color: #333333; border-radius: 0.5rem; }   /* Soft Grey */
+.bg-color-8 { background-color: #F5EAE6; color: #4E2E20; border-radius: 0.5rem; }   /* Clay */
+.bg-color-9 { background-color: #F8F6E7; color: #554C14; border-radius: 0.5rem; }   /* Soft Yellow */
+
+.font-weight-light-new {
+  font-weight: 500 !important; }
+
+.new-font-size{
+  font-size: 1rem !important;
+}
+
+
+/* searchable select box css custom css new */
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 38px !important;
+}
+
+
+.select2-container .select2-selection--single {
+    height: 38px !important;
+}
+	
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 38px !important;
+}
+	
+.select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: #67757c !important;
+    font-size: 16px;
+    margin-left: 0.5rem;
+}
+
+.select2-container--default .select2-selection--single {
+    border: 1px solid #d7d7d7 !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__clear{
+  height: 38px !important;
+}
+.select2-results__option{
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.5;
+  color: #67757c;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered{
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.5;
+  color: #67757c !important;
+  margin-left: 0.4rem;
+}

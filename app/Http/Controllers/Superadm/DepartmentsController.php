@@ -75,14 +75,14 @@ class DepartmentsController extends Controller
 
 
 		], [
-			'department_code.required' => 'Enter deparment code',
-			'department_code.unique' => 'This deparment code already exists.',
+			'department_code.required' => 'Enter Deparment Code',
+			'department_code.unique' => 'This Deparment Code Already Exists.',
 
-			'department_name.required' => 'Enter department name ',
-			'department_name.unique' => 'This department name already exists.',
+			'department_name.required' => 'Enter Department Name ',
+			'department_name.unique' => 'This Department Name Already Exists.',
 
-			'plant_id.required' => 'Please select plant.',
-			// 'department_short_name.required' => 'Department short description required.',
+			'plant_id.required' => 'Please Select Plant.',
+			// 'department_short_name.required' => 'Department Short Description Required.',
 		]);
 
 		try {
@@ -97,7 +97,7 @@ class DepartmentsController extends Controller
 				return redirect()->back()->withInput()->with('error', 'Failed to insert department details.');
 			}
 
-			return redirect()->route('departments.list')->with('success', 'Department added successfully.');
+			return redirect()->route('departments.list')->with('success', 'Department Added Successfully.');
 
 		} catch (Exception $e) {
 			return redirect()->back()->withInput()->with('error', 'Something went wrong: ' . $e->getMessage());
@@ -144,21 +144,21 @@ class DepartmentsController extends Controller
 			'id' => 'required',
 			'is_active' => 'required'
 		], [
-			'department_code.required' => 'Enter deparment code',
-			'department_code.unique' => 'This deparment code already exists.',
+			'department_code.required' => 'Enter Deparment Code',
+			'department_code.unique' => 'This Deparment Code Already Exists.',
 
-			'department_name.required' => 'Enter department name ',
-			'department_name.unique' => 'This department name already exists.',
+			'department_name.required' => 'Enter Department Name ',
+			'department_name.unique' => 'This Department Name Already Exists.',
 
-			'plant_id.required' => 'Please select plant.',
-			// 'department_short_name.required' => 'Department short description required.',
+			'plant_id.required' => 'Please Select Plant.',
+			// 'department_short_name.required' => 'Department Short Description Required.',
 			'id.required' => 'ID required',
-			'is_active.required' => 'Select active or inactive required'
+			'is_active.required' => 'Select Active Or Inactive Required'
 		]);
 
 		try {
 			$this->service->update($req);
-			return redirect()->route('departments.list')->with('success', 'Department updated successfully.');
+			return redirect()->route('departments.list')->with('success', 'Department Updated Successfully.');
 		} catch (Exception $e) {
 			return redirect()->back()->withInput()->with('error', 'Something went wrong: ' . $e->getMessage());
 		}
@@ -175,7 +175,7 @@ class DepartmentsController extends Controller
 			]);
 
 			$this->service->delete($req);
-			return redirect()->route('departments.list')->with('success', 'Department deleted successfully.');
+			return redirect()->route('departments.list')->with('success', 'Department Deleted Successfully.');
 		} catch (Exception $e) {
 			return redirect()->back()->with('error', $e->getMessage());
 		}
@@ -209,10 +209,10 @@ class DepartmentsController extends Controller
         $is_active = $req->is_active ? 1 : 0;
         $this->service->updateStatus($req);
 
-        $statusText = $is_active ? 'activated' : 'deactivated';
+        $statusText = $is_active ? 'Activated' : 'Deactivated';
         return response()->json([
             'status' => true,
-            'message' => "Department '{$department->department_name}' status {$statusText} successfully"
+            'message' => "Department '{$department->department_name}' Status {$statusText} Successfully"
         ]);
 
     } catch (\Exception $e) {
@@ -228,7 +228,9 @@ public function export(Request $request)
     $query = \DB::table('departments')
         ->join('plant_masters', 'departments.plant_id', '=', 'plant_masters.id')
         ->where('departments.is_deleted', 0) // 👈 fully qualified
-        ->select('departments.*', 'plant_masters.plant_name');
+        // ->select('departments.*', 'plant_masters.plant_name');
+		->select('departments.*', 'plant_masters.plant_name', 'plant_masters.plant_code')
+		->get();
 
     if ($search) {
         $query->where(function($q) use ($search) {

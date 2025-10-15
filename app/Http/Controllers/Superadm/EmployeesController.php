@@ -131,9 +131,9 @@ class EmployeesController extends Controller
 			'employee_password' => [
 				'required',
 				'string',
-				'min:8',
+				'min:1',
 				'max:50',
-				'regex:/^(?=(?:.*\d){2,})(?=(?:.*[A-Za-z]){5,})(?=.*[^A-Za-z0-9]).+$/'
+				// 'regex:/^(?=(?:.*\d){2,})(?=(?:.*[A-Za-z]){5,})(?=.*[^A-Za-z0-9]).+$/'
 			],
 		], [
 			// 'plant_id.required' => 'Select plant',
@@ -174,6 +174,7 @@ class EmployeesController extends Controller
 			return redirect()->back()->withInput()->with('error', 'Something went wrong: ' . $e->getMessage());
 		}
 	}
+
 	public function edit($id)
 	{
     $decodedId = base64_decode($id);
@@ -257,9 +258,9 @@ class EmployeesController extends Controller
     if ($req->filled('employee_password')) {
         $rules['employee_password'] = [
             'string',
-            'min:8',
+            'min:1',
             'max:50',
-            'regex:/^(?=(?:.*\d){2,})(?=(?:.*[A-Za-z]){5,})(?=.*[^A-Za-z0-9]).+$/'
+            // 'regex:/^(?=(?:.*\d){2,})(?=(?:.*[A-Za-z]){5,})(?=.*[^A-Za-z0-9]).+$/'
         ];
     }
 

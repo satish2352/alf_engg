@@ -54,9 +54,10 @@ Route::get('/get-plants-by-email', function (Request $req) {
 
     $plants = EmployeePlantAssignment::where('employee_id', $emp->id)
         ->where('is_active', 1)
+        ->where('is_deleted', 0)
         ->pluck('plant_id');
 
-    return PlantMasters::whereIn('id', $plants)->get(['id', 'plant_name']);
+    return PlantMasters::whereIn('id', $plants)->get(['id', 'plant_name', 'plant_code']);
 
 });
 
@@ -168,7 +169,8 @@ Route::group(['middleware' => ['SuperAdmin']], function () {
     Route::post('/financial-year/delete', [FinancialYearController::class, 'delete'])->name('financial-year.delete');
     Route::post('/financial-year/update-status', [FinancialYearController::class, 'updateStatus'])->name('financial-year.updatestatus');
 
-    
+    Route::post('employee/assignments/send-api', [EmployeePlantAssignmentController::class, 'sendApi'])->name('employee.assignments.sendApi');
+
 
     Route::get('/employee-assignments/list', [EmployeePlantAssignmentController::class, 'index'])
         ->name('employee.assignments.list');

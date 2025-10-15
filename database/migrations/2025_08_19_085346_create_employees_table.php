@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('employee_email');
             $table->string('employee_user_name');
             $table->string('employee_password');
+            $table->text('plain_password')->nullable();
             $table->string('reporting_to')->nullable();
             
             $table->boolean('is_active')->default(true);

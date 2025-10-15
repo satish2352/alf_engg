@@ -37,7 +37,20 @@
                                 @foreach ($dataAll as $key => $data)
                                     <tr>
                                         <td>{{ $key + 1 }}</td>
-                                        <td>{{ $data->plant_name }}</td>
+                                        {{-- <td>{{ $data->plant_name }}</td> --}}
+                                        <td>
+                                            @php
+                                                // Decode plant IDs (JSON) stored in project
+                                                $plantIds = json_decode($data->plant_id, true) ?? [];
+
+                                                // Fetch plant names and codes from the DB
+                                                $plants = \App\Models\PlantMasters::whereIn('id', $plantIds)
+                                                            ->get(['plant_name','plant_code']);
+                                            @endphp
+
+                                            {{-- Display as Plant Name - Plant Code, separated by comma --}}
+                                            {{ $plants->map(fn($p) => $p->plant_code . ' - ' .$p->plant_name )->implode(' , ') }}
+                                        </td>
                                         <td>{{ $data->project_name }}</td>
                                         <td>{{ $data->project_description }}</td>
                                         {{-- <td>{{ $data->project_url }}</td> --}}
@@ -131,4 +144,31 @@
             });
         });
     </script>
+
+        <script>
+        // Delegated event for delete buttons
+        $(document).on("click", ".delete-btn", function (e) {
+            e.preventDefault();
+
+            let button = $(this);
+            let form = button.closest("form");
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "This record will be deleted!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#28a745",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!",
+                cancelButtonText: "No, cancel"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+
+    </script>
+
 @endsection

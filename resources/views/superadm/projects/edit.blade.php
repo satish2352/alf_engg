@@ -20,7 +20,7 @@
                         @csrf
 
 
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                             <label for="plant_id">Plant <span class="text-danger">*</span></label>
                             <input type="hidden" name="id" class="form-control" value="{{ old('id', $data->id) }}">
                             <select name="plant_id" id="plant_id" class="form-control">
@@ -36,8 +36,7 @@
                             @error('plant_id')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
-                        </div>
-
+                        </div> --}}
 
                         <div class="form-group">
                             <label>Project Name <span class="text-danger">*</span></label>
@@ -68,6 +67,29 @@
                             @enderror
                         </div>
 
+                        <div class="form-group">
+                            <label for="plant_id">Assign Plants <span class="text-danger">*</span></label>
+                            <input type="hidden" name="id" value="{{ old('id', $data->id) }}">
+
+                            @php
+                                $selectedPlants = is_array($data->plant_id)
+                                    ? $data->plant_id
+                                    : (is_string($data->plant_id) && json_decode($data->plant_id) ? json_decode($data->plant_id, true) : [$data->plant_id]);
+                            @endphp
+
+                            <select name="plant_id[]" id="plant_id" class="form-control" multiple>
+                                @foreach ($plants as $plant)
+                                    <option value="{{ $plant->id }}" {{ in_array($plant->id, old('plant_id', $selectedPlants)) ? 'selected' : '' }}>
+                                        {{ $plant->plant_name }} ({{ $plant->plant_code }})
+                                    </option>
+                                @endforeach
+                            </select>
+
+                            @error('plant_id')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
 
                         <div class="form-group">
                             <label>Status</label>
@@ -91,4 +113,19 @@
             </div>
         </div>
     </div>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-multiselect/dist/css/bootstrap-multiselect.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-multiselect/dist/js/bootstrap-multiselect.min.js"></script>
+
+    <script>
+    $(document).ready(function () {
+        $('#plant_id').multiselect({
+            includeSelectAllOption: true,
+            enableFiltering: true,
+            maxHeight: 300,
+            buttonWidth: '100%'
+        });
+    });
+    </script>
+
 @endsection

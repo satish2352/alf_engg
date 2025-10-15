@@ -205,7 +205,7 @@ document.getElementById('superemail').addEventListener('blur', function () {
             select.innerHTML = `<option value="">-- Select Plant --</option>`;
 
             data.forEach(p => {
-                select.innerHTML += `<option value="${p.id}">${p.plant_name}</option>`;
+                select.innerHTML += `<option value="${p.id}">${p.plant_code} - ${p.plant_name}</option>`;
             });
         });
 });

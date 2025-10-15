@@ -35,7 +35,7 @@
                     <a class="navbar-brand" href="">
 
                         
-                            <img src="{{ asset('asset/images/background/alf.jpg') }}" class="light-logo" alt="homepage"
+                            <img src="{{ asset('asset/images/background/alf.png') }}" class="light-logo" alt="homepage"
                                 style="    height: 50px;" />
                     </a>
                 </div>

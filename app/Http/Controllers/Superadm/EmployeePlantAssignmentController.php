@@ -15,6 +15,7 @@ use Exception;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\EmployeePlantAssignmentsExport;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Http;
 
 class EmployeePlantAssignmentController extends Controller
 {
@@ -60,10 +61,10 @@ class EmployeePlantAssignmentController extends Controller
             'department_id' => 'required|array|min:1',
             'projects_id'   => 'required|array|min:1',
         ], [
-            'employee_id.required'   => 'Please select an employee',
-            'plant_id.required'      => 'Please select a plant',
-            'department_id.required' => 'Please select at least one department',
-            'projects_id.required'   => 'Please select at least one project',
+            'employee_id.required'   => 'Please Select An Employee',
+            'plant_id.required'      => 'Please Select a Plant',
+            'department_id.required' => 'Please Select At Least One Department',
+            'projects_id.required'   => 'Please Select At Least One Project',
         ]);
 
         $validator->validate();
@@ -73,7 +74,7 @@ class EmployeePlantAssignmentController extends Controller
             $exists = $this->service->exists($request->employee_id, $request->plant_id);
             if($exists){
                 $employeeName = Employees::find($request->employee_id)->employee_name;
-                return back()->withInput()->with('error', "$employeeName is already assigned to the selected plant.");
+                return back()->withInput()->with('error', "$employeeName Is Already Assigned To The Selected Plant.");
             }
 
             // Save assignment
@@ -83,12 +84,93 @@ class EmployeePlantAssignmentController extends Controller
             $plantName = PlantMasters::find($request->plant_id)->plant_name;
 
             return redirect()->route('employee.assignments.list')
-                             ->with('success', "$employeeName has been assigned to $plantName plant successfully.");
+                             ->with('success', "$employeeName Has Been Assigned To $plantName Plant Successfully.");
 
         } catch (Exception $e) {
             return back()->withInput()->with('error', 'Error adding assignment: ' . $e->getMessage());
         }
     }
+
+    public function sendApi(Request $request)
+    {
+        $request->validate([
+            'id' => 'required'
+        ]);
+
+        try {
+            $assignment = EmployeePlantAssignment::with(['employee', 'plant'])
+                            ->findOrFail($request->id);
+
+            $employee = $assignment->employee;
+            $plant = $assignment->plant;
+
+            // Get department codes
+            $departmentCodes = Departments::whereIn('id', $assignment->department_id ?? [])
+                        ->pluck('department_code')
+                        ->implode(',');
+
+            // Get projects
+            $projectIds = $assignment->projects_id ?? [];
+            $projects = Projects::whereIn('id', $projectIds)->get();
+
+            $responses = [];
+
+            foreach ($projects as $proj) {
+                $payload = [
+                    'plant'          => $plant->plant_code,
+                    'dept'     => $departmentCodes,
+                    'email_id'      => $employee->employee_email,
+                    'role'                => $employee->role->role ?? '',
+                    'emp_name'       => $employee->employee_name,
+                    'emp_code'       => $employee->employee_code,
+                    'emp_type'           => $employee->employee_type,
+                    'username'  => $employee->employee_user_name,
+                    'password'  => decrypt($employee->plain_password ?? ''),
+                    'status'         => $assignment->is_active,
+                    // 'password'   => $employee->employee_password, // hashed
+                    // 'project_id'          => $proj->id, // optional
+                ];
+
+                    // Extract project name dynamically from project_url
+                    $projectName = '';
+                    if (preg_match('#https?://[^/]+/([^/]+)/#', $proj->project_url, $matches)) {
+                        $projectName = $matches[1]; // This will be like 'alfkaizen' 
+                    }
+                    // Log the project name
+                    // \Log::info('Project Name: ' . $projectName);
+
+                    // Send POST request and capture response
+                    // $response = Http::post('https://alfitworld.com/alfkaizen/CommonController/api_add_employee', $payload);
+
+                    // Build the API URL dynamically
+                    $apiUrl = "https://alfitworld.com/{$projectName}/CommonController/api_add_employee";
+
+                    // Send POST request
+                    $response = Http::post($apiUrl, $payload);
+
+                $responses[] = [
+                    'project_id' => $proj->id,
+                    'payload'    => $payload,
+                    'status'     => $response->successful() ? 'success' : 'failed',
+                    'response'   => $response->body(),
+                    'function'   => 'sendApi'
+                ];
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'API call sent successfully for ' . $employee->employee_name,
+                'data' => $responses
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
 
     // Show edit form
     public function edit($encodedId)
@@ -122,11 +204,11 @@ class EmployeePlantAssignmentController extends Controller
             'projects_id'   => 'required|array|min:1',
             'is_active'     => 'required|in:0,1',
         ], [
-            'employee_id.required'   => 'Please select an employee',
-            'plant_id.required'      => 'Please select a plant',
-            'department_id.required' => 'Please select at least one department',
-            'projects_id.required'   => 'Please select at least one project',
-            'is_active.required'     => 'Please select status',
+            'employee_id.required'   => 'Please Select An Employee',
+            'plant_id.required'      => 'Please Select a Plant',
+            'department_id.required' => 'Please Select At Least One Department',
+            'projects_id.required'   => 'Please Select At Least One Project',
+            'is_active.required'     => 'Please Select Status',
         ]);
 
         $validator->validate();
@@ -136,7 +218,7 @@ class EmployeePlantAssignmentController extends Controller
             $exists = $this->service->exists($request->employee_id, $request->plant_id, $id);
             if($exists){
                 $employeeName = Employees::find($request->employee_id)->employee_name;
-                return back()->withInput()->with('error', "$employeeName is already assigned to the selected plant.");
+                return back()->withInput()->with('error', "$employeeName Is Already Assigned To The Selected Plant.");
             }
 
             // Update assignment
@@ -146,7 +228,7 @@ class EmployeePlantAssignmentController extends Controller
             $plantName = PlantMasters::find($request->plant_id)->plant_name;
 
             return redirect()->route('employee.assignments.list')
-                             ->with('success', "$employeeName assigned has been updated to $plantName plant successfully.");
+                             ->with('success', "$employeeName Assigned Has Been Updated To $plantName Plant Successfully.");
 
         } catch(Exception $e) {
             return back()->withInput()->with('error', 'Error updating assignment: ' . $e->getMessage());
@@ -166,7 +248,7 @@ class EmployeePlantAssignmentController extends Controller
 
             return response()->json([
                 'status'=>true,
-                'message'=> "$employeeName assignment for $plantName plant has been deleted successfully."
+                'message'=> "$employeeName Assignment For $plantName Plant Has Been Deleted Successfully."
             ]);
         } catch(Exception $e) {
             return response()->json(['status'=>false,'message'=>'Error deleting assignment: '.$e->getMessage()]);
@@ -174,6 +256,26 @@ class EmployeePlantAssignmentController extends Controller
     }
 
     // Update status (Active / Inactive)
+    // public function updateStatus(Request $request)
+    // {
+    //     try {
+    //         $id = base64_decode($request->id);
+    //         $assignment = $this->service->getById($id);
+    //         $employeeName = $assignment->employee->employee_name;
+    //         $plantName = $assignment->plant->plant_name;
+
+    //         $this->service->updateStatus($request);
+
+    //         $statusText = $request->is_active == 1 ? 'Activated' : 'Deactivated';
+    //         return response()->json([
+    //             'status'=>true,
+    //             'message'=> "$employeeName Assignment For $plantName Plant has been $statusText Successfully."
+    //         ]);
+    //     } catch(Exception $e) {
+    //         return response()->json(['status'=>false,'message'=>'Error updating status: '.$e->getMessage()]);
+    //     }
+    // }
+
     public function updateStatus(Request $request)
     {
         try {
@@ -182,17 +284,73 @@ class EmployeePlantAssignmentController extends Controller
             $employeeName = $assignment->employee->employee_name;
             $plantName = $assignment->plant->plant_name;
 
+            // First update status in DB
             $this->service->updateStatus($request);
 
-            $statusText = $request->is_active == 1 ? 'activated' : 'deactivated';
+            $employee = $assignment->employee;
+            $plant = $assignment->plant;
+
+            $departmentCodes = Departments::whereIn('id', $assignment->department_id ?? [])
+                        ->pluck('department_code')
+                        ->implode(',');
+
+            $projectIds = $assignment->projects_id ?? [];
+            $projects = Projects::whereIn('id', $projectIds)->get();
+
+            $responses = [];  // Store each API result
+
+            foreach ($projects as $proj) {
+
+                $payload = [
+                    'plant'          => $plant->plant_code,
+                    'dept'           => $departmentCodes,
+                    'email_id'       => $employee->employee_email,
+                    'role'           => $employee->role->role ?? '',
+                    'emp_name'       => $employee->employee_name,
+                    'emp_code'       => $employee->employee_code,
+                    'emp_type'       => $employee->employee_type,
+                    'username'       => $employee->employee_user_name,
+                    'password'       => decrypt($employee->plain_password ?? ''),
+                    'status'         => $request->is_active, 
+                ];
+
+                // Extract project name
+                $projectName = '';
+                if (preg_match('#https?://[^/]+/([^/]+)/#', $proj->project_url, $matches)) {
+                    $projectName = $matches[1];
+                }
+
+                $apiUrl = "https://alfitworld.com/{$projectName}/CommonController/api_add_employee";
+
+                // API CALL
+                $response = Http::post($apiUrl, $payload);
+
+                // Store response details
+                $responses[] = [
+                    'project_id' => $proj->id,
+                    'url'        => $apiUrl,
+                    'payload'    => $payload,
+                    'status'     => $response->successful() ? 'success' : 'failed',
+                    'response'   => $response->body(),
+                ];
+            }
+
+            $statusText = $request->is_active == 1 ? 'Activated' : 'Deactivated';
+
             return response()->json([
-                'status'=>true,
-                'message'=> "$employeeName's assignment for $plantName plant has been $statusText successfully."
+                'status' => true,
+                'message' => "$employeeName Assiged For $plantName Plant has been $statusText Successfully.",
+                'api_responses' => $responses  // Here you get all API responses
             ]);
+
         } catch(Exception $e) {
-            return response()->json(['status'=>false,'message'=>'Error updating status: '.$e->getMessage()]);
+            return response()->json([
+                'status'=>false,
+                'message'=>'Error updating status: '.$e->getMessage()
+            ]);
         }
     }
+
 
 public function export(Request $request)
 {

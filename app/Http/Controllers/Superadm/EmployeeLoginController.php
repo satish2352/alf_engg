@@ -9,6 +9,8 @@ use App\Models\Employees;
 use App\Models\EmployeePlantAssignment;
 use Illuminate\Support\Facades\Session;
 use App\Models\FinancialYear;
+use App\Models\PlantMaster;
+use App\Models\Roles;
 
 class EmployeeLoginController extends Controller
 {
@@ -30,10 +32,10 @@ class EmployeeLoginController extends Controller
             'plant_id' => 'required',
             'financial_year_id' => 'required',
         ], [
-            'superemail.required' => 'Enter user name',
-            'superpassword.required' => 'Enter password',
-            'plant_id.required' => 'Please select a plant',
-            'financial_year_id.required' => 'Please select financial year',
+            'superemail.required' => 'Enter User Name',
+            'superpassword.required' => 'Enter Password',
+            'plant_id.required' => 'Please Select a Plant',
+            'financial_year_id.required' => 'Please Select Financial Year',
         ]);
 
         $uname = $req->input('superemail');
@@ -44,21 +46,28 @@ class EmployeeLoginController extends Controller
                              ->where('is_deleted', 0)
                              ->first();
 
-        if (!$employee) return redirect()->back()->with('error', 'Credentials incorrect');
-        if ($employee->is_active == 0) return redirect()->back()->with('error', 'Your account has been deactivated. Please contact the admin for assistance.');
-        if (!Hash::check($pass, $employee->employee_password)) return redirect()->back()->with('error', 'Credentials incorrect');
+        $plantData = \DB::table('plant_masters')
+                ->where('id', $plant)
+                ->where('is_deleted', 0)
+                ->first();
+
+        if (!$employee) return redirect()->back()->with('error', 'Credentials Incorrect');
+        if ($employee->is_active == 0) return redirect()->back()->with('error', 'Your Account Has Been Deactivated. Please Contact The Admin For Assistance.');
+        if (!Hash::check($pass, $employee->employee_password)) return redirect()->back()->with('error', 'Credentials Incorrect');
 
         $hasPlant = EmployeePlantAssignment::where('employee_id', $employee->id)
                                            ->where('plant_id', $plant)
                                            ->where('is_active', 1)
                                            ->exists();
 
-        if (!$hasPlant) return redirect()->back()->with('error', 'Selected plant not assigned');
+        if (!$hasPlant) return redirect()->back()->with('error', 'Selected Plant Not Assigned');
 
         // ✅ Store session
         Session::put('emp_user_id', $employee->id);
         Session::put('emp_role_id', $employee->role_id);
+        Session::put('emp_role_name', $employee->role->role ?? null);
         Session::put('emp_plant_id', $plant);
+        Session::put('emp_plant_code', $plantData->plant_code);
         Session::put('emp_code', $employee->employee_code);
         Session::put('emp_financial_year_id', $req->financial_year_id);
         Session::put('role', 'employee');

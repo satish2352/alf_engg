@@ -42,7 +42,7 @@ class RoleController extends Controller
 			'role' => [
 				'required',
 				'max:255',
-				'regex:/^[a-zA-Z0-9\s]+$/',
+				// 'regex:/^[a-zA-Z0-9\s]+$/',
 				Rule::unique('roles', 'role')->where(function ($query) {
 					return $query->where('is_deleted', 0);
 
@@ -51,16 +51,16 @@ class RoleController extends Controller
 			 'short_description' => 'required|max:255',
 		], [
 			'role.required' => 'Enter Role Name',
-			'role.regex' => 'Role must contain only letters, numbers, and spaces.',
-			'role.unique' => 'This role already exists.',
-			'role.max' => 'Role name must not exceed 255 characters.',
+			// 'role.regex' => 'Role Must Contain Only Letters, Numbers, And Spaces.',
+			'role.unique' => 'This Role Already Exists.',
+			'role.max' => 'Role Name Must Not Exceed 255 Characters.',
 			'short_description.required' => 'Enter Description',
-			 'short_description.max' => 'Description must not exceed 255 characters.',
+			 'short_description.max' => 'Description Must Not Exceed 255 Characters.',
 		]);
 
 		try {
 			$this->service->save($req);
-			return redirect()->route('roles.list')->with('success', 'Role added successfully.');
+			return redirect()->route('roles.list')->with('success', 'Role Added Successfully.');
 		} catch (Exception $e) {
 			return redirect()->back()->withInput()->with('error', 'Something went wrong: ' . $e->getMessage());
 		}
@@ -93,17 +93,17 @@ class RoleController extends Controller
 			'is_active' => 'required'
 		], [
 			'role.required' => 'Enter Role Name',
-			'role.unique' => 'This role already exists.',
-			'role.max' => 'Role name must not exceed 255 characters.',
-			'id.required' => 'ID required',
-			'is_active.required' => 'Select active or inactive required',
+			'role.unique' => 'This Role Already Exists.',
+			'role.max' => 'Role Name Must Not Exceed 255 Characters.',
+			'id.required' => 'ID Required',
+			'is_active.required' => 'Select Active Or Inactive Required',
 			'short_description.required' => 'Enter Description',
-			'short_description.max' => 'Description must not exceed 255 characters.',
+			'short_description.max' => 'Description Must Not Exceed 255 Characters.',
 		]);
 
 		try {
 			$this->service->update($req);
-			return redirect()->route('roles.list')->with('success', 'Role updated successfully.');
+			return redirect()->route('roles.list')->with('success', 'Role Updated Successfully.');
 		} catch (Exception $e) {
 			return redirect()->back()->withInput()->with('error', 'Something went wrong: ' . $e->getMessage());
 		}
@@ -136,7 +136,7 @@ class RoleController extends Controller
 			]);
 
 			$this->service->delete($req);
-			return redirect()->route('roles.list')->with('success', 'Role deleted successfully.');
+			return redirect()->route('roles.list')->with('success', 'Role Deleted Successfully.');
 		} catch (Exception $e) {
 			// Show the custom message if role is assigned to employees
 			return redirect()->back()->with('error', $e->getMessage());
@@ -171,8 +171,8 @@ class RoleController extends Controller
         $role->is_active = $request->is_active;
         $role->save();
 
-        $statusText = $role->is_active ? 'activated ' : 'deactivated ';
-        $message = "Role '{$role->role}' status {$statusText} successfully";
+        $statusText = $role->is_active ? 'Activated ' : 'Deactivated ';
+        $message = "Role '{$role->role}' Status {$statusText} Successfully";
 
         return response()->json(['status' => true, 'message' => $message]);
     } catch (Exception $e) {

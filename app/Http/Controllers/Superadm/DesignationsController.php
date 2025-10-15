@@ -50,15 +50,15 @@ class DesignationsController extends Controller
 
 			
 		], [
-			'designation.required' => 'Enter designation Name',
-			'designation.unique' => 'This designation already exists.',
-			'short_description.required' => 'This short description required.',
-			 'short_description.max' => 'Description must not exceed 255 characters.',
+			'designation.required' => 'Enter Designation Name',
+			'designation.unique' => 'This Designation Already Exists.',
+			'short_description.required' => 'This Short Description Required.',
+			'short_description.max' => 'Description Must Not Exceed 255 Characters.',
 		]);
 
 		try {
 			$this->service->save($req);
-			return redirect()->route('designations.list')->with('success', 'Designation added successfully.');
+			return redirect()->route('designations.list')->with('success', 'Designation Added Successfully.');
 		} catch (Exception $e) {
 			return redirect()->back()->withInput()->with('error', 'Something went wrong: ' . $e->getMessage());
 		}
@@ -90,17 +90,17 @@ class DesignationsController extends Controller
 			'id' => 'required',
 			'is_active' => 'required'
 		], [
-			'designation.required' => 'Enter designation Name',
-			'designation.unique' => 'This designation already exists.',
-			'short_description.required' => 'This short description required.',
-			'id.required' => 'ID required',
-			'is_active.required' => 'Select active or inactive required',
-			 'short_description.max' => 'Description must not exceed 255 characters.',
+			'designation.required' => 'Enter Designation Name',
+			'designation.unique' => 'This designation already Exists.',
+			'short_description.required' => 'This Short Description Required.',
+			'id.required' => 'ID Required',
+			'is_active.required' => 'Select Active Or Inactive Required',
+			 'short_description.max' => 'Description Must Not Exceed 255 Characters.',
 		]);
 
 		try {
 			$this->service->update($req);
-			return redirect()->route('designations.list')->with('success', 'Designation updated successfully.');
+			return redirect()->route('designations.list')->with('success', 'Designation Updated Successfully.');
 		} catch (Exception $e) {
 			return redirect()->back()->withInput()->with('error', 'Something went wrong: ' . $e->getMessage());
 		}
@@ -133,7 +133,7 @@ class DesignationsController extends Controller
         ]);
 
         $this->service->delete($req);
-        return redirect()->route('designations.list')->with('success', 'Designation deleted successfully.');
+        return redirect()->route('designations.list')->with('success', 'Designation Deleted Successfully.');
     } catch (Exception $e) {
         // Show the custom message if designation is assigned to employees
         return redirect()->back()->with('error', $e->getMessage());
@@ -169,8 +169,8 @@ class DesignationsController extends Controller
         $designation->is_active = $request->is_active;
         $designation->save();
 
-        $statusText = $designation->is_active ? 'activated' : 'deactivated';
-        $message = "Designation '{$designation->designation}' status {$statusText} successfully";
+        $statusText = $designation->is_active ? 'Activated' : 'Deactivated';
+        $message = "Designation '{$designation->designation}' Status {$statusText} Successfully";
 
         return response()->json(['status' => true, 'message' => $message]);
     } catch (Exception $e) {

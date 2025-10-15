@@ -16,7 +16,7 @@
                                 @foreach ($plants as $plant)
                                     <option value="{{ $plant->id }}"
                                         {{ old('plant_id') == $plant->id ? 'selected' : '' }}>
-                                        {{ $plant->plant_name }}
+                                        {{ $plant->plant_name }} ({{ $plant->plant_code }})
                                     </option>
                                 @endforeach
                             </select>
