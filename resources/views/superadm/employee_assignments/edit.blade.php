@@ -107,7 +107,7 @@ $oldDepartments = is_array($oldDepartments) ? $oldDepartments : [];
                     </div>
 
                     {{-- Status --}}
-                    <div class="form-group">
+                    <div class="form-group" style="display: none">
                         <label>Status <span class="text-danger">*</span></label>
                         <select name="is_active" class="form-control">
                             <option value="1" {{ old('is_active', $assignment->is_active) == 1 ? 'selected' : '' }}>Active</option>

@@ -62,16 +62,18 @@ class EmployeeLoginController extends Controller
 
         if (!$hasPlant) return redirect()->back()->with('error', 'Selected Plant Not Assigned');
 
-        // ✅ Store session
+        // Store session
         Session::put('emp_user_id', $employee->id);
         Session::put('emp_role_id', $employee->role_id);
         Session::put('emp_role_name', $employee->role->role ?? null);
         Session::put('emp_plant_id', $plant);
         Session::put('emp_plant_code', $plantData->plant_code);
         Session::put('emp_code', $employee->employee_code);
+        Session::put('designation', $employee->designation->designation ?? null);
         Session::put('emp_financial_year_id', $req->financial_year_id);
         Session::put('role', 'employee');
         Session::put('email_id', $employee->employee_email);
+        Session::put('com_portal_url', env('ASSET_URL'));
 
         return redirect()->route('dashboard-emp');
     }

@@ -50,24 +50,68 @@ class EmployeePlantAssignmentService
         return $this->repo->getById($id);
     }
 
-public function update($req, $id)
-{
-    try {
-        $data = [
-            'employee_id' => $req->employee_id,
-            'plant_id' => $req->plant_id,
-            // 'department_id' => implode(',', $req->department_id ?? []),
-            // 'projects_id' => implode(',', $req->projects_id ?? []),
-'department_id' => $req->department_id ?? [],
-'projects_id'   => $req->projects_id ?? [],
-            'is_active' => $req->is_active, // ✅ allow status update
-        ];
-        return $this->repo->update($id, $data);
-    } catch(Exception $e) {
-        Log::error("EmployeePlantAssignmentService update: ".$e->getMessage());
-        return false;
+    // public function update($req, $id)
+    // {
+    //     try {
+    //         $data = [
+    //             'employee_id' => $req->employee_id,
+    //             'plant_id' => $req->plant_id,
+    //             // 'department_id' => implode(',', $req->department_id ?? []),
+    //             // 'projects_id' => implode(',', $req->projects_id ?? []),
+    //             'department_id' => $req->department_id ?? [],
+    //             'projects_id'   => $req->projects_id ?? [],
+    //             'is_active' => $req->is_active, // allow status update
+    //             'send_api'      => 0,
+    //         ];
+    //         return $this->repo->update($id, $data);
+    //     } catch(Exception $e) {
+    //         Log::error("EmployeePlantAssignmentService update: ".$e->getMessage());
+    //         return false;
+    //     }
+    // }
+
+    // change after add send_api col logic
+    public function update($req, $id)
+    {
+        try {
+            $assignment = $this->repo->getById($id);
+
+            // Convert DB values to comparable format
+            $oldData = [
+                'employee_id'   => $assignment->employee_id,
+                'plant_id'      => $assignment->plant_id,
+                'department_id' => is_array($assignment->department_id) ? $assignment->department_id : (array) $assignment->department_id,
+                'projects_id'   => is_array($assignment->projects_id) ? $assignment->projects_id : (array) $assignment->projects_id,
+                'is_active'     => $assignment->is_active,
+            ];
+
+            $newData = [
+                'employee_id'   => $req->employee_id,
+                'plant_id'      => $req->plant_id,
+                'department_id' => $req->department_id ?? [],
+                'projects_id'   => $req->projects_id ?? [],
+                'is_active'     => $req->is_active,
+            ];
+
+            // Compare data
+            $hasChanges = $oldData['employee_id'] != $newData['employee_id'] ||
+                        $oldData['plant_id']    != $newData['plant_id'] ||
+                        json_encode($oldData['department_id']) != json_encode($newData['department_id']) ||
+                        json_encode($oldData['projects_id'])   != json_encode($newData['projects_id']) ||
+                        $oldData['is_active']   != $newData['is_active'];
+
+            // If there are changes, reset send_api = 0
+            if ($hasChanges) {
+                $newData['send_api'] = 0;
+            }
+
+            return $this->repo->update($id, $newData);
+
+        } catch(Exception $e) {
+            Log::error("EmployeePlantAssignmentService update: " . $e->getMessage());
+            return false;
+        }
     }
-}
 
 
     public function delete($req)

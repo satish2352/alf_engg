@@ -57,32 +57,60 @@ class DepartmentsController extends Controller
 	public function save(Request $req)
 	{
 
+		// $req->validate([
+		// 	'department_code' => [
+		// 		'required',
+		// 		Rule::unique('departments', 'department_code')->where(function ($query) {
+		// 			return $query->where('is_deleted', 0);
+		// 		}),
+		// 	],
+		// 	'department_name' => [
+		// 		'required',
+		// 		Rule::unique('departments', 'department_name')->where(function ($query) {
+		// 			return $query->where('is_deleted', 0);
+		// 		}),
+		// 	],
+		// 	'plant_id' => 'required',
+		// 	// 'department_short_name' => 'required',
+
+
+		// ], [
+		// 	'department_code.required' => 'Enter Deparment Code',
+		// 	'department_code.unique' => 'This Deparment Code Already Exists.',
+
+		// 	'department_name.required' => 'Enter Department Name ',
+		// 	'department_name.unique' => 'This Department Name Already Exists.',
+
+		// 	'plant_id.required' => 'Please Select Plant.',
+		// 	// 'department_short_name.required' => 'Department Short Description Required.',
+		// ]);
+
 		$req->validate([
 			'department_code' => [
 				'required',
-				Rule::unique('departments', 'department_code')->where(function ($query) {
-					return $query->where('is_deleted', 0);
-				}),
+				Rule::unique('departments', 'department_code')
+					->where(function ($query) use ($req) {
+						return $query->where('is_deleted', 0)
+									->where('plant_id', $req->plant_id);
+					}),
 			],
 			'department_name' => [
 				'required',
-				Rule::unique('departments', 'department_name')->where(function ($query) {
-					return $query->where('is_deleted', 0);
-				}),
+				Rule::unique('departments', 'department_name')
+					->where(function ($query) use ($req) {
+						return $query->where('is_deleted', 0)
+									->where('plant_id', $req->plant_id);
+					}),
 			],
 			'plant_id' => 'required',
-			// 'department_short_name' => 'required',
-
-
 		], [
-			'department_code.required' => 'Enter Deparment Code',
-			'department_code.unique' => 'This Deparment Code Already Exists.',
+			'department_code.required' => 'Enter Department Code',
+			'department_code.unique' => 'This Department Code already exists for the selected plant.',
 
-			'department_name.required' => 'Enter Department Name ',
-			'department_name.unique' => 'This Department Name Already Exists.',
+			'department_name.required' => 'Enter Department Name',
+			'department_name.unique' => 'This Department Name already exists for the selected plant.',
 
-			'plant_id.required' => 'Please Select Plant.',
-			// 'department_short_name.required' => 'Department Short Description Required.',
+			'plant_id.required' => 'Please select a plant.',
 		]);
 
 		try {
@@ -125,35 +153,69 @@ class DepartmentsController extends Controller
 
 	public function update(Request $req)
 	{
+		// $req->validate([
+		// 	'department_code' => [
+		// 		'required',
+		// 		Rule::unique('departments', 'department_code')
+		// 			->where(fn($query) => $query->where('is_deleted', 0))
+		// 			->ignore($req->id),
+
+		// 	],
+		// 	'department_name' => [
+		// 		'required',
+		// 		Rule::unique('departments', 'department_name')
+		// 			->where(fn($query) => $query->where('is_deleted', 0))
+		// 			->ignore($req->id),
+		// 	],
+		// 	'plant_id' => 'required',
+		// 	// 'department_short_name' => 'required',
+		// 	'id' => 'required',
+		// 	'is_active' => 'required'
+		// ], [
+		// 	'department_code.required' => 'Enter Deparment Code',
+		// 	'department_code.unique' => 'This Deparment Code Already Exists.',
+
+		// 	'department_name.required' => 'Enter Department Name ',
+		// 	'department_name.unique' => 'This Department Name Already Exists.',
+
+		// 	'plant_id.required' => 'Please Select Plant.',
+		// 	// 'department_short_name.required' => 'Department Short Description Required.',
+		// 	'id.required' => 'ID required',
+		// 	'is_active.required' => 'Select Active Or Inactive Required'
+		// ]);
+
 		$req->validate([
 			'department_code' => [
 				'required',
 				Rule::unique('departments', 'department_code')
-					->where(fn($query) => $query->where('is_deleted', 0))
+					->where(function ($query) use ($req) {
+						return $query->where('is_deleted', 0)
+									->where('plant_id', $req->plant_id);
+					})
 					->ignore($req->id),
-
 			],
 			'department_name' => [
 				'required',
 				Rule::unique('departments', 'department_name')
-					->where(fn($query) => $query->where('is_deleted', 0))
+					->where(function ($query) use ($req) {
+						return $query->where('is_deleted', 0)
+									->where('plant_id', $req->plant_id);
+					})
 					->ignore($req->id),
 			],
 			'plant_id' => 'required',
-			// 'department_short_name' => 'required',
 			'id' => 'required',
 			'is_active' => 'required'
 		], [
-			'department_code.required' => 'Enter Deparment Code',
-			'department_code.unique' => 'This Deparment Code Already Exists.',
+			'department_code.required' => 'Enter Department Code',
+			'department_code.unique' => 'This Department Code already exists for the selected plant.',
 
-			'department_name.required' => 'Enter Department Name ',
-			'department_name.unique' => 'This Department Name Already Exists.',
+			'department_name.required' => 'Enter Department Name',
+			'department_name.unique' => 'This Department Name already exists for the selected plant.',
 
-			'plant_id.required' => 'Please Select Plant.',
-			// 'department_short_name.required' => 'Department Short Description Required.',
+			'plant_id.required' => 'Please select a plant.',
 			'id.required' => 'ID required',
-			'is_active.required' => 'Select Active Or Inactive Required'
+			'is_active.required' => 'Select Active or Inactive status',
 		]);
 
 		try {

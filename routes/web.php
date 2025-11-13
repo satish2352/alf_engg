@@ -196,6 +196,12 @@ Route::group(['middleware' => ['SuperAdmin']], function () {
     Route::get('/employee-assignments/export', [EmployeePlantAssignmentController::class, 'export'])
     ->name('employee.assignments.export');
 
+    Route::post('/employee/assignments/get-projects', [EmployeePlantAssignmentController::class, 'getProjects'])
+    ->name('employee.assignments.getProjects');
+
+    Route::get('/employee/assignments/checkSendApi', [EmployeePlantAssignmentController::class, 'checkSendApi'])
+     ->name('employee.assignments.checkSendApi');
+
 
 
     // Route::get('logout', [LoginController::class, 'logout'])->name('logout');

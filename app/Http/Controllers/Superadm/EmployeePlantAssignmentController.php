@@ -91,85 +91,302 @@ class EmployeePlantAssignmentController extends Controller
         }
     }
 
+    // public function sendApi(Request $request)
+    // {
+    //     $request->validate([
+    //         'id' => 'required'
+    //     ]);
+
+    //     try {
+    //         $assignment = EmployeePlantAssignment::with(['employee.designation', 'plant'])
+    //                         ->findOrFail($request->id);
+
+    //         $employee = $assignment->employee;
+    //         $plant = $assignment->plant;
+
+    //         // Decode department IDs (stored as JSON like ["54","53"])
+    //         $departmentIds = is_array($assignment->department_id)
+    //             ? $assignment->department_id
+    //             : json_decode($assignment->department_id ?? '[]', true);
+
+    //         // Fetch both department codes and short names
+    //         $departments = Departments::whereIn('id', $departmentIds)->get();
+
+    //         $departmentCodes = $departments->pluck('department_code')->implode(',');
+    //         $departmentShortNames = $departments->pluck('department_short_name')->implode(',');
+
+    //         // Get projects
+    //         $projectIds = $assignment->projects_id ?? [];
+    //         $projects = Projects::whereIn('id', $projectIds)->get();
+
+    //         $responses = [];
+
+    //         foreach ($projects as $proj) {
+    //             $payload = [
+    //                 'plant'              => $plant->plant_code,
+    //                 'dept'               => $departmentCodes,        // e.g. "54,53"
+    //                 'dept_short_names'   => $departmentShortNames,   // e.g. "IT,HR/Admin"
+    //                 'email_id'           => $employee->employee_email,
+    //                 'role'               => $employee->role->role ?? '',
+    //                 'emp_name'           => $employee->employee_name,
+    //                 'emp_code'           => $employee->employee_code,
+    //                 'emp_type'           => $employee->employee_type,
+    //                 'designation'        => $employee->designation->designation ?? '',
+    //                 'username'           => $employee->employee_user_name,
+    //                 'password'           => decrypt($employee->plain_password ?? ''),
+    //                 'status'             => $assignment->is_active,
+    //             ];
+
+    //             // Extract project name dynamically from project_url
+    //             $projectName = '';
+    //             if (preg_match('#https?://[^/]+/([^/]+)/#', $proj->project_url, $matches)) {
+    //                 $projectName = $matches[1]; // e.g. 'alfkaizen'
+    //             }
+
+    //             // Build API URL dynamically
+    //             $apiUrl = "https://alfitworld.com/{$projectName}/CommonController/api_add_employee";
+
+    //             // Send POST request
+    //             $response = Http::post($apiUrl, $payload);
+
+    //             $responses[] = [
+    //                 'project_id' => $proj->id,
+    //                 'payload'    => $payload,
+    //                 'status'     => $response->successful() ? 'success' : 'failed',
+    //                 'response'   => $response->body(),
+    //                 'function'   => 'sendApi'
+    //             ];
+    //         }
+
+    //         return response()->json([
+    //             'status' => true,
+    //             'message' => 'API call sent successfully for ' . $employee->employee_name,
+    //             'data' => $responses
+    //         ]);
+
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => $e->getMessage()
+    //         ]);
+    //     }
+    // }
+
     public function sendApi(Request $request)
     {
         $request->validate([
-            'id' => 'required'
+            'id' => 'required',
+            'departments' => 'required|array'
         ]);
 
         try {
-            $assignment = EmployeePlantAssignment::with(['employee', 'plant'])
+            $assignment = EmployeePlantAssignment::with(['employee.designation', 'plant'])
                             ->findOrFail($request->id);
 
             $employee = $assignment->employee;
             $plant = $assignment->plant;
 
-            // Get department codes
-            $departmentCodes = Departments::whereIn('id', $assignment->department_id ?? [])
-                        ->pluck('department_code')
-                        ->implode(',');
-
-            // Get projects
             $projectIds = $assignment->projects_id ?? [];
             $projects = Projects::whereIn('id', $projectIds)->get();
 
             $responses = [];
 
             foreach ($projects as $proj) {
+                // 🔹 Fetch departments selected for this specific project
+                $selectedDeptIds = $request->departments[$proj->id] ?? [];
+
+                if (empty($selectedDeptIds)) {
+                    // if for any project no any department not selected then, skip this
+                    $responses[] = [
+                        'project_id' => $proj->id,
+                        'status' => 'skipped',
+                        'message' => 'No departments selected for this project',
+                    ];
+                    continue;
+                }
+
+                $departments = Departments::whereIn('id', $selectedDeptIds)->get();
+                $departmentCodes = $departments->pluck('department_code')->implode(',');
+                $departmentShortNames = $departments->pluck('department_short_name')->implode(',');
+
                 $payload = [
-                    'plant'          => $plant->plant_code,
-                    'dept'     => $departmentCodes,
-                    'email_id'      => $employee->employee_email,
-                    'role'                => $employee->role->role ?? '',
-                    'emp_name'       => $employee->employee_name,
-                    'emp_code'       => $employee->employee_code,
+                    'plant'              => $plant->plant_code,
+                    'dept'               => $departmentCodes,
+                    'dept_short_names'   => $departmentShortNames,
+                    'email_id'           => $employee->employee_email,
+                    'role'               => $employee->role->role ?? '',
+                    'emp_name'           => $employee->employee_name,
+                    'emp_code'           => $employee->employee_code,
                     'emp_type'           => $employee->employee_type,
-                    'username'  => $employee->employee_user_name,
-                    'password'  => decrypt($employee->plain_password ?? ''),
-                    'status'         => $assignment->is_active,
-                    // 'password'   => $employee->employee_password, // hashed
-                    // 'project_id'          => $proj->id, // optional
+                    'designation'        => $employee->designation->designation ?? '',
+                    'username'           => $employee->employee_user_name,
+                    'password'           => decrypt($employee->plain_password ?? ''),
+                    'status'             => $assignment->is_active,
+                    'com_portal_url'     => env('ASSET_URL'),
                 ];
 
-                    // Extract project name dynamically from project_url
-                    $projectName = '';
-                    if (preg_match('#https?://[^/]+/([^/]+)/#', $proj->project_url, $matches)) {
-                        $projectName = $matches[1]; // This will be like 'alfkaizen' 
-                    }
-                    // Log the project name
-                    // \Log::info('Project Name: ' . $projectName);
+                // Extract project name dynamically
+                $projectName = '';
+                if (preg_match('#https?://[^/]+/([^/]+)/#', $proj->project_url, $matches)) {
+                    $projectName = $matches[1];
+                }
 
-                    // Send POST request and capture response
-                    // $response = Http::post('https://alfitworld.com/alfkaizen/CommonController/api_add_employee', $payload);
+                $apiUrl = "https://alfitworld.com/{$projectName}/CommonController/api_add_employee";
 
-                    // Build the API URL dynamically
-                    $apiUrl = "https://alfitworld.com/{$projectName}/CommonController/api_add_employee";
-
-                    // Send POST request
-                    $response = Http::post($apiUrl, $payload);
+                // 🔹 Send to that project’s API
+                $response = Http::post($apiUrl, $payload);
 
                 $responses[] = [
                     'project_id' => $proj->id,
-                    'payload'    => $payload,
-                    'status'     => $response->successful() ? 'success' : 'failed',
-                    'response'   => $response->body(),
-                    'function'   => 'sendApi'
+                    'project_name' => $proj->project_name,
+                    'departments_sent' => $departments->pluck('department_name')->toArray(),
+                    'payload' => $payload,
+                    'status' => $response->successful() ? 'success' : 'failed',
+                    'response' => $response->body(),
                 ];
             }
 
+                // After all API calls, mark as sent
+                $assignment->update(['send_api' => 1]);
+
             return response()->json([
                 'status' => true,
-                'message' => 'API call sent successfully for ' . $employee->employee_name,
-                'data' => $responses
+                'message' => 'API sent successfully for ' . $employee->employee_name,
+                'data' => $responses,
             ]);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 'status' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ]);
         }
     }
+
+    public function getProjects(Request $request)
+    {
+        $assignment = EmployeePlantAssignment::find($request->id);
+
+        if (!$assignment) {
+            return response()->json(['status' => false, 'message' => 'Assignment not found']);
+        }
+
+        // Decode projects_id
+        $projectIds = is_array($assignment->projects_id)
+            ? $assignment->projects_id
+            : json_decode($assignment->projects_id, true);
+
+        $projects = !empty($projectIds)
+            ? Projects::whereIn('id', $projectIds)->get(['id', 'project_name'])
+            : [];
+
+        // Decode department_id
+        $departmentIds = is_array($assignment->department_id)
+            ? $assignment->department_id
+            : json_decode($assignment->department_id, true);
+
+        // only selected departments shown
+        $departments = !empty($departmentIds)
+            ? Departments::whereIn('id', $departmentIds)->get(['id', 'department_name'])
+            : [];
+
+        return response()->json([
+            'status' => true,
+            'projects' => $projects,
+            'departments' => $departments,
+        ]);
+    }
+
+    public function checkSendApi()
+    {
+        $data = EmployeePlantAssignment::select('id', 'send_api')->get();
+
+        return response()->json([
+            'status' => true,
+            'data' => $data
+        ]);
+    }
+
+
+    // public function sendApi(Request $request)
+    // {
+    //     $request->validate([
+    //         'id' => 'required'
+    //     ]);
+
+    //     try {
+    //         $assignment = EmployeePlantAssignment::with(['employee', 'plant'])
+    //                         ->findOrFail($request->id);
+
+    //         $employee = $assignment->employee;
+    //         $plant = $assignment->plant;
+
+    //         // Get department codes
+    //         $departmentCodes = Departments::whereIn('id', $assignment->department_id ?? [])
+    //                     ->pluck('department_code')
+    //                     ->implode(',');
+
+    //         // Get projects
+    //         $projectIds = $assignment->projects_id ?? [];
+    //         $projects = Projects::whereIn('id', $projectIds)->get();
+
+    //         $responses = [];
+
+    //         foreach ($projects as $proj) {
+    //             $payload = [
+    //                 'plant'          => $plant->plant_code,
+    //                 'dept'     => $departmentCodes,
+    //                 'email_id'      => $employee->employee_email,
+    //                 'role'                => $employee->role->role ?? '',
+    //                 'emp_name'       => $employee->employee_name,
+    //                 'emp_code'       => $employee->employee_code,
+    //                 'emp_type'           => $employee->employee_type,
+    //                 'username'  => $employee->employee_user_name,
+    //                 'password'  => decrypt($employee->plain_password ?? ''),
+    //                 'status'         => $assignment->is_active,
+    //                 // 'password'   => $employee->employee_password, // hashed
+    //                 // 'project_id'          => $proj->id, // optional
+    //             ];
+
+    //                 // Extract project name dynamically from project_url
+    //                 $projectName = '';
+    //                 if (preg_match('#https?://[^/]+/([^/]+)/#', $proj->project_url, $matches)) {
+    //                     $projectName = $matches[1]; // This will be like 'alfkaizen' 
+    //                 }
+    //                 // Log the project name
+    //                 // \Log::info('Project Name: ' . $projectName);
+
+    //                 // Send POST request and capture response
+    //                 // $response = Http::post('https://alfitworld.com/alfkaizen/CommonController/api_add_employee', $payload);
+
+    //                 // Build the API URL dynamically
+    //                 $apiUrl = "https://alfitworld.com/{$projectName}/CommonController/api_add_employee";
+
+    //                 // Send POST request
+    //                 $response = Http::post($apiUrl, $payload);
+
+    //             $responses[] = [
+    //                 'project_id' => $proj->id,
+    //                 'payload'    => $payload,
+    //                 'status'     => $response->successful() ? 'success' : 'failed',
+    //                 'response'   => $response->body(),
+    //                 'function'   => 'sendApi'
+    //             ];
+    //         }
+
+    //         return response()->json([
+    //             'status' => true,
+    //             'message' => 'API call sent successfully for ' . $employee->employee_name,
+    //             'data' => $responses
+    //         ]);
+
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => $e->getMessage()
+    //         ]);
+    //     }
+    // }
 
 
     // Show edit form
@@ -221,6 +438,9 @@ class EmployeePlantAssignmentController extends Controller
                 return back()->withInput()->with('error', "$employeeName Is Already Assigned To The Selected Plant.");
             }
 
+            // Update send_api col 0
+            $request->merge(['send_api' => 0]);
+
             // Update assignment
             $this->service->update($request, $id);
 
@@ -236,24 +456,216 @@ class EmployeePlantAssignmentController extends Controller
     }
 
     // Delete assignment
+    // public function delete(Request $request)
+    // {
+    //     try {
+    //         $id = base64_decode($request->id);
+    //         $assignment = $this->service->getById($id);
+    //         $employeeName = $assignment->employee->employee_name;
+    //         $plantName = $assignment->plant->plant_name;
+
+    //         $this->service->delete($request);
+
+    //         return response()->json([
+    //             'status'=>true,
+    //             'message'=> "$employeeName Assignment For $plantName Plant Has Been Deleted Successfully."
+    //         ]);
+    //     } catch(Exception $e) {
+    //         return response()->json(['status'=>false,'message'=>'Error deleting assignment: '.$e->getMessage()]);
+    //     }
+    // }
+
     public function delete(Request $request)
     {
         try {
             $id = base64_decode($request->id);
             $assignment = $this->service->getById($id);
-            $employeeName = $assignment->employee->employee_name;
-            $plantName = $assignment->plant->plant_name;
 
+            if (!$assignment) {
+                return response()->json(['status' => false, 'message' => 'Assignment not found.']);
+            }
+
+            $employee = $assignment->employee;
+            $plant = $assignment->plant;
+
+            $employeeName = $employee->employee_name;
+            $plantName = $plant->plant_name;
+
+            // Get related projects
+            $projects = Projects::whereIn('id', $assignment->projects_id ?? [])->get();
+
+            $responses = [];
+            $failedProjects = [];
+            $successfulProjects = [];
+
+            foreach ($projects as $proj) {
+                $payload = [
+                    'plant'             => $plant->plant_code,
+                    'emp_code'          => $employee->employee_code,
+                    'com_portal_url'    => env('ASSET_URL'),
+                    'status'            => 0,
+                    'is_deleted'        => $request->is_deleted ?? 1,
+                ];
+
+                // Extract project name from URL
+                $projectName = '';
+                if (preg_match('#https?://[^/]+/([^/]+)/#', $proj->project_url, $matches)) {
+                    $projectName = $matches[1];
+                }
+
+                $apiUrl = "https://alfitworld.com/{$projectName}/CommonController/api_delete_employee";
+
+                // Call API
+                $response = Http::withoutRedirecting()->post($apiUrl, $payload);
+                $body = $response->body();
+
+                if ($response->status() == 302 || str_contains($body, 'User unable to delete')) {
+                    // API failed for this project
+                    $failedProjects[] = ucfirst($projectName);
+                    $status = 'failed';
+                } else {
+                    // Success for this project
+                    $successfulProjects[] = ucfirst($projectName);
+                    $status = 'success';
+                }
+
+                $responses[] = [
+                    'project_id' => $proj->id,
+                    'url'        => $apiUrl,
+                    'payload'    => $payload,
+                    'status'     => $status,
+                    'response'   => $body,
+                ];
+            }
+
+            // Build dynamic message
+            $messageParts = [];
+
+            if (!empty($successfulProjects)) {
+                $messageParts[] = implode(', ', $successfulProjects) . ' project employee record deleted successfully.';
+            }
+
+            if (!empty($failedProjects)) {
+                $messageParts[] = implode(', ', $failedProjects) . ' project employee record cannot be deleted since related records are linked to them.';
+            }
+
+            $finalMessage = implode(' ', $messageParts);
+
+            // If any failed project, skip local deletion
+            if (!empty($failedProjects)) {
+                return response()->json([
+                    'status' => false,
+                    'message' => $finalMessage,
+                    'api_responses' => $responses,
+                ]);
+            }
+
+            // ✅ Delete locally if all succeeded
             $this->service->delete($request);
 
             return response()->json([
-                'status'=>true,
-                'message'=> "$employeeName Assignment For $plantName Plant Has Been Deleted Successfully."
+                'status' => true,
+                'message' => "$employeeName assignment for $plantName plant has been deleted successfully. $finalMessage",
+                'api_responses' => $responses,
             ]);
-        } catch(Exception $e) {
-            return response()->json(['status'=>false,'message'=>'Error deleting assignment: '.$e->getMessage()]);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Error deleting assignment: ' . $e->getMessage(),
+            ]);
         }
     }
+
+
+    // before check which project under record delete and which record project under record not delete
+
+    // public function delete(Request $request)
+    // {
+    //     try {
+    //         $id = base64_decode($request->id);
+    //         $assignment = $this->service->getById($id);
+
+    //         if (!$assignment) {
+    //             return response()->json(['status' => false, 'message' => 'Assignment not found.']);
+    //         }
+
+    //         $employee = $assignment->employee;
+    //         $plant = $assignment->plant;
+
+    //         $employeeName = $employee->employee_name;
+    //         $plantName = $plant->plant_name;
+
+    //         // Get related projects
+    //         $projects = Projects::whereIn('id', $assignment->projects_id ?? [])->get();
+
+    //         $responses = [];
+    //         $apiFailed = false;
+    //         $errorMessage = null;
+
+    //         foreach ($projects as $proj) {
+    //             $payload = [
+    //                 'plant'      => $plant->plant_code,
+    //                 'emp_code'   => $employee->employee_code,
+    //                 'status'     => 0,
+    //                 'is_deleted' => $request->is_deleted ?? 1,
+    //             ];
+
+    //             // Extract project name from URL
+    //             $projectName = '';
+    //             if (preg_match('#https?://[^/]+/([^/]+)/#', $proj->project_url, $matches)) {
+    //                 $projectName = $matches[1];
+    //             }
+
+    //             // Target API endpoint
+    //             $apiUrl = "https://alfitworld.com/{$projectName}/CommonController/api_delete_employee";
+
+    //             // Call API
+    //             $response = Http::withoutRedirecting()->post($apiUrl, $payload);
+
+    //             // Detect "User unable to delete"
+    //             $body = $response->body();
+
+    //             if ($response->status() == 302 || str_contains($body, 'User unable to delete')) {
+    //                 $apiFailed = true;
+    //                 $errorMessage = 'This employee cannot be deleted since related records are linked to them.';
+    //             }
+
+    //             $responses[] = [
+    //                 'project_id' => $proj->id,
+    //                 'url'        => $apiUrl,
+    //                 'payload'    => $payload,
+    //                 'status'     => $response->successful() ? 'success' : 'failed',
+    //                 'response'   => $body,
+    //             ];
+    //         }
+
+    //         // Stop here if API says cannot delete
+    //         if ($apiFailed) {
+    //             return response()->json([
+    //                 'status' => false,
+    //                 'message' => $errorMessage ?? 'External system prevented deletion.',
+    //                 'api_responses' => $responses,
+    //             ]);
+    //         }
+
+    //         // Only delete locally if all remote deletions succeeded
+    //         $this->service->delete($request);
+
+    //         return response()->json([
+    //             'status' => true,
+    //             'message' => "$employeeName assignment for $plantName plant has been deleted successfully.",
+    //             'api_responses' => $responses,
+    //         ]);
+
+    //     } catch (Exception $e) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => 'Error deleting assignment: ' . $e->getMessage(),
+    //         ]);
+    //     }
+    // }
+
 
     // Update status (Active / Inactive)
     // public function updateStatus(Request $request)
@@ -290,9 +702,20 @@ class EmployeePlantAssignmentController extends Controller
             $employee = $assignment->employee;
             $plant = $assignment->plant;
 
-            $departmentCodes = Departments::whereIn('id', $assignment->department_id ?? [])
-                        ->pluck('department_code')
-                        ->implode(',');
+            // $departmentCodes = Departments::whereIn('id', $assignment->department_id ?? [])
+            //             ->pluck('department_code')
+            //             ->implode(',');
+
+            // Decode department IDs (stored as JSON like ["54","53"])
+            $departmentIds = is_array($assignment->department_id)
+                ? $assignment->department_id
+                : json_decode($assignment->department_id ?? '[]', true);
+
+            // Fetch both department codes and short names
+            $departments = Departments::whereIn('id', $departmentIds)->get();
+
+            $departmentCodes = $departments->pluck('department_code')->implode(',');
+            $departmentShortNames = $departments->pluck('department_short_name')->implode(',');
 
             $projectIds = $assignment->projects_id ?? [];
             $projects = Projects::whereIn('id', $projectIds)->get();
@@ -303,7 +726,8 @@ class EmployeePlantAssignmentController extends Controller
 
                 $payload = [
                     'plant'          => $plant->plant_code,
-                    'dept'           => $departmentCodes,
+                    // 'dept'           => $departmentCodes,
+                    // 'dept_short_names'   => $departmentShortNames,  
                     'email_id'       => $employee->employee_email,
                     'role'           => $employee->role->role ?? '',
                     'emp_name'       => $employee->employee_name,
@@ -312,6 +736,7 @@ class EmployeePlantAssignmentController extends Controller
                     'username'       => $employee->employee_user_name,
                     'password'       => decrypt($employee->plain_password ?? ''),
                     'status'         => $request->is_active, 
+                    'com_portal_url'     => env('ASSET_URL'),
                 ];
 
                 // Extract project name
@@ -320,7 +745,7 @@ class EmployeePlantAssignmentController extends Controller
                     $projectName = $matches[1];
                 }
 
-                $apiUrl = "https://alfitworld.com/{$projectName}/CommonController/api_add_employee";
+                $apiUrl = "https://alfitworld.com/{$projectName}/CommonController/api_update_employee_status";
 
                 // API CALL
                 $response = Http::post($apiUrl, $payload);

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->text('projects_id')->nullable();
             $table->boolean('is_active')->default(true);
             $table->boolean('is_deleted')->default(false);
+            $table->boolean('send_api')->default(false);
             $table->timestamps();
 
             $table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');

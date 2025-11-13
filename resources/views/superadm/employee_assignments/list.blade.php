@@ -5,7 +5,46 @@
     .dropdown-item.active, .dropdown-item-custom:active {
         background-color: #952419;
     }
+    .modal-title{
+        color: #ffffff;
+    }
+    .close-icon{
+        color: #ffffff;
+        opacity: unset;
+    }
+    /* Blink effect (just once per trigger) */
+    .blink-btn {
+        animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.3; }
+    }
+    /* Global Fullscreen Loader */
+    #global-loader {
+        display: none;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(255, 255, 255, 0.7);
+        z-index: 9999;
+        text-align: center;
+    }
+    #global-loader i {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 3rem;
+        color: #f0ad4e;
+    }
 </style>
+
+<div id="global-loader">
+    <i class="fa fa-spinner fa-spin"></i>
+</div>
+
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -62,11 +101,20 @@
                                     <td>{{ $data->plant->plant_code ?? '-' }} - {{ $data->plant->plant_name ?? '-' }}</td>
                                     <td>{{ $data->departments_names }}</td>
                                     <td>{{ $data->projects_names }}</td>
-                                    <td>
+                                    {{-- <td>
                                         <button class="btn btn-sm btn-success send-api-btn"
                                             data-id="{{ $data->id }}"
                                             title="Send API">
                                             <i class="mdi mdi-send"></i> Send API
+                                        </button>
+                                    </td> --}}
+                                    <td>
+                                        <button class="btn btn-sm btn-warning open-send-modal {{ $data->send_api == 0 ? 'blink-btn' : '' }}"
+                                            data-id="{{ $data->id }}"
+                                            data-employee="{{ $data->employee->employee_name ?? '-' }}"
+                                            data-plant="{{ $data->plant->plant_code ?? '-' }} - {{ $data->plant->plant_name ?? '-' }}"
+                                            title="Send Data">
+                                            <i class="mdi mdi-upload"></i> Send Data
                                         </button>
                                     </td>
                                     <td>
@@ -114,6 +162,215 @@
         </div>
     </div>
 </div>
+
+{{-- =================== SEND DATA MODAL =================== --}}
+<div class="modal fade" id="sendDataModal" tabindex="-1" role="dialog" aria-labelledby="sendDataLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+        <div class="modal-header bg-warning">
+            <h5 class="modal-title" id="sendDataLabel">Send Employee Data to API</h5>
+            <button type="button" class="close close-icon" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <h6><strong>Employee:</strong> <span id="modalEmployeeName"></span></h6>
+            <h6><strong>Plant:</strong> <span id="modalPlantName"></span></h6>
+            <hr>
+
+            <table class="table table-bordered" id="projectTable">
+                <thead class="bg-light">
+                    <tr>
+                        <th>Sr. No</th>
+                        <th>Project Name</th>
+                        <th>Departments</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-success" id="sendApiConfirmBtn">Send to API</button>
+        </div>
+    </div>
+  </div>
+</div>
+
+{{-- =================== SCRIPT =================== --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-multiselect/dist/js/bootstrap-multiselect.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-multiselect/dist/css/bootstrap-multiselect.css">
+
+<script>
+    $(document).ready(function() {
+
+        // Open modal on click
+        $(document).on('click', '.open-send-modal', function() {
+            let id = $(this).data('id');
+            let employeeName = $(this).data('employee');
+            let plantName = $(this).data('plant');
+
+            $('#modalEmployeeName').text(employeeName);
+            $('#modalPlantName').text(plantName);
+            $('#projectTable tbody').html('<tr><td colspan="3" class="text-center">Loading...</td></tr>');
+            $('#sendDataModal').modal('show');
+
+            const $sendBtn = $('#sendApiConfirmBtn');
+            $sendBtn.prop('disabled', true); // Initially disabled
+
+            // Load assigned projects
+            $.ajax({
+                url: "{{ route('employee.assignments.getProjects') }}",
+                type: "POST",
+                data: { _token: "{{ csrf_token() }}", id: id },
+                success: function(res) {
+                    if (res.status) {
+                        let rows = '';
+                        res.projects.forEach((p, index) => {
+                            let deptOptions = '';
+                            res.departments.forEach(d => {
+                                deptOptions += `<option value="${d.id}">${d.department_name}</option>`;
+                            });
+
+                            rows += `
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${p.project_name}</td>
+                                    <td>
+                                        <select class="form-control department-select" multiple name="department[${p.id}][]">
+                                            ${deptOptions}
+                                        </select>
+                                    </td>
+                                </tr>`;
+                        });
+
+                        $('#projectTable tbody').html(rows);
+
+                        // Initialize multi-select dropdowns
+                        $('.department-select').multiselect({
+                            includeSelectAllOption: true,
+                            enableFiltering: true,
+                            buttonWidth: '100%',
+                            maxHeight: 300
+                        });
+
+                        // 🔹 Check if any department selected -> enable/disable Send button
+                        const updateSendButton = () => {
+                            let allSelected = true;
+
+                            $('.department-select').each(function() {
+                                if (!$(this).val() || $(this).val().length === 0) {
+                                    allSelected = false;
+                                    return false; // break loop if any project missing
+                                }
+                            });
+
+                            $sendBtn.prop('disabled', !allSelected);
+                        };
+
+                        // Initial check
+                        updateSendButton();
+
+                        // Watch for changes in dropdown selections
+                        $(document).on('change', '.department-select', updateSendButton);
+
+                    } else {
+                        $('#projectTable tbody').html('<tr><td colspan="3" class="text-center text-danger">No projects found.</td></tr>');
+                    }
+                },
+                error: function() {
+                    $('#projectTable tbody').html('<tr><td colspan="3" class="text-center text-danger">Error loading data.</td></tr>');
+                }
+            });
+
+            // store assignment id in modal for later use
+            $('#sendApiConfirmBtn').data('id', id);
+        });
+
+        // Disable Send button until all projects have departments selected
+        $(document).on('change', '.department-select', function() {
+            let allSelected = true;
+
+            $('.department-select').each(function() {
+                if ($(this).val() === null || $(this).val().length === 0) {
+                    allSelected = false;
+                    return false; // break loop
+                }
+            });
+
+            if (allSelected) {
+                $('#sendApiConfirmBtn').prop('disabled', false);
+            } else {
+                $('#sendApiConfirmBtn').prop('disabled', true);
+            }
+        });
+
+
+        // Send to API
+        $('#sendApiConfirmBtn').on('click', function() {
+            let id = $(this).data('id');
+            let departmentsData = {};
+
+            $('.department-select').each(function() {
+                let projectId = $(this).attr('name').match(/\d+/)[0];
+                let selected = $(this).val() || [];
+                departmentsData[projectId] = selected;
+            });
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "Do you want to send this data to API?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#28a745",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, send!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ route('employee.assignments.sendApi') }}",
+                        type: "POST",
+                        data: { _token: "{{ csrf_token() }}", id: id, departments: departmentsData },
+                        success: function(response){
+                            // if(response.status){
+                            //     Swal.fire("Success!", response.message, "success");
+                            //     $('#sendDataModal').modal('hide');
+                            if(response.status){
+                                Swal.fire({
+                                    title: "Success!",
+                                    text: response.message,
+                                    icon: "success",
+                                    allowOutsideClick: true,
+                                }).then((swalResult) => {
+                                    if (swalResult.isConfirmed || swalResult.isDismissed) {
+                                        location.reload();
+                                    }
+                                });
+                                $('#sendDataModal').modal('hide');
+                            } else {
+                                Swal.fire("Error!", response.message, "error");
+                            }
+                        },
+                        error: function(){
+                            Swal.fire("Error!", "Something went wrong.", "error");
+                        }
+                    });
+                }
+            });
+        });
+
+    });
+</script>
+
+{{-- Global AJAX Loader --}}
+<script>
+    $(document).ajaxStart(function () {
+        $("#global-loader").fadeIn(100);
+    });
+    $(document).ajaxStop(function () {
+        $("#global-loader").fadeOut(300);
+    });
+</script>
 
 <script>
 $(document).on("change", ".toggle-status", function(e) {
@@ -237,7 +494,7 @@ $(document).ready(function(){
                     data: { _token: "{{ csrf_token() }}", id: id, is_active: newState },
                     success: function(response){
                         if(response.status){
-                            // ✅ Success done then checkbox update do
+                            // Success done then checkbox update do
                             checkbox.prop("checked", newState);
                             Swal.fire("Success!", response.message, "success");
                         } else {
@@ -249,7 +506,7 @@ $(document).ready(function(){
                     }
                 });
             } else {
-                // ❌ Cancel → do nothing
+                // Cancel → do nothing
                 checkbox.prop("checked", previousState);
             }
         });
@@ -287,7 +544,7 @@ $(document).on('click', '.btn-export', function(e){
         return false;
     }
 
-    // ✅ If data exists, proceed
+    // If data exists, proceed
     window.location.href = exportUrl;
 });
 </script>
@@ -319,7 +576,36 @@ $(document).on('click', '.btn-export', function(e){
 
     </script>
 
-    <script>
+    {{-- <script>
+    setInterval(() => {
+        $.ajax({
+            url: "{{ route('employee.assignments.checkSendApi') }}",
+            type: "GET",
+            global: false, // ✅ Proper way to disable global ajaxStart/ajaxStop
+            success: function(res) {
+                if (res.status) {
+                    res.data.forEach(item => {
+                        const btn = $(`.open-send-modal[data-id='${item.id}']`);
+
+                        if (item.send_api == 0) {
+                            if (!btn.hasClass('blink-btn')) {
+                                btn.addClass('blink-btn');
+                            }
+                        } else {
+                            btn.removeClass('blink-btn');
+                        }
+                    });
+                }
+            },
+            error: function() {
+                console.error("Error checking send_api status.");
+            }
+        });
+    }, 10000); // every 10 seconds
+    </script> --}}
+
+
+    {{-- <script>
         $(document).on('click', '.send-api-btn', function(e){
         e.preventDefault();
         let button = $(this);
@@ -355,7 +641,7 @@ $(document).on('click', '.btn-export', function(e){
         });
     });
 
-    </script>
+    </script> --}}
 
 
 @endsection

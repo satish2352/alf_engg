@@ -20,7 +20,7 @@
                             <div class="col-lg-4 col-md-6 mb-4">
 
                                 {{-- <a href="{{ $project->project_url }}?plant_no={{$project->plant_id}}&emp_code={{ session('emp_code') }}&fy_id={{ session('emp_financial_year_id') }}"> --}}
-                                <a href="{{ $project->project_url }}?plant_code={{ session('emp_plant_code') }}&emp_code={{ $project->emp_code }}&fy={{ $project->financial_year }}&role={{ session('emp_role_name') }}" target="_blank">
+                                <a href="{{ $project->project_url }}?plant_code={{ session('emp_plant_code') }}&emp_code={{ $project->emp_code }}&fy={{ $project->financial_year }}&role={{ session('emp_role_name') }}&com_portal_url={{ session('com_portal_url') }}" target="_blank">
 
                                     <div class="card shadow-sm card-radius h-80">
                                         <div class="card-body card-project {{ $colorClass }}">
