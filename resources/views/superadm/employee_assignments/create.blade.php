@@ -89,41 +89,38 @@
     </div>
 </div>
 
+{{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script> --}}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-multiselect/dist/css/bootstrap-multiselect.css">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-multiselect/dist/js/bootstrap-multiselect.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
 <script>
-$(document).ready(function() {
+$(function() { // shorthand document.ready
 
-    // Initially disable departments and projects selects
-    $('#department_id, #projects_id').prop('disabled', true);
+    if (typeof $ === 'undefined') {
+        console.error('jQuery not loaded!');
+        return;
+    }
+    if (!$.fn.multiselect) {
+        console.error('bootstrap-multiselect plugin NOT loaded.');
+        return;
+    }
 
-    // Enable them when a plant is selected
-    $('#plant_id').on('change', function() {
-        let plantSelected = $(this).val() !== '';
-        $('#department_id, #projects_id').prop('disabled', !plantSelected);
-
-        // Clear options if no plant selected
-        if (!plantSelected) {
-            $('#projects_id, #department_id').empty().multiselect('rebuild');
-        }
-    });
-
-});
-</script>
-
-<script>
-$(document).ready(function () {
-
+    // Initialize empty multiselect
     $('#projects_id, #department_id').multiselect({
         includeSelectAllOption: true,
         enableFiltering: true,
-        maxHeight: 300,
-        buttonWidth: '100%'
+        maxHeight: 250,
+        buttonWidth: '100%',
+        enableCaseInsensitiveFiltering: true
     });
 
+    // start disabled
+    $('#projects_id, #department_id').multiselect('disable');
+
+    // AJAX helpers
     function loadProjects(plantId) {
         return $.ajax({
             url: "{{ route('projects.list-ajax') }}",
@@ -142,92 +139,120 @@ $(document).ready(function () {
         });
     }
 
-    $('#plant_id').on('change', function () {
+    // ON PLANT CHANGE
+    $('#plant_id').off('change').on('change', function () {
         let plantId = $(this).val();
+        console.log("plant changed ->", plantId);
 
         if (!plantId) {
-            $('#projects_id, #department_id').empty().multiselect('rebuild');
+            $('#projects_id, #department_id').multiselect('destroy');
+            $('#projects_id').html('');
+            $('#department_id').html('');
+            $('#projects_id, #department_id').multiselect({
+                includeSelectAllOption: true,
+                enableFiltering: true,
+                maxHeight: 250,
+                buttonWidth: '100%',
+                enableCaseInsensitiveFiltering: true
+            });
+            $('#projects_id, #department_id').multiselect('disable');
             return;
         }
 
-        $.when(loadProjects(plantId), loadDepartments(plantId)).done(function(projectResp, deptResp) {
-            let projects = projectResp[0].projects || [];
-            let departments = deptResp[0].department || [];
+        $('#projects_id, #department_id').multiselect('disable');
 
-            $('#projects_id').empty();
-            $('#department_id').empty();
+        $.when(loadProjects(plantId), loadDepartments(plantId))
+            .done(function(projectResp, deptResp) {
 
-            projects.forEach(p => $('#projects_id').append(`<option value="${p.id}">${p.project_name}</option>`));
-            departments.forEach(d => $('#department_id').append(`<option value="${d.id}">${d.department_name}</option>`));
+                let projects = projectResp[0].projects ?? [];
+                let departments = deptResp[0].department ?? deptResp[0].departments ?? [];
 
-            $('#projects_id, #department_id').multiselect('rebuild');
+                console.log("Parsed projects:", projects);
+                console.log("Parsed departments:", departments);
 
-            // Show combined alert if both missing
-            if (projects.length === 0 && departments.length === 0) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Required Fields Missing',
-                    text: 'Please add both Projects and Departments before adding an employee.'
+                // ----- RESET SELECTS -----
+                $('#projects_id').multiselect('destroy');
+                $('#department_id').multiselect('destroy');
+                $('#projects_id').html('');
+                $('#department_id').html('');
+
+                // ----- ADD NEW OPTIONS -----
+                projects.forEach(p => {
+                    $('#projects_id').append(
+                        `<option value="${p.id}">${p.project_name}</option>`
+                    );
                 });
-            } else if (projects.length === 0) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Projects Missing',
-                    text: 'Please add projects before adding an employee.'
+
+                departments.forEach(d => {
+                    $('#department_id').append(
+                        `<option value="${d.id}">${d.department_name}</option>`
+                    );
                 });
-            } else if (departments.length === 0) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Departments Missing',
-                    text: 'Please add departments before adding an employee.'
+
+                // ----- RE-INIT MULTISELECT -----
+                $('#projects_id, #department_id').multiselect({
+                    includeSelectAllOption: true,
+                    enableFiltering: true,
+                    maxHeight: 250,
+                    buttonWidth: '100%',
+                    enableCaseInsensitiveFiltering: true
                 });
-            }
-        });
+
+                // enable if items exist
+                if (projects.length > 0 || departments.length > 0) {
+                    $('#projects_id, #department_id').multiselect('enable');
+                }
+
+                // restore old selected values
+                let oldProjects = @json(old('projects_id', []));
+                let oldDepartments = @json(old('department_id', []));
+
+                if (oldProjects.length) {
+                    $('#projects_id').multiselect('select', oldProjects);
+                }
+                if (oldDepartments.length) {
+                    $('#department_id').multiselect('select', oldDepartments);
+                }
+
+                // alerts
+                if (projects.length === 0 && departments.length === 0) {
+                    Swal.fire('Required Fields Missing', 'Please add both Projects and Departments.', 'warning');
+                } else if (projects.length === 0) {
+                    Swal.fire('Projects Missing', 'Please add projects.', 'warning');
+                } else if (departments.length === 0) {
+                    Swal.fire('Departments Missing', 'Please add departments.', 'warning');
+                }
+
+            })
+            .fail(function() {
+                Swal.fire('Error', 'Failed to load data.', 'error');
+            });
     });
 
-    $(document).ready(function () {
-
-    function setOldSelections(selectId, oldValues) {
-        selectId.val(oldValues).multiselect('rebuild');
-    }
-
+    // Restore previous plant selection
     let oldPlant = "{{ old('plant_id') }}";
-    let oldProjects = @json(old('projects_id', []));
-    let oldDepartments = @json(old('department_id', []));
-
-    if(oldPlant) {
-        $('#department_id, #projects_id').prop('disabled', false);
-
-        $.when(loadProjects(oldPlant), loadDepartments(oldPlant)).done(function(projectResp, deptResp) {
-            let projects = projectResp[0].projects || [];
-            let departments = deptResp[0].department || [];
-
-            $('#projects_id').empty();
-            $('#department_id').empty();
-
-            projects.forEach(p => $('#projects_id').append(`<option value="${p.id}">${p.project_name}</option>`));
-            departments.forEach(d => $('#department_id').append(`<option value="${d.id}">${d.department_name}</option>`));
-
-            $('#projects_id, #department_id').multiselect('rebuild');
-
-            // Set old selected values
-            setOldSelections($('#projects_id'), oldProjects);
-            setOldSelections($('#department_id'), oldDepartments);
-        });
+    if (oldPlant) {
+        $('#plant_id').val(oldPlant).trigger('change');
     }
 
-});
-
+    // Select2
+    $('#employee_select').select2({
+        placeholder: 'Search Employee',
+        allowClear: true
+    });
 
 });
 </script>
-<script>
+
+
+
+{{-- <script>
 $(document).ready(function() {
     $('#employee_select').select2({
         placeholder: 'Search Employee',
         allowClear: true
     });
 });
-</script>
+</script> --}}
 
 @endsection

@@ -11,7 +11,32 @@
             <div class="card">
                 <div class="card-body">
 
-                    <div class="mb-3 d-flex justify-content-end">
+                    {{-- <div class="col-md-4">
+                        <form method="GET" action="{{ route('departments.list') }}">
+                            <select name="plant_id" class="form-control" onchange="this.form.submit()">
+                                <option value="">-- Select Plant --</option>
+                                @foreach($plants as $p)
+                                    <option value="{{ $p->id }}" 
+                                        {{ $selectedPlant == $p->id ? 'selected' : '' }}>
+                                        {{ $p->plant_code }} - {{ $p->plant_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </form>
+                    </div> --}}
+
+                    <div class="mb-3 d-flex">
+                        <form method="GET" action="{{ route('departments.list') }}" class="mr-auto">
+                            <select name="plant_id" class="form-control" onchange="this.form.submit()">
+                                <option value="">-- Select Plant --</option>
+                                @foreach($plants as $p)
+                                    <option value="{{ $p->id }}" {{ $selectedPlant == $p->id ? 'selected' : '' }}>
+                                        {{ $p->plant_code }} - {{ $p->plant_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </form>
+
                         <div class="btn-group mr-2">
                             <button type="button" class="btn btn-warning btn-add dropdown-toggle" data-toggle="dropdown">
                                 Export
@@ -21,8 +46,8 @@
                                 <a class="dropdown-item dropdown-item-custom export-btn" data-type="pdf" href="#">PDF</a>
                             </div>
                         </div>
+
                         <a href="{{ route('departments.create') }}" class="btn btn-warning btn-add">Add Department</a>
-                        {{-- <button id="exportExcelBtn" class="btn btn-warning btn-add" style="cursor: pointer;">Export Excel</button> --}}
                     </div>
 
                     @if (session('success'))

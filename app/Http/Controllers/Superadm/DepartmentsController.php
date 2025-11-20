@@ -20,11 +20,32 @@ class DepartmentsController extends Controller
 		$this->service = new DepartmentsService();
 	}
 
-	public function index()
+	// public function index()
+	// {
+	// 	try {
+	// 		$dataAll = $this->service->list();
+	// 		return view('superadm.departments.list', compact('dataAll'));
+	// 	} catch (Exception $e) {
+	// 		return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
+	// 	}
+	// }
+
+	public function index(Request $request)
 	{
 		try {
-			$dataAll = $this->service->list();
-			return view('superadm.departments.list', compact('dataAll'));
+			$selectedPlant = $request->plant_id;
+
+			// Fetch all plants for dropdown
+			$plants = PlantMasters::where('is_deleted', 0)
+				->where('is_active', 1)
+				->orderBy('plant_name', 'desc')
+				->get();
+
+			// Fetch departments with optional plant filter
+			$dataAll = $this->service->list($selectedPlant);
+
+			return view('superadm.departments.list', compact('dataAll', 'plants', 'selectedPlant'));
+
 		} catch (Exception $e) {
 			return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
 		}

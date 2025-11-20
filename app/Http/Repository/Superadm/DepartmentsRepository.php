@@ -10,25 +10,51 @@ use Illuminate\Support\Facades\Log;
 
 class DepartmentsRepository
 {
-    public function list()
+    // public function list()
+    // {
+    //     try {
+    //         return Departments::leftJoin('plant_masters', 'departments.plant_id', '=', 'plant_masters.id')
+    //                 ->where('departments.is_deleted', 0)
+    //                 ->orderBy('departments.id', 'desc')
+    //                 ->select(
+    //                     'departments.*',
+    //                     'plant_masters.plant_name',
+    //                     'plant_masters.plant_code',
+    //                     'plant_masters.city'
+    //                 )
+    //                 ->get();
+
+    //     } catch (Exception $e) {
+    //         Log::error("Error fetching project list: " . $e->getMessage());
+    //         return collect(); // return empty collection on error
+    //     }
+    // }
+
+    public function list($plant_id = null)
     {
         try {
-            return Departments::leftJoin('plant_masters', 'departments.plant_id', '=', 'plant_masters.id')
-                    ->where('departments.is_deleted', 0)
-                    ->orderBy('departments.id', 'desc')
-                    ->select(
-                        'departments.*',
-                        'plant_masters.plant_name',
-                        'plant_masters.plant_code',
-                        'plant_masters.city'
-                    )
-                    ->get();
+            $query = Departments::leftJoin('plant_masters', 'departments.plant_id', '=', 'plant_masters.id')
+                ->where('departments.is_deleted', 0)
+                ->orderBy('departments.id', 'desc')
+                ->select(
+                    'departments.*',
+                    'plant_masters.plant_name',
+                    'plant_masters.plant_code',
+                    'plant_masters.city'
+                );
+
+            if ($plant_id) {
+                $query->where('departments.plant_id', $plant_id);
+            }
+
+            return $query->get();
 
         } catch (Exception $e) {
-            Log::error("Error fetching project list: " . $e->getMessage());
-            return collect(); // return empty collection on error
+            Log::error("Error fetching department list: " . $e->getMessage());
+            return collect();
         }
     }
+
 
     public function listajaxlist($plant_id)
     {

@@ -207,7 +207,18 @@ document.getElementById('superemail').addEventListener('blur', function () {
             data.forEach(p => {
                 select.innerHTML += `<option value="${p.id}">${p.plant_code} - ${p.plant_name}</option>`;
             });
+            if (data.length > 0) {
+                select.value = data[0].id;
+            }
         });
+});
+
+window.addEventListener('load', function() {
+    let fySelect = document.getElementById('financial_year_id');
+
+    if (fySelect.options.length > 1) {
+        fySelect.selectedIndex = 1; // first option after "--Select--"
+    }
 });
 </script>
 

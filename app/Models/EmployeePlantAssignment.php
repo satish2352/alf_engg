@@ -19,7 +19,8 @@ class EmployeePlantAssignment extends Model
         'projects_id',
         'is_active',
         'is_deleted',
-        'send_api'
+        'send_api',
+        'send_api_department_id'
     ];
 
     protected $casts = [

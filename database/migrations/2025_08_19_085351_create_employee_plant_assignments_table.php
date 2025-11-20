@@ -20,6 +20,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->boolean('is_deleted')->default(false);
             $table->boolean('send_api')->default(false);
+            $table->text('send_api_department_id')->nullable();
             $table->timestamps();
 
             $table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');

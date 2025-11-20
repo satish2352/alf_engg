@@ -60,7 +60,7 @@
                             <a class="dropdown-item dropdown-item-custom btn-export" href="{{ route('employee.assignments.export', ['type'=>'pdf']) }}">PDF</a>
                         </div>
                     </div>
-                    <a href="{{ route('employee.assignments.create') }}" class="btn btn-warning btn-add">Assign Plants</a>
+                    <a href="{{ route('employee.assignments.create') }}" class="btn btn-warning btn-add">Assign Plants & Project</a>
                     {{-- <a href="{{ route('employee.assignments.export') }}" 
                     class="btn btn-warning btn-export btn-add">Download Excel</a> --}}
                 </div>
@@ -163,13 +163,19 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{{-- =================== SCRIPT =================== --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-multiselect/dist/js/bootstrap-multiselect.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-multiselect/dist/css/bootstrap-multiselect.css">
+
 {{-- =================== SEND DATA MODAL =================== --}}
-<div class="modal fade" id="sendDataModal" tabindex="-1" role="dialog" aria-labelledby="sendDataLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+<div class="modal fade" id="sendDataModal" tabindex="-1" role="dialog" aria-labelledby="sendDataLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header bg-warning">
             <h5 class="modal-title" id="sendDataLabel">Send Employee Data to API</h5>
-            <button type="button" class="close close-icon" data-dismiss="modal">&times;</button>
+            <button type="button" class="close close-icon" data-bs-dismiss="modal">&times;</button>
         </div>
         <div class="modal-body">
             <h6><strong>Employee:</strong> <span id="modalEmployeeName"></span></h6>
@@ -189,17 +195,12 @@
 
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             <button type="button" class="btn btn-success" id="sendApiConfirmBtn">Send to API</button>
         </div>
     </div>
   </div>
 </div>
-
-{{-- =================== SCRIPT =================== --}}
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap-multiselect/dist/js/bootstrap-multiselect.min.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-multiselect/dist/css/bootstrap-multiselect.css">
 
 <script>
     $(document).ready(function() {
@@ -228,9 +229,14 @@
                         let rows = '';
                         res.projects.forEach((p, index) => {
                             let deptOptions = '';
-                            res.departments.forEach(d => {
-                                deptOptions += `<option value="${d.id}">${d.department_name}</option>`;
+                                let saved = res.savedDept[p.id] ?? [];
+                                res.departments.forEach(d => {
+                                    let selected = saved.includes(String(d.id)) ? "selected" : "";
+                                deptOptions += `<option value="${d.id}" ${selected}>${d.department_name}</option>`;
                             });
+                            // res.departments.forEach(d => {
+                            //     deptOptions += `<option value="${d.id}">${d.department_name}</option>`;
+                            // });
 
                             rows += `
                                 <tr>

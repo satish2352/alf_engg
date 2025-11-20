@@ -41,6 +41,24 @@ class ProjectsController extends Controller
 	// 	}
 	// }
 
+	// public function listajaxlist(Request $req)
+	// {
+	// 	try {
+	// 		$plantId = $req->plant_id;
+
+	// 		$projects = \App\Models\Projects::where('is_deleted', 0)
+	// 			->where('is_active', 1)
+	// 			// ->whereJsonContains('plant_id', (int)$plantId) // ✅ JSON_CONTAINS
+	// 			->whereJsonContains('plant_id', (string)$plantId)
+	// 			->get(['id','project_name']);
+
+	// 		return response()->json(['projects' => $projects]);
+
+	// 	} catch (Exception $e) {
+	// 		return response()->json(['projects' => [], 'error' => $e->getMessage()]);
+	// 	}
+	// }
+
 	public function listajaxlist(Request $req)
 	{
 		try {
@@ -48,8 +66,10 @@ class ProjectsController extends Controller
 
 			$projects = \App\Models\Projects::where('is_deleted', 0)
 				->where('is_active', 1)
-				// ->whereJsonContains('plant_id', (int)$plantId) // ✅ JSON_CONTAINS
-				->whereJsonContains('plant_id', (string)$plantId)
+				->where(function ($q) use ($plantId) {
+					$q->where('plant_id', $plantId)  
+					->orWhereJsonContains('plant_id', (string)$plantId);
+				})
 				->get(['id','project_name']);
 
 			return response()->json(['projects' => $projects]);
@@ -58,6 +78,7 @@ class ProjectsController extends Controller
 			return response()->json(['projects' => [], 'error' => $e->getMessage()]);
 		}
 	}
+
 
 	public function create(Request $req)
 	{

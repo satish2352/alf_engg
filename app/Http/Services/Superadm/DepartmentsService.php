@@ -15,15 +15,26 @@ class DepartmentsService
         $this->repo = new DepartmentsRepository();
     }
 
-    public function list()
+    // public function list()
+    // {
+    //     try {
+    //         return $this->repo->list();
+    //     } catch (Exception $e) {
+    //         Log::error("Department Service list error: " . $e->getMessage());
+    //         return false;
+    //     }
+    // }
+
+    public function list($plant_id = null)
     {
         try {
-            return $this->repo->list();
+            return $this->repo->list($plant_id);
         } catch (Exception $e) {
             Log::error("Department Service list error: " . $e->getMessage());
             return false;
         }
     }
+
 
      public function listajaxlist($req)
     {

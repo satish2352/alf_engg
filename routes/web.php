@@ -134,6 +134,7 @@ Route::group(['middleware' => ['SuperAdmin']], function () {
 
 
     Route::get('/departments/export', [DepartmentsController::class, 'export'])->name('departments.export');
+    Route::get('/departments/filter', [DepartmentsController::class, 'filter'])->name('departments.filter');
 
 
     // employees management routes
