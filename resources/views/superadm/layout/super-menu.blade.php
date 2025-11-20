@@ -73,7 +73,7 @@
 
         <li class="nav-item">
             @if(session('role') == 'admin')
-                <a href="{{ route('admin.logout') }}">
+                <a href="{{ route('emp.logout') }}">
                     <i class="mdi mdi-logout"></i>
                     <span>Logout</span>
                 </a>

@@ -38,6 +38,18 @@ select.form-control {
 #plant_id {
     font-size: 1.05rem; /* or 18px */
 }
+
+.fullpage-center {
+    min-height: 94vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card.card-plain {
+    width: 100%;
+    max-width: 620px;
+}
 </style>
 
     </head>
@@ -91,7 +103,8 @@ select.form-control {
                                     
                                 </div>
                             </div>
-                            <div class="col-sm-4 d-flex flex-column mx-auto">
+                            {{-- <div class="col-sm-4 d-flex flex-column mx-auto"> --}}
+                            <div class="col-sm-4 fullpage-center">
                                 <div class="card card-plain mt-2">
                                     <div class="card-header pb-0 text-left bg-transparent text-center">
                                          
@@ -130,7 +143,7 @@ select.form-control {
                             @enderror
                         </div>
 
-                        <label style="color:#fff">Select Plant</label>
+                        <label style="color:#fff" id="plant_label">Select Plant</label>
                         <div class="mb-3">
                             <select id="plant_id" name="plant_id" class="form-control">
                                 <option value="">-- Select Plant --</option>
@@ -140,7 +153,7 @@ select.form-control {
                             @enderror
                         </div>
 
-                        <label style="color:#fff">Select Financial Year</label>
+                        <label style="color:#fff" id="financial_year_label">Select Financial Year</label>
                         <div class="mb-3">
                             <select id="financial_year_id" name="financial_year_id" class="form-control">
                                 <option value="">-- Select Year --</option>
@@ -221,6 +234,66 @@ window.addEventListener('load', function() {
     }
 });
 </script>
+
+<script>
+    document.getElementById('superemail').addEventListener('blur', function () {
+    let email = this.value.trim();
+
+    let plantLabel = document.getElementById('plant_label');
+    let plantDiv = document.getElementById('plant_id').parentElement;
+
+    let fyLabel = document.getElementById('financial_year_label');
+    let fyDiv = document.getElementById('financial_year_id').parentElement;
+
+    if (!email) return;
+
+    fetch(`{{ url('/check-admin') }}?email=${email}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.isAdmin) {
+                plantLabel.style.display = 'none';
+                plantDiv.style.display = 'none';
+                fyLabel.style.display = 'none';
+                fyDiv.style.display = 'none';
+            } else {
+                plantLabel.style.display = 'block';
+                plantDiv.style.display = 'block';
+                fyLabel.style.display = 'block';
+                fyDiv.style.display = 'block';
+            }
+        });
+});
+
+</script>
+
+{{-- <script>
+document.getElementById('superemail').addEventListener('blur', function () {
+    let email = this.value.trim();
+
+    let plantLabel = document.getElementById('plant_label');
+    let plantDiv = document.getElementById('plant_id').parentElement;
+
+    let fyLabel = document.getElementById('financial_year_label');
+    let fyDiv = document.getElementById('financial_year_id').parentElement;
+
+    if (email === "alfadmin@gmail.com") {
+        // Hide both label + input
+        plantLabel.style.display = 'none';
+        plantDiv.style.display = 'none';
+
+        fyLabel.style.display = 'none';
+        fyDiv.style.display = 'none';
+    } else {
+        // Show both
+        plantLabel.style.display = 'block';
+        plantDiv.style.display = 'block';
+
+        fyLabel.style.display = 'block';
+        fyDiv.style.display = 'block';
+    }
+});
+</script> --}}
+
 
    
     </body>

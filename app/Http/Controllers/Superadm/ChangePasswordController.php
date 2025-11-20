@@ -22,16 +22,16 @@ public function updatePassword(Request $request)
         'new_password' => [
             'required',
             'string',
-            'min:8',
+            'min:1',
             'max:255',
-            'regex:/^(?=(?:.*\d){2,})(?=(?:.*[A-Za-z]){5,})(?=.*[^A-Za-z0-9]).+$/'
+            // 'regex:/^(?=(?:.*\d){2,})(?=(?:.*[A-Za-z]){5,})(?=.*[^A-Za-z0-9]).+$/'
         ],
         'confirm_password' => 'required|same:new_password',
     ], [
         'new_password.required' => 'Enter password',
         'new_password.min'      => 'Password must be at least 8 characters',
         'new_password.max'      => 'Password must not exceed 255 characters',
-        'new_password.regex'    => 'Password must contain at least 2 digits, 5 letters, and 1 special character',
+        // 'new_password.regex'    => 'Password must contain at least 2 digits, 5 letters, and 1 special character',
         'confirm_password.required' => 'Please confirm your password',
         'confirm_password.same'     => 'New Password & Confirm Password must match',
     ]);
@@ -45,7 +45,7 @@ public function updatePassword(Request $request)
 
     if ($role === 'admin') {
         $userId = Session::get('user_id');
-        $loginRoute = 'login'; // admin login route
+        $loginRoute = 'emp.login'; // admin login route
         $sessionKeys = ['user_id','role_id','role','email_id','department_id','projects_id'];
     } elseif ($role === 'employee') {
         $userId = Session::get('emp_user_id');

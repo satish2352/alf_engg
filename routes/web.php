@@ -31,20 +31,41 @@ Route::get('/clear-cache', function () {
 })->name('clear.cache');
 
 
-Route::get('login', [LoginController::class, 'loginsuper'])->name('login');
+// Route::get('login', [LoginController::class, 'loginsuper'])->name('login');
 
 Route::middleware('guest')->group(function () {
-    Route::get('login', [LoginController::class, 'loginsuper'])->name('login');
+    // Route::get('login', [LoginController::class, 'loginsuper'])->name('login');
     Route::post('superlogin', [LoginController::class, 'validateSuperLogin'])->name('superlogin');
 
-    Route::get('emp-login', [EmployeeLoginController::class, 'loginEmployee'])->name('emp.login');
-    Route::post('emp-login', [EmployeeLoginController::class, 'validateEmpLogin'])->name('emp.login.submit');
+    Route::get('login', [EmployeeLoginController::class, 'loginEmployee'])->name('emp.login');
+    Route::post('login', [EmployeeLoginController::class, 'validateEmpLogin'])->name('emp.login.submit');
 });
 
 Route::post('superlogin', [LoginController::class, 'validateSuperLogin'])->name('superlogin');
 
-Route::get('emp-login', [EmployeeLoginController::class, 'loginEmployee'])->name('emp.login');
-Route::post('emp-login', [EmployeeLoginController::class, 'validateEmpLogin'])->name('emp.login.submit');
+// check admin email or not
+Route::get('/check-admin', function (Request $req) {
+    $employee = Employees::where('employee_user_name', $req->email)
+        ->where('is_deleted', 0)
+        ->first();
+
+    if (!$employee) {
+        return response()->json(['isAdmin' => false]);
+    }
+
+    $isAdmin = (
+        $employee->employee_type == 0 &&
+        $employee->role_id == 0 &&
+        $employee->designation_id == 0 &&
+        $employee->employee_code == 0
+    );
+
+    return response()->json(['isAdmin' => $isAdmin]);
+});
+
+
+Route::get('login', [EmployeeLoginController::class, 'loginEmployee'])->name('emp.login');
+Route::post('login', [EmployeeLoginController::class, 'validateEmpLogin'])->name('emp.login.submit');
 Route::get('emp-logout', [EmployeeLoginController::class, 'logOut'])->name('emp.logout');
 
 Route::get('/get-plants-by-email', function (Request $req) {

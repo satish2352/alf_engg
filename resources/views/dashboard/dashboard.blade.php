@@ -10,6 +10,28 @@
                 <div class="card-body">
 
                     <div class="row">
+
+                        <!-- Plants Card -->
+                        <div class="col-lg-3 col-md-6 mb-4">
+                            <a href="{{ route('plantmaster.list') }}" class="text-decoration-none text-dark">
+                                <div class="card shadow-sm card-radius h-80">
+                                    <div class="card-body bg-plants ">
+                                        <div class="d-flex flex-row">
+                                            <div
+                                                class="round round-lg text-white d-inline-block text-center rounded-circle bg-dashboard-info">
+                                               <i class="mdi mdi-factory mdi-36px icon-padding"></i>
+                                            </div>
+                                            <div class="ml-2 align-self-center">
+                                                <h3 class="mb-0 font-weight-light-new new-font-size">
+                                                    Plants <strong>{{ $allPlants }}</strong>
+                                                </h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
                         <!-- Roles Card -->
                         <div class="col-lg-3 col-md-6 mb-4">
                             <a href="{{ route('roles.list') }}" class="text-decoration-none text-dark">
@@ -52,51 +74,7 @@
                             </a>
                         </div>
 
-                        <!-- Plants Card -->
-                        <div class="col-lg-3 col-md-6 mb-4">
-                            <a href="{{ route('plantmaster.list') }}" class="text-decoration-none text-dark">
-                                <div class="card shadow-sm card-radius h-80">
-                                    <div class="card-body bg-plants ">
-                                        <div class="d-flex flex-row">
-                                            <div
-                                                class="round round-lg text-white d-inline-block text-center rounded-circle bg-dashboard-info">
-                                               <i class="mdi mdi-factory mdi-36px icon-padding"></i>
-                                            </div>
-                                            <div class="ml-2 align-self-center">
-                                                <h3 class="mb-0 font-weight-light-new new-font-size">
-                                                    Plants <strong>{{ $allPlants }}</strong>
-                                                </h3>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-
-
-                          <!-- Plants Card -->
-                        <div class="col-lg-3 col-md-6 mb-4">
-                            <a href="{{ route('projects.list') }}" class="text-decoration-none text-dark">
-                                <div class="card shadow-sm card-radius h-80">
-                                    <div class="card-body bg-projects">
-                                        <div class="d-flex flex-row">
-                                            <div
-                                                class="round round-lg text-white d-inline-block text-center rounded-circle bg-dashboard-info">
-                                                <i class="mdi mdi-clipboard-text mdi-36px icon-padding"></i>
-                                            </div>
-                                            <div class="ml-2 align-self-center">
-                                                <h3 class="mb-0 font-weight-light-new new-font-size">
-                                                    Projects <strong>{{ $allProjects }}</strong>
-                                                </h3>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-
-
-                          <!-- Plants Card -->
+                        <!-- Departments Card -->
                         <div class="col-lg-3 col-md-6 mb-4">
                             <a href="{{ route('departments.list') }}" class="text-decoration-none text-dark">
                                 <div class="card shadow-sm card-radius h-80">
@@ -118,7 +96,29 @@
                         </div>
 
 
-                          <!-- Plants Card -->
+                        <!-- Project Card -->
+                        <div class="col-lg-3 col-md-6 mb-4">
+                            <a href="{{ route('projects.list') }}" class="text-decoration-none text-dark">
+                                <div class="card shadow-sm card-radius h-80">
+                                    <div class="card-body bg-projects">
+                                        <div class="d-flex flex-row">
+                                            <div
+                                                class="round round-lg text-white d-inline-block text-center rounded-circle bg-dashboard-info">
+                                                <i class="mdi mdi-clipboard-text mdi-36px icon-padding"></i>
+                                            </div>
+                                            <div class="ml-2 align-self-center">
+                                                <h3 class="mb-0 font-weight-light-new new-font-size">
+                                                    Projects <strong>{{ $allProjects }}</strong>
+                                                </h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+
+                        <!-- Employees Card -->
                         <div class="col-lg-3 col-md-6 mb-4">
                             <a href="{{ route('employees.list') }}" class="text-decoration-none text-dark">
                                 <div class="card shadow-sm card-radius h-80">

@@ -70,7 +70,7 @@
                               {{-- <li><a href="{{ route('logout') }}"><i class="fa fa-power-off"></i> Logout</a></li> --}}
                                     <li>
                                         @if(session('role') == 'admin')
-                                            <a href="{{ route('admin.logout') }}"><i class="fa fa-power-off"></i> Logout</a>
+                                            <a href="{{ route('emp.logout') }}"><i class="fa fa-power-off"></i> Logout</a>
                                         @else
                                             <a href="{{ route('emp.logout') }}"><i class="fa fa-power-off"></i> Logout</a>
                                         @endif
