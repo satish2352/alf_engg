@@ -26,7 +26,8 @@
                     </div> --}}
 
                     <div class="mb-3 d-flex">
-                        <form method="GET" action="{{ route('departments.list') }}" class="mr-auto">
+                        <form method="POST" action="{{ route('departments.filter') }}" class="mr-auto">
+                            @csrf
                             <select name="plant_id" class="form-control" onchange="this.form.submit()">
                                 <option value="">-- Select Plant --</option>
                                 @foreach($plants as $p)

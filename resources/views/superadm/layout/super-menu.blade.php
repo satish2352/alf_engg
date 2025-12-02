@@ -8,10 +8,17 @@
             </a>
         </li>
 
+        <li class="nav-item {{ request()->is('plantmaster/list') || request()->is('plantmaster/add') || request()->is('plantmaster/edit/*') ? 'active' : '' }}">
+            <a href="{{ route('plantmaster.list') }}">
+                <i class="mdi mdi-factory"></i>
+                <span>Plants</span>
+            </a>
+        </li>
+
         <li class="nav-item {{ request()->is('roles/list') || request()->is('roles/add') || request()->is('roles/edit/*') ? 'active' : '' }}">
             <a href="{{ route('roles.list') }}">
                 <i class="mdi mdi-account-key"></i>
-                <span>Role</span>
+                <span>Roles</span>
             </a>
         </li>
 
@@ -22,24 +29,10 @@
             </a>
         </li>
 
-        <li class="nav-item {{ request()->is('financial-year/list') || request()->is('financial-year/add') || request()->is('financial-year/edit/*') ? 'active' : '' }}">
-            <a href="{{ route('financial-year.list') }}">
-                <i class="mdi mdi-calendar"></i>
-                <span>Financial Years</span>
-            </a>
-        </li>
-
-        <li class="nav-item {{ request()->is('employee-types/list') || request()->is('employee-types/add') || request()->is('employee-types/edit/*') ? 'active' : '' }}">
-            <a href="{{ route('employee-types.list') }}">
-                <i class="mdi mdi-account-circle"></i>
-                <span>Employee Types</span>
-            </a>
-        </li>
-
-        <li class="nav-item {{ request()->is('plantmaster/list') || request()->is('plantmaster/add') || request()->is('plantmaster/edit/*') ? 'active' : '' }}">
-            <a href="{{ route('plantmaster.list') }}">
-                <i class="mdi mdi-factory"></i>
-                <span>Plant</span>
+        <li class="nav-item {{ request()->is('departments/list') || request()->is('departments/add') || request()->is('departments/edit/*') ? 'active' : '' }}">
+            <a href="{{ route('departments.list') }}">
+                <i class="mdi mdi-office-building"></i>
+                <span>Departments</span>
             </a>
         </li>
 
@@ -50,10 +43,17 @@
             </a>
         </li>
 
-        <li class="nav-item {{ request()->is('departments/list') || request()->is('departments/add') || request()->is('departments/edit/*') ? 'active' : '' }}">
-            <a href="{{ route('departments.list') }}">
-                <i class="mdi mdi-office-building"></i>
-                <span>Departments</span>
+        <li class="nav-item {{ request()->is('employee-types/list') || request()->is('employee-types/add') || request()->is('employee-types/edit/*') ? 'active' : '' }}">
+            <a href="{{ route('employee-types.list') }}">
+                <i class="mdi mdi-account-circle"></i>
+                <span>Employee Types</span>
+            </a>
+        </li>
+
+        <li class="nav-item {{ request()->is('financial-year/list') || request()->is('financial-year/add') || request()->is('financial-year/edit/*') ? 'active' : '' }}">
+            <a href="{{ route('financial-year.list') }}">
+                <i class="mdi mdi-calendar"></i>
+                <span>Financial Years</span>
             </a>
         </li>
 

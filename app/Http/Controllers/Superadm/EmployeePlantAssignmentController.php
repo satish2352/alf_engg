@@ -27,15 +27,58 @@ class EmployeePlantAssignmentController extends Controller
     }
 
     // List all assignments
-    public function index()
+    // public function index()
+    // {
+    //     try {
+    //         $assignments = $this->service->list();
+    //         return view('superadm.employee_assignments.list', compact('assignments'));  
+    //     } catch (Exception $e) {
+    //         return back()->with('error', 'Error fetching assignments: ' . $e->getMessage());
+    //     }
+    // }
+
+    public function index(Request $request)
     {
         try {
-            $assignments = $this->service->list();
-            return view('superadm.employee_assignments.list', compact('assignments'));  
+            $selectedPlant = session('selectedPlant'); 
+
+            // Get all plants
+            $plants = PlantMasters::where('is_deleted', 0)
+                ->where('is_active', 1)
+                ->orderBy('plant_name', 'desc')
+                ->get();
+
+            // Fetch assignments with optional filter
+            $assignments = EmployeePlantAssignment::with(['employee', 'plant'])
+                ->where('is_deleted', 0)
+                ->when($selectedPlant, function ($query) use ($selectedPlant) {
+                    return $query->where('plant_id', $selectedPlant);
+                })
+                ->get();
+
+            return view('superadm.employee_assignments.list',
+                compact('assignments', 'plants', 'selectedPlant'));
+
         } catch (Exception $e) {
-            return back()->with('error', 'Error fetching assignments: ' . $e->getMessage());
+            return back()->with('error', 'Error fetching assignments: '.$e->getMessage());
         }
     }
+
+public function filter(Request $request)
+{
+    $plant_id = $request->plant_id;
+
+    // store selected plant in session
+    session(['selectedPlant' => $plant_id]);
+
+    // if no plant selected → clear filter
+    if (!$plant_id) {
+        session()->forget('selectedPlant');
+    }
+
+    return redirect()->route('employee.assignments.list');
+}
+
 
     // Show create form
     public function create()
@@ -924,25 +967,27 @@ public function getProjects(Request $request)
 
 public function export(Request $request)
 {
-    $type = $request->query('type', 'excel'); // default excel
+    $type = $request->query('type', 'excel');
 
-    // Get assignments (consider adding search filters later if needed)
-    $assignments = EmployeePlantAssignment::where('is_deleted', 0)->get();
-
-    if ($assignments->isEmpty()) {
-        return redirect()->back()->with('error', 'No data available to export.');
-    }
+    $plantFilter = session('selectedPlant'); 
+    $search = $request->input('search'); 
 
     if ($type === 'excel') {
-        return Excel::download(new EmployeePlantAssignmentsExport, 'EmployeeAssignments.xlsx');
+        return Excel::download(
+            new EmployeePlantAssignmentsExport($plantFilter, $search),
+            'EmployeeAssignments.xlsx'
+        );
     }
+
+    // PDF
+    $assignments = EmployeePlantAssignmentsExport::getFilteredData($plantFilter, $search);
 
     $pdf = Pdf::loadView('superadm.employee_assignments.assignments_pdf', compact('assignments'))
             ->setPaper('A4', 'landscape');
-    return $pdf->download('EmployeeAssignments.pdf');
 
-    return redirect()->back()->with('error', 'Invalid export type.');
+    return $pdf->download('EmployeeAssignments.pdf');
 }
+
 
 
 }

@@ -33,23 +33,37 @@ class DepartmentsController extends Controller
 	public function index(Request $request)
 	{
 		try {
-			$selectedPlant = $request->plant_id;
+			$selectedPlant = session('department_selected_plant');
 
-			// Fetch all plants for dropdown
 			$plants = PlantMasters::where('is_deleted', 0)
-				->where('is_active', 1)
-				->orderBy('plant_name', 'desc')
-				->get();
+					->where('is_active', 1)
+					->orderBy('plant_name', 'desc')
+					->get();
 
-			// Fetch departments with optional plant filter
 			$dataAll = $this->service->list($selectedPlant);
 
-			return view('superadm.departments.list', compact('dataAll', 'plants', 'selectedPlant'));
+			return view('superadm.departments.list',
+				compact('dataAll','plants','selectedPlant')
+			);
 
 		} catch (Exception $e) {
 			return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
 		}
 	}
+
+	public function filter(Request $request)
+	{
+		$plant_id = $request->plant_id;
+
+		session(['department_selected_plant' => $plant_id]);
+
+		if (!$plant_id) {
+			session()->forget('department_selected_plant');
+		}
+
+		return redirect()->route('departments.list');
+	}
+
 
 	public function listajaxlist(Request $req)
 	{
@@ -306,42 +320,50 @@ class DepartmentsController extends Controller
 public function export(Request $request)
 {
     $search = $request->query('search');
-    $type = $request->query('type') ?? 'excel'; // optional type for pdf/excel
+    $type = $request->query('type') ?? 'excel';
 
     $query = \DB::table('departments')
         ->join('plant_masters', 'departments.plant_id', '=', 'plant_masters.id')
-        ->where('departments.is_deleted', 0) // 👈 fully qualified
-        // ->select('departments.*', 'plant_masters.plant_name');
-		->select('departments.*', 'plant_masters.plant_name', 'plant_masters.plant_code')
-		->get();
+        ->where('departments.is_deleted', 0)
+        ->select(
+            'departments.*',
+            'plant_masters.plant_name',
+            'plant_masters.plant_code'
+        );  // ❌ remove ->get()
 
+    // 🔍 Apply search filter before get()
     if ($search) {
-        $query->where(function($q) use ($search) {
+        $query->where(function ($q) use ($search) {
             $q->where('departments.department_name', 'like', "%$search%")
               ->orWhere('departments.department_code', 'like', "%$search%")
+              ->orWhere('departments.department_short_name', 'like', "%$search%")
               ->orWhere('plant_masters.plant_name', 'like', "%$search%");
         });
     }
 
+    // ✔ apply get() at last
     $departments = $query->get();
 
     if ($departments->isEmpty()) {
         return redirect()->back()->with('error', 'No data available to export.');
     }
 
+    // Excel Export
     if ($type == 'excel') {
-        $fileName = 'departments_' . date('Y_m_d') . '.xlsx';
-        return Excel::download(new DepartmentsExport($search), $fileName);
+        return Excel::download(new DepartmentsExport($search), 'departments_'.date('Y_m_d').'.xlsx');
     }
 
+    // PDF Export
     if ($type == 'pdf') {
         $pdf = Pdf::loadView('superadm.departments.pdf', compact('departments'))
-                  ->setPaper('A4', 'landscape'); // for better width
-        return $pdf->download('departments_' . date('Y_m_d') . '.pdf');
+            ->setPaper('A4', 'landscape');
+
+        return $pdf->download('departments_'.date('Y_m_d').'.pdf');
     }
 
     return redirect()->back()->with('error', 'Invalid export type.');
 }
+
 
 
 

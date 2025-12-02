@@ -180,9 +180,9 @@ class EmployeeLoginController extends Controller
         $req->session()->flush();
 
         if ($role === 'admin') {
-            return redirect()->route('emp.login');  // admin + employee both use same login page
+            return redirect()->route('login');  // admin + employee both use same login page
         } else {
-            return redirect()->route('emp.login');
+            return redirect()->route('login');
         }
     }
 

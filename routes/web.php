@@ -37,7 +37,7 @@ Route::middleware('guest')->group(function () {
     // Route::get('login', [LoginController::class, 'loginsuper'])->name('login');
     Route::post('superlogin', [LoginController::class, 'validateSuperLogin'])->name('superlogin');
 
-    Route::get('login', [EmployeeLoginController::class, 'loginEmployee'])->name('emp.login');
+    Route::get('login', [EmployeeLoginController::class, 'loginEmployee'])->name('login');
     Route::post('login', [EmployeeLoginController::class, 'validateEmpLogin'])->name('emp.login.submit');
 });
 
@@ -64,7 +64,7 @@ Route::get('/check-admin', function (Request $req) {
 });
 
 
-Route::get('login', [EmployeeLoginController::class, 'loginEmployee'])->name('emp.login');
+// Route::get('login', [EmployeeLoginController::class, 'loginEmployee'])->name('emp.login');
 Route::post('login', [EmployeeLoginController::class, 'validateEmpLogin'])->name('emp.login.submit');
 Route::get('emp-logout', [EmployeeLoginController::class, 'logOut'])->name('emp.logout');
 
@@ -156,6 +156,8 @@ Route::group(['middleware' => ['SuperAdmin']], function () {
 
     Route::get('/departments/export', [DepartmentsController::class, 'export'])->name('departments.export');
     Route::get('/departments/filter', [DepartmentsController::class, 'filter'])->name('departments.filter');
+    Route::post('/departments/filter', [DepartmentsController::class, 'filter'])->name('departments.filter');
+
 
 
     // employees management routes
@@ -223,6 +225,10 @@ Route::group(['middleware' => ['SuperAdmin']], function () {
 
     Route::get('/employee/assignments/checkSendApi', [EmployeePlantAssignmentController::class, 'checkSendApi'])
      ->name('employee.assignments.checkSendApi');
+
+     Route::post('/employee-assignments/filter', [EmployeePlantAssignmentController::class, 'filter'])
+    ->name('employee.assignments.filter');
+
 
 
 

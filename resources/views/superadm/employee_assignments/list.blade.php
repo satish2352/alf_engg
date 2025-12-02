@@ -50,7 +50,21 @@
         <div class="card">
             <div class="card-body">
 
-                <div class="mb-3 d-flex justify-content-end">
+                <div class="mb-3 d-flex">
+
+                    <form method="POST" action="{{ route('employee.assignments.filter') }}" class="mr-auto">
+                        @csrf
+                        <select name="plant_id" class="form-control" onchange="this.form.submit()">
+                            <option value="">-- Select Plant --</option>
+                            @foreach($plants as $p)
+                                <option value="{{ $p->id }}" 
+                                    {{ $selectedPlant == $p->id ? 'selected' : '' }}>
+                                    {{ $p->plant_code }} - {{ $p->plant_name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </form>
+
                     <div class="btn-group mr-2">
                         <button type="button" class="btn btn-warning btn-add dropdown-toggle" data-toggle="dropdown">
                             Export
@@ -60,10 +74,10 @@
                             <a class="dropdown-item dropdown-item-custom btn-export" href="{{ route('employee.assignments.export', ['type'=>'pdf']) }}">PDF</a>
                         </div>
                     </div>
+
                     <a href="{{ route('employee.assignments.create') }}" class="btn btn-warning btn-add">Assign Plants & Project</a>
-                    {{-- <a href="{{ route('employee.assignments.export') }}" 
-                    class="btn btn-warning btn-export btn-add">Download Excel</a> --}}
                 </div>
+
 
                 @if (session('success'))
                     <div class="alert alert-success alert-dismissible fade show" id="success-alert">{{ session('success') }}</div>
@@ -526,34 +540,43 @@ $(document).ready(function(){
 <script>
 $(document).on('click', '.btn-export', function(e){
     e.preventDefault();
-    const exportUrl = $(this).attr('href');
 
-    // Get visible rows after DataTable search/filter
+    let searchValue = $('.dataTables_filter input').val();
+    let exportUrl = $(this).attr('href') + "&search=" + encodeURIComponent(searchValue);
+
+    // Check visible rows in DataTable
     const rows = $("table.datatables tbody tr:visible");
     let hasData = false;
 
     rows.each(function() {
-        const firstCell = $(this).find("td:first").text().trim().toLowerCase();
-        if (firstCell !== "" && firstCell !== "no data available" && firstCell !== "no matching records found") {
+        // First column text
+        const txt = $(this).find("td:first").text().trim().toLowerCase();
+
+        if (txt !== "" &&
+            txt !== "no data available" &&
+            txt !== "no matching records found" &&
+            txt !== "no data available in table"
+        ) {
             hasData = true;
-            return false; // stop loop
+            return false; // break loop
         }
     });
 
     if (!hasData) {
         Swal.fire({
             icon: 'warning',
-            title: 'No data available!',
+            title: 'No Data Available!',
             text: 'There is no matching record to export.',
-            confirmButtonColor: '#3085d6'
+            confirmButtonColor: '#952419'
         });
         return false;
     }
 
-    // If data exists, proceed
+    // Proceed if data exists
     window.location.href = exportUrl;
 });
 </script>
+
 
 
     <script>
