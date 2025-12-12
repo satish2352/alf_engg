@@ -64,15 +64,31 @@ public function list($search = null)
                 'employee_type' => $req->input('employee_type'),
                 'employee_email' => $req->input('employee_email'),
                 'employee_user_name' => $req->input('employee_user_name'),
+                'employee_signature' => $req->input('employee_signature'),
                 // 'employee_password' => Hash::make($req->input('employee_password')),
                 'employee_password'   => Hash::make($plainPassword),
                 'plain_password'      => encrypt($plainPassword), // store encrypted plain password
                 'reporting_to' => $req->input('reporting_to'),
-
-                
             ];
-            // dd($data);
-            // die();
+
+        if ($req->hasFile('employee_signature')) {
+
+            $file = $req->file('employee_signature');
+           
+            $extension = $file->getClientOriginalExtension();
+
+            $fileName = time() . rand(1000, 9999) . '.' . $extension;
+            
+           $uploadPath = storage_path(config('fileConstants.EMPLOYEE_SIGNATURE_ADD'));
+            if (!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0777, true);
+            }
+
+            $file->move($uploadPath, $fileName);
+
+            $data['employee_signature'] = $fileName;
+        }
+   
             return $this->repo->save($data);
         } catch (Exception $e) {
             Log::error("Employees Service save error: " . $e->getMessage());
@@ -117,6 +133,40 @@ public function list($search = null)
                 $data['employee_password'] = Hash::make($plainPassword);
                 $data['plain_password']    = encrypt($plainPassword); // store encrypted plain password
             }
+
+            // 2️⃣ Update password if given
+        if ($req->filled('employee_password')) {
+            $plainPassword = $req->input('employee_password');
+            $data['employee_password'] = Hash::make($plainPassword);
+            $data['plain_password']    = encrypt($plainPassword);
+        }
+
+        // 3️⃣ Handle signature upload
+        if ($req->hasFile('employee_signature')) {
+
+            // DELETE OLD IMAGE
+            if (!empty($employee->employee_signature)) {
+
+                $oldPath = 'public' . config('fileConstants.EMPLOYEE_SIGNATURE_DELETE') . $employee->employee_signature;
+
+                \Storage::delete($oldPath);
+            }
+
+            // UPLOAD NEW IMAGE
+            $file       = $req->file('employee_signature');
+            $extension  = $file->getClientOriginalExtension();
+            $fileName   = time() . rand(1000, 9999) . '.' . $extension;
+
+            $uploadPath = storage_path(config('fileConstants.EMPLOYEE_SIGNATURE_ADD'));
+
+            if (!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0777, true);
+            }
+
+            $file->move($uploadPath, $fileName);
+
+            $data['employee_signature'] = $fileName;
+        }
 
             return $this->repo->update($id, $data);
 

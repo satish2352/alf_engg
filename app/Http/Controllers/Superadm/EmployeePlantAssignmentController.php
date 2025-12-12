@@ -606,6 +606,15 @@ public function filter(Request $request)
         // default employee role (from employees table)
         $defaultRole = $assignment->employee->role_id;
 
+        // get employee signature
+        $employee     = $assignment->employee;
+        $signatureUrl = null;
+
+        if (!empty($employee->employee_signature)) {
+            $signatureUrl = config('fileConstants.EMPLOYEE_SIGNATURE_VIEW') . $employee->employee_signature;
+        }
+
+
         // load saved role mappings safely
         $savedRoles = $this->safeJsonToArray($assignment->send_api_role_id);
 
@@ -619,7 +628,8 @@ public function filter(Request $request)
             'roles'         => $roles,
             'savedRoles'    => $savedRoles,
             'savedDept'     => $savedDept,
-            'defaultRole'   => $defaultRole
+            'defaultRole'   => $defaultRole,
+            'employee_signature' => $signatureUrl
         ]);
     }
 

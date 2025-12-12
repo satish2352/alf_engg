@@ -192,6 +192,8 @@
             <button type="button" class="close close-icon" data-bs-dismiss="modal">&times;</button>
         </div>
         <div class="modal-body">
+            <input type="hidden" id="employeeSignatureUrl">
+
             <h6><strong>Employee:</strong> <span id="modalEmployeeName"></span></h6>
             <h6><strong>Plant:</strong> <span id="modalPlantName"></span></h6>
             <hr>
@@ -240,6 +242,8 @@
                 type: "POST",
                 data: { _token: "{{ csrf_token() }}", id: id },
                 success: function(res) {
+                     $('#employeeSignatureUrl').val(res.employee_signature);
+
                     if (res.status) {
                         let rows = '';
 
@@ -366,6 +370,9 @@
                 let projectId = $(this).attr('name').match(/\d+/)[0];
                 rolesData[projectId] = $(this).val() || [];
             });
+        // ✅ GET SIGNATURE URL FROM HIDDEN INPUT
+            let signatureUrl = $('#employeeSignatureUrl').val();
+            console.log("Signature URL Sending to API:", signatureUrl);
 
             Swal.fire({
                 title: "Are you sure?",
@@ -384,7 +391,8 @@
                             _token: "{{ csrf_token() }}",
                             id: id, 
                             departments: departmentsData,
-                            roles: rolesData
+                            roles: rolesData,
+                             signature: signatureUrl 
                         },
                         success: function(response){
                             if(response.status){
