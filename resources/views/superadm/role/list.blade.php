@@ -27,6 +27,7 @@
                                     <th>Sr.No.</th>
                                     <th>Role Name</th>
                                     <th>Short Description</th>
+                                    <th>Send Data</th>
                                     <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
@@ -37,7 +38,17 @@
                                     <td>{{ $key + 1 }}</td>
                                     <td>{{ $role->role }}</td>
                                     <td>{{ $role->short_description }}</td>
-
+                                    <td>
+                                        <button type="button"
+                                            class="btn btn-sm btn-warning open-role-send-modal {{ $role->send_api == 0 ? 'blink-btn' : '' }}"
+                                            data-id="{{ $role->id }}"
+                                            data-role="{{ $role->role }}"
+                                            data-desc="{{ $role->short_description }}"
+                                            data-old-projects="{{ $role->send_api_project_id ?? '' }}"
+                                        >
+                                            <i class="mdi mdi-upload"></i> Send Data
+                                        </button>
+                                    </td>
                                     <td>
                                         @if ($role->id != 0)
                                             <form action="{{ route('roles.updatestatus') }}" method="POST"
@@ -98,6 +109,152 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="sendRoleModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title" style="color:white">Send Role Data to API</h5>
+                    <button class="close" data-bs-dismiss="modal">&times;</button>
+                </div>
+
+                <div class="modal-body">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Sr.</th>
+                                <th>Role Name</th>
+                                <th>Select Projects</th>
+                            </tr>
+                        </thead>
+                        <tbody id="roleProjectAssignBody"></tbody>
+                    </table>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-success" id="sendRoleApiBtn">Send to API</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {{-- =================== SCRIPT =================== --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-multiselect/dist/js/bootstrap-multiselect.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-multiselect/dist/css/bootstrap-multiselect.css">
+
+    <script>
+        $(document).on("click", ".open-role-send-modal", function () {
+
+            $("#sendRoleApiBtn").prop("disabled", true);
+
+            let id = $(this).data("id");
+            let role = $(this).data("role");
+            let desc = $(this).data("desc");
+
+            let rawOldProjects = $(this).attr("data-old-projects") || "";
+            let oldProjects = rawOldProjects.split(",").filter(Boolean);
+
+            $("#roleProjectAssignBody").html("<tr><td colspan='3'>Loading...</td></tr>");
+            $("#sendRoleModal").modal("show");
+
+            $.ajax({
+                url: "{{ url('/get-all-projects') }}",
+                type: "GET",
+                success: function(projects){
+
+                    let options = "";
+                    projects.forEach(p=>{
+                        options += `<option value="${p.id}">${p.project_name}</option>`;
+                    });
+
+                    let row = `
+                        <tr>
+                            <td>1</td>
+                            <td>${role}</td>
+                            <td>
+                                <select class="form-control role-project-select" multiple>
+                                    ${options}
+                                </select>
+                            </td>
+                        </tr>
+                    `;
+
+                    $("#roleProjectAssignBody").html(row);
+
+                    $(".role-project-select").multiselect({
+                        includeSelectAllOption: true,
+                        enableFiltering: true,
+                        buttonWidth: '100%',
+                        maxHeight: 300,
+                        onChange: function(){
+                            let selected = $(".role-project-select").val();
+                            $("#sendRoleApiBtn").prop("disabled", !selected);
+                        }
+                    });
+
+                    $(".role-project-select").val(oldProjects);
+                    $(".role-project-select").multiselect("refresh");
+
+                    if(oldProjects.length > 0){
+                        $("#sendRoleApiBtn").prop("disabled", false);
+                    }
+
+                    $("#sendRoleApiBtn").data("id", id);
+                }
+            });
+
+        });
+
+        $("#sendRoleApiBtn").click(function(){
+
+            let roleId = $(this).data("id");
+            let selectedProjects = $(".role-project-select").val();
+
+            if(!selectedProjects){
+                Swal.fire("Select at least one project!");
+                return;
+            }
+
+            Swal.fire({
+                title: "Are you sure?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, Send!"
+            }).then(res=>{
+
+                if(res.isConfirmed){
+
+                    $.ajax({
+                        url: "{{ route('roles.sendApi') }}",
+                        type: "POST",
+                        data:{
+                            _token: "{{ csrf_token() }}",
+                            id: roleId,
+                            projects: selectedProjects
+                        },
+                        success: function(response){
+
+                            if(response.status){
+                                Swal.fire("Success!", response.message, "success")
+                                .then(()=> location.reload());
+                            }else{
+                                Swal.fire("Error!", response.message, "error");
+                            }
+                        }
+                    });
+
+                }
+
+            });
+
+        });
+    </script>
+
     <script>
         $(document).on("change", ".toggle-status", function(e) {
             e.preventDefault();

@@ -59,11 +59,16 @@ public function save($data)
             'city'             => $data['city'],
             'created_by'       => $data['created_by'],
             'is_active'        => $data['is_active'] ?? 1,
+            'is_deleted' => 0,
         ];
 
         // Optional fields
         if (!empty($data['address'])) {
             $insertData['address'] = $data['address'];
+        }
+
+        if (!empty($data['week_off'])) {
+            $insertData['week_off'] = $data['week_off'];
         }
 
         if (!empty($data['plant_short_name'])) {
@@ -141,8 +146,16 @@ public function update($req)
             $data['address'] = $req->input('address');
         }
 
+        if ($req->filled('week_off')) {
+            $data['week_off'] = $req->week_off;
+        }
+
         if ($req->filled('plant_short_name')) {
             $data['plant_short_name'] = $req->input('plant_short_name');
+        }
+
+        if ($req->filled('send_api')) {
+            $data['send_api'] = $req->send_api;
         }
 
         return $this->repo->update($data, $id);

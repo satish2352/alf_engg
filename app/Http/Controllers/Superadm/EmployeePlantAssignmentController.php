@@ -10,6 +10,7 @@ use App\Models\PlantMasters;
 use App\Models\Departments;
 use App\Models\EmployeePlantAssignment;
 use App\Models\Projects;
+use App\Models\Roles;
 use Illuminate\Support\Facades\Validator;
 use Exception;
 use Maatwebsite\Excel\Facades\Excel;
@@ -54,6 +55,7 @@ class EmployeePlantAssignmentController extends Controller
                 ->when($selectedPlant, function ($query) use ($selectedPlant) {
                     return $query->where('plant_id', $selectedPlant);
                 })
+                ->orderBy('id', 'DESC')
                 ->get();
 
             return view('superadm.employee_assignments.list',
@@ -306,105 +308,245 @@ public function filter(Request $request)
     //     }
     // }
 
-    public function sendApi(Request $request)
-{
-    $request->validate([
-        'id' => 'required',
-        'departments' => 'required|array'
-    ]);
+    // below last working code
+    // public function sendApi(Request $request)
+    // {
+    //     $request->validate([
+    //         'id' => 'required',
+    //         'departments' => 'required|array'
+    //     ]);
 
-    try {
-        $assignment = EmployeePlantAssignment::with(['employee.designation', 'plant'])
-                        ->findOrFail($request->id);
+    //     try {
+    //         $assignment = EmployeePlantAssignment::with(['employee.designation', 'plant'])
+    //                         ->findOrFail($request->id);
 
-        $employee = $assignment->employee;
-        $plant = $assignment->plant;
+    //         $employee = $assignment->employee;
+    //         $plant = $assignment->plant;
 
-        $projectIds = $assignment->projects_id ?? [];
-        $projects = Projects::whereIn('id', $projectIds)->get();
+    //         $projectIds = $assignment->projects_id ?? [];
+    //         $projects = Projects::whereIn('id', $projectIds)->get();
 
-        $responses = [];
+    //         $responses = [];
 
-        // 🔹 existing stored departments (merge later)
-        $storedDept = json_decode($assignment->send_api_department_id, true) ?? [];
-        // remove departments for projects that no longer exist in assignment
-        $currentProjects = array_column($projects->toArray(), 'id');
-        $storedDept = array_intersect_key($storedDept, array_flip($currentProjects));
+    //         // 🔹 existing stored departments (merge later)
+    //         $storedDept = json_decode($assignment->send_api_department_id, true) ?? [];
+    //         // remove departments for projects that no longer exist in assignment
+    //         $currentProjects = array_column($projects->toArray(), 'id');
+    //         $storedDept = array_intersect_key($storedDept, array_flip($currentProjects));
 
 
-        foreach ($projects as $proj) {
+    //         foreach ($projects as $proj) {
 
-            $selectedDeptIds = $request->departments[$proj->id] ?? [];
+    //             $selectedDeptIds = $request->departments[$proj->id] ?? [];
 
-            if (empty($selectedDeptIds)) {
-                $responses[] = [
-                    'project_id' => $proj->id,
-                    'status' => 'skipped',
-                    'message' => 'No departments selected for this project',
-                ];
-                continue;
-            }
+    //             if (empty($selectedDeptIds)) {
+    //                 $responses[] = [
+    //                     'project_id' => $proj->id,
+    //                     'status' => 'skipped',
+    //                     'message' => 'No departments selected for this project',
+    //                 ];
+    //                 continue;
+    //             }
 
-            // SAVE SELECTED DEPARTMENTS INTO DB (merged)
-            $storedDept[$proj->id] = $selectedDeptIds;
+    //             // SAVE SELECTED DEPARTMENTS INTO DB (merged)
+    //             $storedDept[$proj->id] = $selectedDeptIds;
 
-            $departments = Departments::whereIn('id', $selectedDeptIds)->get();
-            $departmentCodes = $departments->pluck('department_code')->implode(',');
-            $departmentShortNames = $departments->pluck('department_short_name')->implode(',');
+    //             $departments = Departments::whereIn('id', $selectedDeptIds)->get();
+    //             $departmentCodes = $departments->pluck('department_code')->implode(',');
+    //             $departmentShortNames = $departments->pluck('department_short_name')->implode(',');
 
-            $payload = [
-                'plant'              => $plant->plant_code,
-                'dept'               => $departmentCodes,
-                'dept_short_names'   => $departmentShortNames,
-                'email_id'           => $employee->employee_email,
-                'role'               => $employee->role->role ?? '',
-                'emp_name'           => $employee->employee_name,
-                'emp_code'           => $employee->employee_code,
-                'emp_type'           => $employee->employee_type,
-                'designation'        => $employee->designation->designation ?? '',
-                'username'           => $employee->employee_user_name,
-                'password'           => decrypt($employee->plain_password ?? ''),
-                'status'             => $assignment->is_active,
-                'com_portal_url'     => env('ASSET_URL'),
-            ];
+    //             $payload = [
+    //                 'plant'              => $plant->plant_code,
+    //                 'dept'               => $departmentCodes,
+    //                 'dept_short_names'   => $departmentShortNames,
+    //                 'email_id'           => $employee->employee_email,
+    //                 'role'               => $employee->role->role ?? '',
+    //                 'emp_name'           => $employee->employee_name,
+    //                 'emp_code'           => $employee->employee_code,
+    //                 'emp_type'           => $employee->employee_type,
+    //                 'designation'        => $employee->designation->designation ?? '',
+    //                 'username'           => $employee->employee_user_name,
+    //                 'password'           => decrypt($employee->plain_password ?? ''),
+    //                 'status'             => $assignment->is_active,
+    //                 'com_portal_url'     => env('ASSET_URL'),
+    //             ];
 
-            if (preg_match('#https?://[^/]+/([^/]+)/#', $proj->project_url, $matches)) {
-                $projectName = $matches[1];
-            }
+    //             if (preg_match('#https?://[^/]+/([^/]+)/#', $proj->project_url, $matches)) {
+    //                 $projectName = $matches[1];
+    //             }
 
-            $apiUrl = "https://alfitworld.com/{$projectName}/CommonController/api_add_employee";
+    //             $apiUrl = "https://alfitworld.com/{$projectName}/CommonController/api_add_employee";
 
-            $response = Http::post($apiUrl, $payload);
+    //             $response = Http::post($apiUrl, $payload);
 
-            $responses[] = [
-                'project_id' => $proj->id,
-                'project_name' => $proj->project_name,
-                'departments_sent' => $departments->pluck('department_name')->toArray(),
-                'payload' => $payload,
-                'status' => $response->successful() ? 'success' : 'failed',
-                'response' => $response->body(),
-            ];
+    //             $responses[] = [
+    //                 'project_id' => $proj->id,
+    //                 'project_name' => $proj->project_name,
+    //                 'departments_sent' => $departments->pluck('department_name')->toArray(),
+    //                 'payload' => $payload,
+    //                 'status' => $response->successful() ? 'success' : 'failed',
+    //                 'response' => $response->body(),
+    //             ];
+    //         }
+
+    //         // STORE MERGED DEPARTMENT DATA
+    //         $assignment->update([
+    //             'send_api_department_id' => json_encode($storedDept),
+    //             'send_api' => 1
+    //         ]);
+
+    //         return response()->json([
+    //             'status' => true,
+    //             'message' => 'API sent successfully for ' . $employee->employee_name,
+    //             'data' => $responses,
+    //         ]);
+
+    //     } catch (Exception $e) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => $e->getMessage(),
+    //         ]);
+    //     }
+    // }
+    
+    private function safeJsonToArray($value)
+    {
+        // 1) If already array → return as-is
+        if (is_array($value)) {
+            return $value;
         }
 
-        // STORE MERGED DEPARTMENT DATA
-        $assignment->update([
-            'send_api_department_id' => json_encode($storedDept),
-            'send_api' => 1
-        ]);
+        // 2) If NULL or empty → return []
+        if (empty($value)) {
+            return [];
+        }
 
-        return response()->json([
-            'status' => true,
-            'message' => 'API sent successfully for ' . $employee->employee_name,
-            'data' => $responses,
-        ]);
+        // 3) If JSON string → decode
+        if (is_string($value)) {
+            $decoded = json_decode($value, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                return $decoded;
+            }
+        }
 
-    } catch (Exception $e) {
-        return response()->json([
-            'status' => false,
-            'message' => $e->getMessage(),
-        ]);
+        // 4) Any other type → force array
+        return [];
     }
-}
+
+
+    public function sendApi(Request $request)
+    {
+        $request->validate([
+            'id'         => 'required',
+            'departments'=> 'required|array',
+            'roles'      => 'required|array',
+        ]);
+
+        try {
+            $assignment = EmployeePlantAssignment::with(['employee.designation', 'plant'])
+                            ->findOrFail($request->id);
+
+            $employee = $assignment->employee;
+            $plant    = $assignment->plant;
+
+            // Load previously saved JSON safely (always array)
+            $storedRoles = $this->safeJsonToArray($assignment->send_api_role_id);
+            $storedDept  = $this->safeJsonToArray($assignment->send_api_department_id);
+
+            $projectIds = $this->safeJsonToArray($assignment->projects_id);
+            $projects   = Projects::whereIn('id', $projectIds)->get();
+
+            $responses = [];
+
+            foreach ($projects as $proj) {
+
+                $pid = $proj->id;
+
+                // ensure array values
+                $selectedDeptIds = $this->safeJsonToArray($request->departments[$pid] ?? []);
+                $selectedRoleIds = $this->safeJsonToArray($request->roles[$pid] ?? []);
+
+                // role IDs → role names
+                $roleNames = Roles::whereIn('id', $selectedRoleIds)
+                   ->pluck('role')
+                   ->implode(',');
+
+                // store new mapping
+                $storedDept[$pid]  = $selectedDeptIds;
+                $storedRoles[$pid] = $selectedRoleIds;
+
+                // skip if no departments
+                if (empty($selectedDeptIds)) {
+                    $responses[] = [
+                        'project_id' => $pid,
+                        'status' => 'skipped',
+                        'message'=> 'No departments selected'
+                    ];
+                    continue;
+                }
+
+                // fetch departments
+                $departments = Departments::whereIn('id', $selectedDeptIds)->get();
+                $departmentCodes      = $departments->pluck('department_code')->implode(',');
+                $departmentShortNames = $departments->pluck('department_short_name')->implode(',');
+
+                // prepare payload
+                $payload = [
+                    'plant'            => $plant->plant_code,
+                    'dept'             => $departmentCodes,
+                    'dept_short_names' => $departmentShortNames,
+                    'email_id'         => $employee->employee_email,
+                    'role'             => $roleNames,
+                    'emp_name'         => $employee->employee_name,
+                    'emp_code'         => $employee->employee_code,
+                    'emp_type'         => $employee->employee_type,
+                    'designation'      => $employee->designation->designation ?? '',
+                    'username'         => $employee->employee_user_name,
+                    'password'         => decrypt($employee->plain_password ?? ''),
+                    'status'           => $assignment->is_active,
+                    'com_portal_url'   => env('ASSET_URL'),
+                ];
+
+                // extract project name
+                $projectName = '';
+                if (preg_match('#https?://[^/]+/([^/]+)/#', $proj->project_url, $matches)) {
+                    $projectName = $matches[1];
+                }
+
+                $apiUrl = "https://alfitworld.com/{$projectName}/CommonController/api_add_employee";
+
+                // call API
+                $response = Http::post($apiUrl, $payload);
+
+                $responses[] = [
+                    'project_id' => $pid,
+                    'payload'    => $payload,
+                    'status'     => $response->successful() ? 'success' : 'failed',
+                    'response'   => $response->body(),
+                ];
+            }
+
+            // store clean JSON without escaping
+            $assignment->send_api_department_id = $storedDept;
+            $assignment->send_api_role_id = $storedRoles;
+            $assignment->send_api = 1;
+            $assignment->save();
+
+
+            return response()->json([
+                'status'  => true,
+                'message' => "API successfully sent for {$employee->employee_name}",
+                'data'    => $responses
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'  => false,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
 
 
     // public function getProjects(Request $request)
@@ -441,48 +583,45 @@ public function filter(Request $request)
     //     ]);
     // }
 
-public function getProjects(Request $request)
-{
-    $assignment = EmployeePlantAssignment::find($request->id);
+    public function getProjects(Request $request)
+    {
+        $assignment = EmployeePlantAssignment::find($request->id);
 
-    if (!$assignment) {
-        return response()->json(['status' => false, 'message' => 'Assignment not found']);
+        if (!$assignment) {
+            return response()->json(['status' => false, 'message' => 'Assignment not found']);
+        }
+
+        // ALWAYS SAFE ARRAY
+        $projectIds    = $this->safeJsonToArray($assignment->projects_id);
+        $departmentIds = $this->safeJsonToArray($assignment->department_id);
+
+        $projects    = Projects::whereIn('id', $projectIds)->get(['id','project_name']);
+        $departments = Departments::whereIn('id', $departmentIds)->get(['id','department_name']);
+
+        // all roles list
+        $roles = Roles::where('is_active',1)
+                    ->where('is_deleted',0)
+                    ->get(['id','role']);
+
+        // default employee role (from employees table)
+        $defaultRole = $assignment->employee->role_id;
+
+        // load saved role mappings safely
+        $savedRoles = $this->safeJsonToArray($assignment->send_api_role_id);
+
+        // load saved department mappings safely
+        $savedDept = $this->safeJsonToArray($assignment->send_api_department_id);
+
+        return response()->json([
+            'status'        => true,
+            'projects'      => $projects,
+            'departments'   => $departments,
+            'roles'         => $roles,
+            'savedRoles'    => $savedRoles,
+            'savedDept'     => $savedDept,
+            'defaultRole'   => $defaultRole
+        ]);
     }
-
-    // Decode projects
-    $projectIds = is_array($assignment->projects_id)
-        ? $assignment->projects_id
-        : json_decode($assignment->projects_id, true);
-
-    $projects = Projects::whereIn('id', $projectIds)->get(['id', 'project_name']);
-
-    // Decode departments
-    $departmentIds = is_array($assignment->department_id)
-        ? $assignment->department_id
-        : json_decode($assignment->department_id, true);
-
-    $departments = Departments::whereIn('id', $departmentIds)->get(['id', 'department_name']);
-
-    // ---- FIX FOR ERROR ----
-    $raw = $assignment->send_api_department_id;
-
-    if (is_array($raw)) {
-        $savedDept = $raw;
-    } elseif (is_string($raw) && !empty($raw)) {
-        $savedDept = json_decode($raw, true) ?? [];
-    } else {
-        $savedDept = [];
-    }
-    // ------------------------
-
-    return response()->json([
-        'status' => true,
-        'projects' => $projects,
-        'departments' => $departments,
-        'savedDept' => $savedDept,
-    ]);
-}
-
 
 
     public function checkSendApi()

@@ -35,6 +35,20 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
+                        <div class="form-group">
+                            <label>Week Off <span class="text-danger">*</span></label>
+                            <select name="week_off" class="form-control">
+                                <option value="">Select Week Off</option>
+                                @foreach (['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'] as $day)
+                                    <option value="{{ $day }}" {{ old('week_off') == $day ? 'selected' : '' }}>
+                                        {{ $day }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('week_off')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
 
                         <div class="form-group">
                             <label>Plant Short Name</label>

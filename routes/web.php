@@ -101,7 +101,8 @@ Route::group(['middleware' => ['SuperAdmin']], function () {
     Route::post('/roles/update/{encodedId}', [RoleController::class, 'update'])->name('roles.update');
     Route::post('/roles/delete', [RoleController::class, 'delete'])->name('roles.delete');
     Route::post('/roles/update-status', [RoleController::class, 'updateStatus'])->name('roles.updatestatus');
-
+    
+    Route::post('/roles/send-api', [RoleController::class, 'sendApi'])->name('roles.sendApi');
 
 
     // Role management routes
@@ -125,8 +126,13 @@ Route::group(['middleware' => ['SuperAdmin']], function () {
     Route::post('/plantmaster/update-status', [PlantMasterController::class, 'updateStatus'])->name('plantmaster.updatestatus');
 
     Route::get('/plantmaster/export', [PlantMasterController::class, 'export'])->name('plantmaster.export');
-
-
+    Route::post('/plant/send-api', [PlantMasterController::class, 'sendApi'])->name('plantmaster.sendApi');
+    Route::get('/get-all-projects', function () {
+    return \DB::table('projects')
+        ->where('is_active', 1)
+        ->where('is_deleted', 0)
+        ->get(['id', 'project_name']);
+    });
 
 
 
@@ -141,6 +147,7 @@ Route::group(['middleware' => ['SuperAdmin']], function () {
     Route::post('/projects/update-status', [ProjectsController::class, 'updateStatus'])->name('projects.updatestatus');
     Route::post('/projects/list-ajax', [ProjectsController::class, 'listajaxlist'])->name('projects.list-ajax');
 
+    Route::post('/superadm/projects/send-api', [ProjectsController::class, 'sendApi'])->name('projects.send.api');
 
 
     // departments management routes

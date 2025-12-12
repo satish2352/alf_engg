@@ -15,6 +15,8 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->string('role');
             $table->string('short_description')->nullable();
+            $table->boolean('send_api')->default(false);
+            $table->text('send_api_project_id')->nullable();
             $table->boolean('is_active')->default(true);
             $table->boolean('is_deleted')->default(false);
         $table->timestamps();

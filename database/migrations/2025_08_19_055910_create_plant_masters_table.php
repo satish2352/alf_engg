@@ -17,7 +17,10 @@ return new class extends Migration
             $table->string('plant_name');
             $table->string('address')->nullable();
             $table->string('city');
+            $table->string('week_off');
             $table->string('plant_short_name')->nullable();
+            $table->boolean('send_api')->default(false);
+            $table->text('send_api_project_id')->nullable();
             $table->string('created_by')->nullable();
             $table->boolean('is_active')->default(true);
             $table->boolean('is_deleted')->default(false);

@@ -26,6 +26,16 @@ class RoleController extends Controller
 		}
 	}
 
+	public function sendApi(Request $request)
+	{
+		$request->validate([
+			'id' => 'required',
+			'projects' => 'required|array|min:1'
+		]);
+
+		return $this->service->sendApi($request);
+	}
+
 	public function create(Request $req)
 	{
 		try {

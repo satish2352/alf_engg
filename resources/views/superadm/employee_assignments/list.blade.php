@@ -202,6 +202,7 @@
                         <th>Sr. No</th>
                         <th>Project Name</th>
                         <th>Departments</th>
+                        <th>Roles</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -241,24 +242,62 @@
                 success: function(res) {
                     if (res.status) {
                         let rows = '';
+
+                        let savedRoles = res.savedRoles;     // project-wise saved role ids
+                        let defaultRole = String(res.defaultRole); // employee role
+
                         res.projects.forEach((p, index) => {
-                            let deptOptions = '';
-                                let saved = res.savedDept[p.id] ?? [];
-                                res.departments.forEach(d => {
-                                    let selected = saved.includes(String(d.id)) ? "selected" : "";
-                                deptOptions += `<option value="${d.id}" ${selected}>${d.department_name}</option>`;
-                            });
-                            // res.departments.forEach(d => {
-                            //     deptOptions += `<option value="${d.id}">${d.department_name}</option>`;
-                            // });
+
+                        /* -------------------- DEPARTMENTS -------------------- */
+                        let deptOptions = '';
+
+                        let savedDept = [];
+                        if (res.savedDept && res.savedDept[p.id]) {
+                            savedDept = res.savedDept[p.id];
+                        }
+
+                        res.departments.forEach(d => {
+                            let selected = savedDept.includes(String(d.id)) ? "selected" : "";
+                            deptOptions += `<option value="${d.id}" ${selected}>${d.department_name}</option>`;
+                        });
+
+
+                                /* -------------------- ROLES (FINAL & CORRECT LOGIC) -------------------- */
+
+                                // saved roles आहोत का?
+                                let selectedRoleIds = [];
+
+                                if (savedRoles && typeof savedRoles === "object" && savedRoles[p.id]) {
+                                    // case 1: saved roles exist → तेच select
+                                    selectedRoleIds = Array.isArray(savedRoles[p.id]) 
+                                    ? savedRoles[p.id] 
+                                    : (savedRoles[p.id] ? JSON.parse(savedRoles[p.id]) : []);
+                                } else {
+                                    // case 2: saved नाहीत → employee default role
+                                    selectedRoleIds = [ String(defaultRole) ];
+                                }
+
+                                let roleOptions = '';
+                                res.roles.forEach(r => {
+                                    let selected = selectedRoleIds.includes(String(r.id)) ? "selected" : "";
+                                    roleOptions += `<option value="${r.id}" ${selected}>${r.role}</option>`;
+                                });
+
 
                             rows += `
                                 <tr>
                                     <td>${index + 1}</td>
                                     <td>${p.project_name}</td>
+
                                     <td>
                                         <select class="form-control department-select" multiple name="department[${p.id}][]">
                                             ${deptOptions}
+                                        </select>
+                                    </td>
+
+                                    <td>
+                                        <select class="form-control role-select" multiple name="roles[${p.id}][]">
+                                            ${roleOptions}
                                         </select>
                                     </td>
                                 </tr>`;
@@ -266,36 +305,14 @@
 
                         $('#projectTable tbody').html(rows);
 
-                        // Initialize multi-select dropdowns
-                        $('.department-select').multiselect({
+                        $('.department-select, .role-select').multiselect({
                             includeSelectAllOption: true,
                             enableFiltering: true,
                             buttonWidth: '100%',
                             maxHeight: 300
                         });
 
-                        // 🔹 Check if any department selected -> enable/disable Send button
-                        const updateSendButton = () => {
-                            let allSelected = true;
-
-                            $('.department-select').each(function() {
-                                if (!$(this).val() || $(this).val().length === 0) {
-                                    allSelected = false;
-                                    return false; // break loop if any project missing
-                                }
-                            });
-
-                            $sendBtn.prop('disabled', !allSelected);
-                        };
-
-                        // Initial check
-                        updateSendButton();
-
-                        // Watch for changes in dropdown selections
-                        $(document).on('change', '.department-select', updateSendButton);
-
-                    } else {
-                        $('#projectTable tbody').html('<tr><td colspan="3" class="text-center text-danger">No projects found.</td></tr>');
+                        validateSendApiButton();
                     }
                 },
                 error: function() {
@@ -308,33 +325,46 @@
         });
 
         // Disable Send button until all projects have departments selected
+        // $(document).on('change', '.department-select', function() {
+        //     let allSelected = true;
+
+        //     $('.department-select').each(function() {
+        //         if ($(this).val() === null || $(this).val().length === 0) {
+        //             allSelected = false;
+        //             return false; // break loop
+        //         }
+        //     });
+
+        //     if (allSelected) {
+        //         $('#sendApiConfirmBtn').prop('disabled', false);
+        //     } else {
+        //         $('#sendApiConfirmBtn').prop('disabled', true);
+        //     }
+        // });
+
         $(document).on('change', '.department-select', function() {
-            let allSelected = true;
-
-            $('.department-select').each(function() {
-                if ($(this).val() === null || $(this).val().length === 0) {
-                    allSelected = false;
-                    return false; // break loop
-                }
-            });
-
-            if (allSelected) {
-                $('#sendApiConfirmBtn').prop('disabled', false);
-            } else {
-                $('#sendApiConfirmBtn').prop('disabled', true);
-            }
+            validateSendApiButton();
         });
 
+        $(document).on('change', '.role-select', function() {
+            validateSendApiButton();
+        });
 
         // Send to API
         $('#sendApiConfirmBtn').on('click', function() {
             let id = $(this).data('id');
+
             let departmentsData = {};
+            let rolesData = {};
 
             $('.department-select').each(function() {
                 let projectId = $(this).attr('name').match(/\d+/)[0];
-                let selected = $(this).val() || [];
-                departmentsData[projectId] = selected;
+                departmentsData[projectId] = $(this).val() || [];
+            });
+
+            $('.role-select').each(function() {
+                let projectId = $(this).attr('name').match(/\d+/)[0];
+                rolesData[projectId] = $(this).val() || [];
             });
 
             Swal.fire({
@@ -350,23 +380,19 @@
                     $.ajax({
                         url: "{{ route('employee.assignments.sendApi') }}",
                         type: "POST",
-                        data: { _token: "{{ csrf_token() }}", id: id, departments: departmentsData },
+                        data: { 
+                            _token: "{{ csrf_token() }}",
+                            id: id, 
+                            departments: departmentsData,
+                            roles: rolesData
+                        },
                         success: function(response){
-                            // if(response.status){
-                            //     Swal.fire("Success!", response.message, "success");
-                            //     $('#sendDataModal').modal('hide');
                             if(response.status){
                                 Swal.fire({
                                     title: "Success!",
                                     text: response.message,
                                     icon: "success",
-                                    allowOutsideClick: true,
-                                }).then((swalResult) => {
-                                    if (swalResult.isConfirmed || swalResult.isDismissed) {
-                                        location.reload();
-                                    }
-                                });
-                                $('#sendDataModal').modal('hide');
+                                }).then(() => location.reload());
                             } else {
                                 Swal.fire("Error!", response.message, "error");
                             }
@@ -434,6 +460,34 @@ $(document).on("change", ".toggle-status", function(e) {
     });
 });
 </script>
+
+<script>
+function validateSendApiButton() {
+    let allDepartmentsSelected = true;
+    let allRolesSelected = true;
+
+    $('.department-select').each(function() {
+        if (!$(this).val() || $(this).val().length === 0) {
+            allDepartmentsSelected = false;
+            return false;
+        }
+    });
+
+    $('.role-select').each(function() {
+        if (!$(this).val() || $(this).val().length === 0) {
+            allRolesSelected = false;
+            return false;
+        }
+    });
+
+    if (allDepartmentsSelected && allRolesSelected) {
+        $('#sendApiConfirmBtn').prop('disabled', false);
+    } else {
+        $('#sendApiConfirmBtn').prop('disabled', true);
+    }
+}
+</script>
+
 
 <script>
 $(document).ready(function(){
@@ -531,7 +585,6 @@ $(document).ready(function(){
             }
         });
     });
-
 
 
 });

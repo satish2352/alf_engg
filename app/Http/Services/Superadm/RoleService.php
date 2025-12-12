@@ -25,6 +25,78 @@ class RoleService
         }
     }
 
+    public function sendApi($request)
+{
+    $role = \DB::table('roles')->where('id',$request->id)->where('is_deleted',0)->first();
+
+    if(!$role){
+        return response()->json(['status'=>false,'message'=>"Role not found"]);
+    }
+
+    $newProjects = $request->projects;
+    $oldProjects = explode(",", $role->send_api_project_id ?? "");
+
+    // 1️⃣ Removed Projects → Disable status=0
+    $removed = array_diff($oldProjects, $newProjects);
+
+    foreach($removed as $projId){
+
+        $proj = \DB::table('projects')->where('id',$projId)->first();
+        if(!$proj) continue;
+
+        preg_match('#https?://[^/]+/([^/]+)/#',$proj->project_url,$m);
+        $projectName = $m[1] ?? null;
+        if(!$projectName) continue;
+
+        \Http::post("https://alfitworld.com/{$projectName}/CommonController/changeRoleStatus",[
+            "role" => $role->role,
+            "status" => 0
+        ]);
+    }
+
+
+    // 2️⃣ New + Existing Projects → Send/Update Role
+    $projects = \DB::table('projects')->whereIn('id',$newProjects)->get();
+
+    $allSuccess = true;
+
+    foreach($projects as $proj){
+
+        preg_match('#https?://[^/]+/([^/]+)/#',$proj->project_url,$m);
+        $projectName = $m[1] ?? null;
+
+        if(!$projectName){
+            $allSuccess = false;
+            continue;
+        }
+
+        $payload = [
+            "role" => $role->role,
+            "short_description" => $role->short_description
+        ];
+
+        $apiUrl = "https://alfitworld.com/{$projectName}/CommonController/addEditRoleApi";
+
+        $response = \Http::post($apiUrl, $payload);
+
+        if(!$response->successful()){
+            $allSuccess = false;
+        }
+    }
+
+    if($allSuccess){
+        \DB::table('roles')->where('id',$role->id)->update([
+            "send_api" => 1,
+            "send_api_project_id" => implode(",", $newProjects)
+        ]);
+
+        return response()->json(['status'=>true,'message'=>"Role data sent successfully"]);
+    }
+
+    return response()->json(['status'=>false,'message'=>"Some APIs failed"]);
+}
+
+
     public function save($req)
     {
         try {

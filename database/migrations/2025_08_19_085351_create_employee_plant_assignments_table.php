@@ -20,7 +20,8 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->boolean('is_deleted')->default(false);
             $table->boolean('send_api')->default(false);
-            $table->text('send_api_department_id')->nullable();
+            $table->json('send_api_department_id')->nullable();
+            $table->json('send_api_role_id')->nullable();
             $table->timestamps();
 
             $table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');
@@ -34,5 +35,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('employee_plant_assignments');
+                    // Revert back to TEXT
+            $table->text('send_api_department_id')->nullable()->change();
+            $table->text('send_api_role_id')->nullable()->change();
     }
 };

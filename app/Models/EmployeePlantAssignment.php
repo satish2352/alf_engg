@@ -20,12 +20,14 @@ class EmployeePlantAssignment extends Model
         'is_active',
         'is_deleted',
         'send_api',
-        'send_api_department_id'
+        'send_api_department_id',
+        'send_api_role_id'
     ];
 
     protected $casts = [
-        'department_id' => 'array',
-        'projects_id'   => 'array',
+        'department_id'     => 'array',
+        'projects_id'       => 'array',
+        'send_api_role_id'  => 'array'
     ];
 
     // Relationships
