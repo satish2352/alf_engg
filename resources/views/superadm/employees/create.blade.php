@@ -6,7 +6,7 @@
             <div class="card">
                 <div class="card-body">
                     <h4>Add Employee</h4>
-                    <form action="{{ route('employees.save') }}" method="POST">
+                    <form action="{{ route('employees.save') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         {{-- Plant --}}
@@ -181,7 +181,6 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
-
                         <div class="form-group">
                             <label for="reporting_to">Reporting To</label>
                                 <select name="reporting_to" id="reporting_to" class="form-control">
@@ -200,6 +199,26 @@
                             @error('reporting_to')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
+                        </div>
+                        <div class="form-group">
+                                <label for="employee_signature">Upload Signature
+                                    <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="file"
+                                    class="form-control"
+                                    name="employee_signature"
+                                    accept="image/png, image/jpeg, image/jpg"> <!-- allow image upload -->
+                                <div class="form-group mt-2">
+                                    <img id="signaturePreview" 
+                                        src="#" 
+                                        alt="Signature Preview" 
+                                        style="display:none; width:100px; height:100px; border:1px solid #ccc; object-fit:contain;">
+                                </div>
+
+                                @if ($errors->has('employee_signature'))
+                                    <span class="red-danger">{{ $errors->first('employee_signature') }}</span>
+                                @endif
                         </div>
 
                         {{-- <div class="form-group">
@@ -644,4 +663,22 @@ $(document).ready(function() {
             });
         });
     </script> --}}
+    <script>
+document.querySelector('input[name="employee_signature"]').addEventListener('change', function(event) {
+    let preview = document.getElementById('signaturePreview');
+    let file = event.target.files[0];
+
+    if (file) {
+        let reader = new FileReader();
+        
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block'; // Show image
+        };
+
+        reader.readAsDataURL(file);
+    }
+});
+</script>
+
 @endsection

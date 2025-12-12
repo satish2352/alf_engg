@@ -75,6 +75,7 @@ class EmployeesRepository
     public function save($data)
     {
         try {
+           
             return Employees::create($data);
         } catch (Exception $e) {
             Log::error("Error saving project: " . $e->getMessage());

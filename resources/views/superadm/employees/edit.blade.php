@@ -16,7 +16,7 @@
                     @endif --}}
 
                     <h4>Edit Employee</h4>
-                    <form action="{{ route('employees.update', $employee->id) }}" method="POST">
+                    <form action="{{ route('employees.update', $employee->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 
@@ -218,6 +218,33 @@
                                     @endforeach
                                 </select>
                             @error('reporting_to')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <label for="employee_signature">Upload Signature</label>
+
+                            <input type="file"
+                                class="form-control"
+                                name="employee_signature"
+                                accept="image/png, image/jpeg, image/jpg"
+                                onchange="previewSignature(event)">
+
+                            <div class="mt-2">
+                                {{-- Show Existing Image (DEFAULT view) --}}
+                                @if ($employee->employee_signature)
+                                    <img id="signatureImage"
+                                        src="{{ config('fileConstants.EMPLOYEE_SIGNATURE_VIEW') . $employee->employee_signature }}"
+                                        width="120" height="120"
+                                        style="object-fit:contain; border:1px solid #ccc;">
+                                @else
+                                    <img id="signatureImage"
+                                        src="#"
+                                        style="display:none; width:120px; height:120px; border:1px solid #ccc; object-fit:contain;">
+                                @endif
+                            </div>
+
+                            @error('employee_signature')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
@@ -434,5 +461,20 @@
             });
         });
     </script>
+<script>
+function previewSignature(event) {
+    let file = event.target.files[0];
+    let img = document.getElementById("signatureImage");
+
+    if (file) {
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            img.src = e.target.result;
+            img.style.display = "block";   // Show new image
+        };
+        reader.readAsDataURL(file);
+    }
+}
+</script>
 
 @endsection

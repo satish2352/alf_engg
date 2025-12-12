@@ -72,6 +72,7 @@
                                
                                 <th>Designation</th>
                                 <th>Role</th>
+                                 <th>Signuture</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -88,6 +89,13 @@
                                 
                                 <td>{{ $data->designation->designation ?? '-' }}</td>
                                 <td>{{ $data->role->role ?? '-' }}</td>
+                                  <td>
+                                <img src="{{ config('fileConstants.EMPLOYEE_SIGNATURE_VIEW') . $data['employee_signature'] }}"
+                                    alt="signature"
+                                    width="100"
+                                    height="100"
+                                    style="object-fit:contain; border:1px solid #ddd;">
+                            </td>
                                 <td>
                                     @if (!empty($data->role) && $data->role->id != 0)
                                     <label class="switch">
@@ -98,6 +106,8 @@
                                       Active
                                        @endif
                                 </td>
+                             
+
                                 <td class="d-flex">
                                     @if (!empty($data->role) && $data->role->id != 0)
                                         {{-- Edit Button --}}

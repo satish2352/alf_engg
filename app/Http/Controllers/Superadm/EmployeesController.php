@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Superadm;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Config;
 use App\Http\Services\Superadm\EmployeesService;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Validation\Rule;
@@ -120,6 +121,7 @@ class EmployeesController extends Controller
 			'employee_name'     => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/',
 			'employee_type'     => 'required',
 			'employee_email'    => 'required|email|max:255|unique:employees,employee_email',
+            'employee_signature' => 'required|image|mimes:jpeg,png,jpg|max:' . config('AllFileValidation.SIGNATURE_IMAGE_MAX_SIZE'),
 			// 'employee_user_name'=> 'required|string|max:100|unique:employees,employee_user_name',
 			'employee_user_name' => [
 				'required',
@@ -156,7 +158,12 @@ class EmployeesController extends Controller
 			'employee_password.min'      => 'Password must be exactly 8 characters',
 			'employee_password.max'      => 'Password must be exactly 8 characters',
 			'employee_password.regex'    => 'Password must be exactly 8 characters and contain at least 2 digits, 5 letters, and 1 special character',
-		]);
+			'employee_signature.required' => 'Please upload employee signature',
+			'employee_signature.image'    => 'File must be an image',
+			'employee_signature.mimes'    => 'Signature must be JPG, JPEG, or PNG',
+			'employee_signature.max'      => 'Signature must be less than ' 
+                                      . config('AllFileValidation.SIGNATURE_IMAGE_MAX_SIZE') . ' KB',
+	]);
 
 		// Add conditional validation for reporting_to
 		// $validator->sometimes('reporting_to', 'required', function ($input) {
@@ -168,6 +175,7 @@ class EmployeesController extends Controller
 		$validator->validate(); // run the validation
 
 		try {
+			
 			$this->service->save($req);
 			return redirect()->route('employees.list')->with('success', 'Employee added successfully.');
 		} catch (Exception $e) {
@@ -254,6 +262,11 @@ class EmployeesController extends Controller
             // 'regex:/^(?=(?:.*\d){2,})(?=(?:.*[A-Za-z]){3,})(?=.*[^A-Za-z0-9]).+$/'
         ],
     ];
+	if ($req->hasFile('employee_signature')) {
+    $rules['employee_signature'] =
+        'image|mimes:jpg,jpeg,png'
+        . '|max:' . Config::get('AllFileValidation.SIGNATURE_IMAGE_MAX_SIZE');
+       }
 
     if ($req->filled('employee_password')) {
         $rules['employee_password'] = [
@@ -280,6 +293,11 @@ class EmployeesController extends Controller
         'employee_password.min'      => 'Password must be exactly 8 characters',
         'employee_password.max'      => 'Password must be exactly 8 characters',
         'employee_password.regex'    => 'Password must be exactly 8 characters and contain at least 2 digits, 5 letters, and 1 special character',
+
+		 'employee_signature.image' => 'Signature must be an image file',
+        'employee_signature.mimes' => 'Only JPG, JPEG, PNG formats allowed',
+        'employee_signature.max'      => 'Signature must be less than ' 
+                                      . config('AllFileValidation.SIGNATURE_IMAGE_MAX_SIZE') . ' KB',
     ];
 
     $req->validate($rules, $messages);
