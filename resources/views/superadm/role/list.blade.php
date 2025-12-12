@@ -1,6 +1,17 @@
 @extends('superadm.layout.master')
 
 @section('content')
+
+<style>
+    .blink-btn {
+    animation: blink 1s infinite;
+    }
+    @keyframes blink {
+        50% { opacity: 0.3; }
+    }
+
+</style>
+
     <div class="row">
         <div class="col-12">
             <div class="card">
@@ -222,9 +233,13 @@
 
             Swal.fire({
                 title: "Are you sure?",
+                text: "Send role data to selected projects?",
                 icon: "warning",
                 showCancelButton: true,
-                confirmButtonText: "Yes, Send!"
+                confirmButtonColor: "#28a745",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, send it!",
+                cancelButtonText: "No, cancel"
             }).then(res=>{
 
                 if(res.isConfirmed){

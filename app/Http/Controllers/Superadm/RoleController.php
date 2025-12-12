@@ -26,15 +26,23 @@ class RoleController extends Controller
 		}
 	}
 
-	public function sendApi(Request $request)
-	{
-		$request->validate([
-			'id' => 'required',
-			'projects' => 'required|array|min:1'
-		]);
+public function sendApi(Request $request)
+{
+    try {
+        $request->validate([
+            'id' => 'required',
+            'projects' => 'required|array|min:1',
+        ]);
 
-		return $this->service->sendApi($request);
-	}
+        return $this->service->sendApi($request);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => false,
+            'message' => $e->getMessage()
+        ]);
+    }
+}
 
 	public function create(Request $req)
 	{
@@ -112,6 +120,12 @@ class RoleController extends Controller
 		]);
 
 		try {
+			    // FORCE SEND API = 0 (Plant सारखं)
+				$req->merge([
+					'send_api' => 0,
+					'send_api_project_id' => null   // You can reset this also (same plant logic)
+				]);
+				
 			$this->service->update($req);
 			return redirect()->route('roles.list')->with('success', 'Role Updated Successfully.');
 		} catch (Exception $e) {
