@@ -443,11 +443,20 @@ public function filter(Request $request)
         ]);
 
         try {
-            $assignment = EmployeePlantAssignment::with(['employee.designation', 'plant'])
+            $assignment = EmployeePlantAssignment::with(['employee.designation', 'employee.reportingManager', 'employee.employeeType', 'plant'])
                             ->findOrFail($request->id);
 
             $employee = $assignment->employee;
             $plant    = $assignment->plant;
+
+            $reportingManagerName = optional($employee->reportingManager)->employee_name;
+            $reportingManagerCode = optional($employee->reportingManager)->employee_code;
+
+            // 🔹 Generate Signature URL
+            $signatureUrl = null;
+            if (!empty($employee->employee_signature)) {
+                $signatureUrl = config('fileConstants.EMPLOYEE_SIGNATURE_VIEW') . $employee->employee_signature;
+            }
 
             // Load previously saved JSON safely (always array)
             $storedRoles = $this->safeJsonToArray($assignment->send_api_role_id);
@@ -499,12 +508,17 @@ public function filter(Request $request)
                     'role'             => $roleNames,
                     'emp_name'         => $employee->employee_name,
                     'emp_code'         => $employee->employee_code,
-                    'emp_type'         => $employee->employee_type,
+                    // 'emp_type'         => $employee->employee_type,
+                    'emp_type' => optional($employee->employeeType)->type_name,
                     'designation'      => $employee->designation->designation ?? '',
                     'username'         => $employee->employee_user_name,
                     'password'         => decrypt($employee->plain_password ?? ''),
                     'status'           => $assignment->is_active,
                     'com_portal_url'   => env('ASSET_URL'),
+                    'reporting_manager' => $reportingManagerName,
+                    'hod'                => $reportingManagerCode,
+                    'image' => $signatureUrl,
+                    // 'image' => 'https://alfengineeringworld.com/alfmis_dashboard/uploads/photos/Kalidas_Barne_20250911_Copilot_20250909_141320_1757568316.png',
                 ];
 
                 // extract project name

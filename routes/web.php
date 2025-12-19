@@ -114,6 +114,8 @@ Route::group(['middleware' => ['SuperAdmin']], function () {
     Route::post('/designations/delete', [DesignationsController::class, 'delete'])->name('designations.delete');
     Route::post('/designations/update-status', [DesignationsController::class, 'updateStatus'])->name('designations.updatestatus');
 
+    Route::post('/designations/send-api', [DesignationsController::class, 'sendApi'])->name('designations.sendApi');
+
 
 
     // plantmaster management routes
@@ -159,6 +161,8 @@ Route::group(['middleware' => ['SuperAdmin']], function () {
     Route::post('/departments/delete', [DepartmentsController::class, 'delete'])->name('departments.delete');
     Route::post('/departments/update-status', [DepartmentsController::class, 'updateStatus'])->name('departments.updatestatus');
     Route::post('/departments/list-ajax', [DepartmentsController::class, 'listajaxlist'])->name('departments.list-ajax');
+
+    Route::post('departments/send-api', [DepartmentsController::class, 'sendApi'])->name('departments.sendApi');
 
 
     Route::get('/departments/export', [DepartmentsController::class, 'export'])->name('departments.export');

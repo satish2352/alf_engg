@@ -26,6 +26,25 @@ class DesignationsController extends Controller
 		}
 	}
 
+	public function sendApi(Request $request)
+	{
+	    try {
+		$request->validate([
+			'id' => 'required',
+			'projects' => 'required|array|min:1'
+		]);
+
+        return $this->service->sendApi($request);
+
+		} catch (\Exception $e) {
+			return response()->json([
+				'status' => false,
+				'message' => $e->getMessage()
+			]);
+		}
+	}
+
+
 	public function create(Request $req)
 	{
 		try {
@@ -46,6 +65,13 @@ class DesignationsController extends Controller
 					return $query->where('is_deleted', 0);
 				}),
 			],
+			'designation_code' => [
+				'required',
+				'max:50',
+				Rule::unique('designations', 'designation_code')->where(function ($query) {
+					return $query->where('is_deleted', 0);
+				}),
+			],
 			'short_description' => 'required|max:255',
 
 			
@@ -54,6 +80,8 @@ class DesignationsController extends Controller
 			'designation.unique' => 'This Designation Already Exists.',
 			'short_description.required' => 'This Short Description Required.',
 			'short_description.max' => 'Description Must Not Exceed 255 Characters.',
+			'designation_code.required' => 'Enter Designation Code',
+			'designation_code.unique' => 'This Designation Code Already Exists.',
 		]);
 
 		try {
@@ -86,6 +114,13 @@ class DesignationsController extends Controller
 					->where(fn($query) => $query->where('is_deleted', 0))
 					->ignore($req->id),
 			],
+			'designation_code' => [
+				'required',
+				'max:50',
+				Rule::unique('designations', 'designation_code')
+					->where(fn($query) => $query->where('is_deleted', 0))
+					->ignore($req->id),
+			],
 			'short_description' => 'required|max:255',
 			'id' => 'required',
 			'is_active' => 'required'
@@ -93,6 +128,8 @@ class DesignationsController extends Controller
 			'designation.required' => 'Enter Designation Name',
 			'designation.unique' => 'This designation already Exists.',
 			'short_description.required' => 'This Short Description Required.',
+			'designation_code.required' => 'Enter Designation Code',
+        	'designation_code.unique' => 'This Designation Code Already Exists.',
 			'id.required' => 'ID Required',
 			'is_active.required' => 'Select Active Or Inactive Required',
 			 'short_description.max' => 'Description Must Not Exceed 255 Characters.',
@@ -123,7 +160,7 @@ class DesignationsController extends Controller
 	// 	}
 	// }
 
-	public function delete(Request $req)
+public function delete(Request $req)
 {
     try {
         $req->validate([
@@ -132,10 +169,9 @@ class DesignationsController extends Controller
             'id.required' => 'ID required'
         ]);
 
-        $this->service->delete($req);
-        return redirect()->route('designations.list')->with('success', 'Designation Deleted Successfully.');
+        return $this->service->delete($req);
+
     } catch (Exception $e) {
-        // Show the custom message if designation is assigned to employees
         return redirect()->back()->with('error', $e->getMessage());
     }
 }
@@ -156,27 +192,18 @@ class DesignationsController extends Controller
 	// 	}
 	// }
 
-	public function updateStatus(Request $request)
+public function updateStatus(Request $request)
 {
     try {
-        $id = base64_decode($request->id);
-        $designation = $this->service->find($id); // add find() method in service
-
-        if (!$designation) {
-            return response()->json(['status' => false, 'message' => 'Designation not found'], 404);
-        }
-
-        $designation->is_active = $request->is_active;
-        $designation->save();
-
-        $statusText = $designation->is_active ? 'Activated' : 'Deactivated';
-        $message = "Designation '{$designation->designation}' Status {$statusText} Successfully";
-
-        return response()->json(['status' => true, 'message' => $message]);
+        return $this->service->updateStatus($request);
     } catch (Exception $e) {
-        return response()->json(['status' => false, 'message' => 'Failed to update status: ' . $e->getMessage()], 500);
+        return response()->json([
+            'status' => false,
+            'message' => 'Failed to update status: ' . $e->getMessage()
+        ], 500);
     }
 }
+
 
 // public function updateStatus(Request $request)
 // {

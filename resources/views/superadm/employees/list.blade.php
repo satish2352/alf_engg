@@ -94,7 +94,7 @@
                                     alt="signature"
                                     width="100"
                                     height="100"
-                                    style="object-fit:contain; border:1px solid #ddd;">
+                                    style="object-fit:contain;">
                             </td>
                                 <td>
                                     @if (!empty($data->role) && $data->role->id != 0)

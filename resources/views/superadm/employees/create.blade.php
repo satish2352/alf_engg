@@ -213,7 +213,7 @@
                                     <img id="signaturePreview" 
                                         src="#" 
                                         alt="Signature Preview" 
-                                        style="display:none; width:100px; height:100px; border:1px solid #ccc; object-fit:contain;">
+                                        style="display:none; width:100px; height:100px; object-fit:contain;">
                                 </div>
 
                                 @if ($errors->has('employee_signature'))

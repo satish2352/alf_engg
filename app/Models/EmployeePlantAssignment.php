@@ -40,12 +40,29 @@ class EmployeePlantAssignment extends Model
     }
 
     // Accessors for department and project names
-    public function getDepartmentsNamesAttribute() {
-        $ids = $this->department_id; // Already an array
-        $ids = is_array($ids) ? $ids : [];
-        if(empty($ids)) return '-';
-        return Departments::whereIn('id', $ids)->pluck('department_name')->implode(', ');
+    // public function getDepartmentsNamesAttribute() {
+    //     $ids = $this->department_id; // Already an array
+    //     $ids = is_array($ids) ? $ids : [];
+    //     if(empty($ids)) return '-';
+    //     return Departments::whereIn('id', $ids)->pluck('department_name')->implode(', ');
+    // }
+
+    public function getDepartmentsNamesAttribute()
+{
+    $ids = is_array($this->department_id) ? $this->department_id : [];
+
+    if (empty($ids)) {
+        return '-';
     }
+
+    return Departments::whereIn('id', $ids)
+        ->get()
+        ->map(function ($dept) {
+            return $dept->department_name . ' (' . $dept->department_code . ')';
+        })
+        ->implode(', ');
+}
+
 
     public function getProjectsNamesAttribute() {
         $ids = $this->projects_id; // Already an array

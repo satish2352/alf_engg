@@ -372,7 +372,7 @@
             });
         // ✅ GET SIGNATURE URL FROM HIDDEN INPUT
             let signatureUrl = $('#employeeSignatureUrl').val();
-            console.log("Signature URL Sending to API:", signatureUrl);
+            // console.log("Signature URL Sending to API:", signatureUrl);
 
             Swal.fire({
                 title: "Are you sure?",

@@ -50,6 +50,17 @@ public function role()
     return $this->belongsTo(Roles::class, 'role_id', 'id');
 }
 
+public function reportingManager()
+{
+    return $this->belongsTo(Employees::class, 'reporting_to', 'id');
+}
+
+public function employeeType()
+{
+    return $this->belongsTo(EmployeeType::class, 'employee_type', 'id');
+}
+
+
 
 }
 

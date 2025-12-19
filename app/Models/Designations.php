@@ -8,7 +8,7 @@ class Designations extends Model
 {
     public $table = 'designations';
     public $timestamps = true;
-    protected $fillable = ['designation','short_description', 'is_active'];
+    protected $fillable = ['designation','short_description', 'designation_code', 'send_api', 'send_api_project_id', 'is_active'];
 
     public function employees()
     {

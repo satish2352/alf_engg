@@ -3,6 +3,26 @@
 @section('content')
 
 <style>
+
+    #global-loader {
+        display: none;
+        position: fixed;
+        top: 0; 
+        left: 0;
+        width: 100%; 
+        height: 100%;
+        background: rgba(255, 255, 255, 0.7);
+        z-index: 9999;
+        text-align: center;
+    }
+    #global-loader i {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 3rem;
+        color: #f0ad4e;
+    }
     .blink-btn {
     animation: blink 1s infinite;
     }
@@ -11,6 +31,10 @@
     }
 
 </style>
+
+<div id="global-loader">
+    <i class="fa fa-spinner fa-spin"></i>
+</div>
 
     <div class="row">
         <div class="col-12">
@@ -244,6 +268,9 @@
 
                 if(res.isConfirmed){
 
+                    // START LOADER
+                    $("#global-loader").fadeIn(100);
+
                     $.ajax({
                         url: "{{ route('roles.sendApi') }}",
                         type: "POST",
@@ -254,12 +281,22 @@
                         },
                         success: function(response){
 
+                            // STOP LOADER
+                            $("#global-loader").fadeOut(300);
+
                             if(response.status){
                                 Swal.fire("Success!", response.message, "success")
                                 .then(()=> location.reload());
                             }else{
                                 Swal.fire("Error!", response.message, "error");
                             }
+                        },
+                        error: function(){
+
+                            // STOP LOADER
+                            $("#global-loader").fadeOut(300);
+
+                            Swal.fire("Error!", "Something went wrong!", "error");
                         }
                     });
 
@@ -291,6 +328,8 @@
                 cancelButtonText: "No, cancel"
             }).then((result) => {
                 if (result.isConfirmed) {
+                    // START LOADER
+                    $("#global-loader").fadeIn(100);
                     $.ajax({
                         url: "{{ route('roles.updatestatus') }}",
                         type: "POST",
@@ -300,6 +339,8 @@
                             is_active: is_active
                         },
                         success: function(response) {
+                            // STOP LOADER
+                            $("#global-loader").fadeOut(300);
                             if (response.status) {
                                 Swal.fire('Success!', response.message, 'success');
                             } else {
@@ -308,6 +349,8 @@
                             }
                         },
                         error: function(xhr) {
+                            // STOP LOADER
+                            $("#global-loader").fadeOut(300);
                             Swal.fire('Error!', xhr.responseJSON?.message || 'Something went wrong', 'error');
                             checkbox.prop("checked", !is_active); // revert
                         }

@@ -1,6 +1,35 @@
 @extends('superadm.layout.master')
 
 @section('content')
+
+<style>
+#global-loader {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(255,255,255,0.7);
+    z-index: 9999;
+}
+#global-loader i {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3rem;
+    color: #f0ad4e;
+}
+.blink-btn {
+    animation: blink 1s infinite;
+}
+@keyframes blink {
+    50% { opacity: 0.3; }
+}
+</style>
+
+<div id="global-loader">
+    <i class="fa fa-spinner fa-spin"></i>
+</div>
+
     <div class="row">
         <div class="col-12">
             <div class="card">
@@ -27,6 +56,7 @@
                                     <th>Sr.No.</th>
                                     <th>Designation Name</th>
                                     <th>Short Description</th>
+                                    <th>Send Data</th>
                                     <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
@@ -37,6 +67,16 @@
                                         <td>{{ $key + 1 }}</td>
                                         <td>{{ $data->designation }}</td>
                                         <td>{{ $data->short_description }}</td>
+                                        <td>
+                                            <button type="button"
+                                                class="btn btn-sm btn-warning open-designation-send-modal {{ $data->send_api == 0 ? 'blink-btn' : '' }}"
+                                                data-id="{{ $data->id }}"
+                                                data-designation="{{ $data->designation }}"
+                                                data-desc="{{ $data->short_description }}"
+                                                data-old-projects="{{ $data->send_api_project_id ?? '' }}">
+                                                <i class="mdi mdi-upload"></i> Send Data
+                                            </button>
+                                        </td>
                                         <td>
                                             <form action="{{ route('designations.updatestatus') }}" method="POST"
                                                 class="d-inline-block delete-form">
@@ -81,6 +121,139 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="sendDesignationModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title text-white">Send Designation Data to API</h5>
+                <button class="close" data-bs-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <table class="table table-bordered">
+                <thead>
+                    <tr>
+                    <th>Sr</th>
+                    <th>Designation</th>
+                    <th>Select Projects</th>
+                    </tr>
+                </thead>
+                <tbody id="designationProjectAssignBody"></tbody>
+                </table>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button class="btn btn-success" id="sendDesignationApiBtn">Send to API</button>
+            </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {{-- =================== SCRIPT =================== --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-multiselect/dist/js/bootstrap-multiselect.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-multiselect/dist/css/bootstrap-multiselect.css">
+
+    <script>
+        $(document).on("click", ".open-designation-send-modal", function () {
+
+    $("#sendDesignationApiBtn").prop("disabled", true);
+
+    let id = $(this).data("id");
+    let designation = $(this).data("designation");
+    let oldProjects = ($(this).data("old-projects") || "").toString().split(",").filter(Boolean);
+
+    $("#designationProjectAssignBody").html("<tr><td colspan='3'>Loading...</td></tr>");
+    $("#sendDesignationModal").modal("show");
+
+    $.get("{{ url('/get-all-projects') }}", function(projects){
+
+        let options = "";
+        projects.forEach(p => {
+            options += `<option value="${p.id}">${p.project_name}</option>`;
+        });
+
+        $("#designationProjectAssignBody").html(`
+            <tr>
+                <td>1</td>
+                <td>${designation}</td>
+                <td>
+                    <select class="form-control designation-project-select" multiple>
+                        ${options}
+                    </select>
+                </td>
+            </tr>
+        `);
+
+        $(".designation-project-select").multiselect({
+            includeSelectAllOption: true,
+            enableFiltering: true,
+            buttonWidth: '100%',
+            maxHeight: 300,
+            onChange: function(){
+                $("#sendDesignationApiBtn").prop(
+                    "disabled",
+                    !$(".designation-project-select").val()
+                );
+            }
+        });
+
+        $(".designation-project-select").val(oldProjects).multiselect("refresh");
+
+        if(oldProjects.length) {
+            $("#sendDesignationApiBtn").prop("disabled", false);
+        }
+
+        $("#sendDesignationApiBtn").data("id", id);
+    });
+});
+
+$("#sendDesignationApiBtn").click(function(){
+
+    let id = $(this).data("id");
+    let projects = $(".designation-project-select").val();
+
+    Swal.fire({
+        title: "Are you sure?",
+        text: "Send designation data to selected projects?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, send it!"
+    }).then(res => {
+
+        if(res.isConfirmed){
+            $("#global-loader").fadeIn(100);
+
+            $.post("{{ route('designations.sendApi') }}", {
+                _token: "{{ csrf_token() }}",
+                id: id,
+                projects: projects
+            }, function(resp){
+
+                $("#global-loader").fadeOut(300);
+
+                if(resp.status){
+                    Swal.fire("Success!", resp.message, "success")
+                        .then(()=> location.reload());
+                } else {
+                    Swal.fire("Error!", resp.message, "error");
+                }
+            }).fail(()=>{
+                $("#global-loader").fadeOut(300);
+                Swal.fire("Error!", "Something went wrong", "error");
+            });
+        }
+    });
+});
+
+    </script>
+
+
     <script>
         $(document).on("change", ".toggle-status", function(e) {
             e.preventDefault();

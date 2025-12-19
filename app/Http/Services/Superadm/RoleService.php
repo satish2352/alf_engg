@@ -40,7 +40,7 @@ public function sendApi($request)
     $oldProjects = explode(",", $role->send_api_project_id ?? "");
 
     // =============================
-    // 🔥 STEP 1: Identify Removed Projects
+    // STEP 1: Identify Removed Projects
     // =============================
     $removedProjects = array_diff($oldProjects, $newProjects);
 
@@ -60,16 +60,16 @@ public function sendApi($request)
         if (!$projectName) continue;
 
         $payload = [
-            "role" => $role->role,
+            "role_name" => $role->role,
             "status" => 0 // disable role
         ];
 
-        \Http::post("https://alfitworld.com/{$projectName}/CommonController/changeRoleStatus", $payload);
+        \Http::post("https://alfitworld.com/{$projectName}/CommonController/api_update_role_status", $payload);
     }
 
 
     // =============================
-    // 🔥 STEP 2: SEND Role to CURRENT Selected Projects
+    // STEP 2: SEND Role to CURRENT Selected Projects
     // =============================
     $projects = \DB::table('projects')
         ->whereIn('id', $newProjects)
@@ -78,6 +78,7 @@ public function sendApi($request)
         ->get();
 
     $allSuccess = true;
+    $apiResponses = [];
 
     foreach ($projects as $proj) {
 
@@ -90,21 +91,31 @@ public function sendApi($request)
         }
 
         $payload = [
-            "role" => $role->role,
+            "role_name" => $role->role,
             "short_description" => $role->short_description
         ];
 
         $apiUrl = "https://alfitworld.com/{$projectName}/CommonController/addEditRoleApi";
         $response = \Http::post($apiUrl, $payload);
 
+        $apiResponses[] = [
+            'project_id' => $proj->id,
+            'project_name' => $projectName,
+            'api_url' => $apiUrl,
+            'role' => $role->role,
+            'short_description' => $role->short_description,
+            'status_code' => $response->status(),
+            'api_response' => $response->json()
+        ];
+
+
         if (!$response->successful()) {
             $allSuccess = false;
         }
     }
 
-
     // =============================
-    // 🔥 STEP 3: UPDATE DB
+    // STEP 3: UPDATE DB
     // =============================
     if ($allSuccess) {
         \DB::table('roles')
@@ -114,10 +125,10 @@ public function sendApi($request)
                 "send_api_project_id" => implode(",", $newProjects)
             ]);
 
-        return response()->json(['status' => true, 'message' => "Role data sent successfully"]);
+        return response()->json(['status' => true, 'message' => "Role data sent successfully", 'data' => $apiResponses]);
     }
 
-    return response()->json(['status' => false, 'message' => "Some APIs failed"]);
+    return response()->json(['status' => false, 'message' => "Some APIs failed", 'data' => $apiResponses]);
 }
 
 
@@ -208,10 +219,10 @@ public function sendApi($request)
     //     }
     // }
 
-    public function delete(Request $req)
+public function delete(Request $request)
 {
     try {
-        $id = base64_decode($req->id);
+        $id = base64_decode($request->id);
 
         $role = \DB::table('roles')
             ->where('id', $id)
@@ -229,11 +240,12 @@ public function sendApi($request)
             ->exists();
 
         if ($employeeExists) {
-            return redirect()->back()->with('error', "Role '{$role->role}' is assigned to employees.");
+            return redirect()->back()
+                ->with('error', "Role '{$role->role}' is assigned to employees.");
         }
 
-        // call deleteRoleApi for each assigned project
-        $projectIds = explode(",", $role->send_api_project_id ?? "");
+        // delete role from external projects
+        $projectIds = array_filter(explode(",", $role->send_api_project_id ?? ""));
 
         $projects = \DB::table('projects')
             ->whereIn('id', $projectIds)
@@ -241,14 +253,14 @@ public function sendApi($request)
             ->get();
 
         foreach ($projects as $proj) {
-
             preg_match('#https?://[^/]+/([^/]+)/#', $proj->project_url, $m);
             $projectName = $m[1] ?? null;
             if (!$projectName) continue;
 
-            \Http::post("https://alfitworld.com/{$projectName}/CommonController/deleteRoleApi", [
-                "role" => $role->role
-            ]);
+            \Http::post(
+                "https://alfitworld.com/{$projectName}/CommonController/api_delete_role",
+                ["role_name" => $role->role]
+            );
         }
 
         // local soft delete
@@ -256,10 +268,13 @@ public function sendApi($request)
             ->where('id', $id)
             ->update(['is_deleted' => 1]);
 
-        return redirect()->route('roles.list')->with('success', 'Role deleted successfully.');
+        return redirect()
+            ->route('roles.list')
+            ->with('success', "Role '{$role->role}' deleted successfully.");
 
     } catch (\Exception $e) {
-        return redirect()->back()->with('error', 'Error deleting role: ' . $e->getMessage());
+        return redirect()->back()
+            ->with('error', 'Error deleting role: ' . $e->getMessage());
     }
 }
 
@@ -277,7 +292,7 @@ public function sendApi($request)
     //     }
     // }
 
-    public function updateStatus(Request $request)
+public function updateStatus(Request $request)
 {
     try {
         $id = base64_decode($request->id);
@@ -288,50 +303,96 @@ public function sendApi($request)
             ->first();
 
         if (!$role) {
-            return response()->json(['status' => false, 'message' => 'Role not found']);
+            return response()->json([
+                'status' => false,
+                'message' => 'Role not found'
+            ]);
         }
 
         $is_active = $request->is_active ? 1 : 0;
 
-        // 1) local DB update
+        // 1️⃣ Local DB update
         \DB::table('roles')
             ->where('id', $id)
             ->update(['is_active' => $is_active]);
 
-        // 2) send API where send_api_project_id stored
-        $projectIds = explode(",", $role->send_api_project_id ?? "");
+        // 2️⃣ Send API to projects
+        $projectIds = array_filter(explode(",", $role->send_api_project_id ?? ""));
+
         $projects = \DB::table('projects')
             ->whereIn('id', $projectIds)
             ->where('is_active', 1)
             ->where('is_deleted', 0)
             ->get();
 
+        $apiResponses = [];
+        $allSuccess = true;
+
         foreach ($projects as $proj) {
 
             preg_match('#https?://[^/]+/([^/]+)/#', $proj->project_url, $m);
             $projectName = $m[1] ?? null;
-            if (!$projectName) continue;
+            if (!$projectName) {
+                $allSuccess = false;
+                continue;
+            }
 
             $payload = [
-                "role" => $role->role,
-                "status" => $is_active
+                'role_name' => $role->role,
+                'status'    => $is_active
             ];
 
-            \Http::post("https://alfitworld.com/{$projectName}/CommonController/changeRoleStatus", $payload);
+            $apiUrl = "https://alfitworld.com/{$projectName}/CommonController/api_update_role_status";
+
+            try {
+                $response = \Http::post($apiUrl, $payload);
+
+                $apiResponses[] = [
+                    'project_id'   => $proj->id,
+                    'project_name' => $projectName,
+                    'api_url'      => $apiUrl,
+                    'role_name'         => $role->role,
+                    'status'       => $is_active,
+                    'status_code'  => $response->status(),
+                    'api_response' => $response->json()
+                ];
+
+                if (!$response->successful()) {
+                    $allSuccess = false;
+                }
+
+            } catch (\Exception $e) {
+                $allSuccess = false;
+
+                $apiResponses[] = [
+                    'project_id'   => $proj->id,
+                    'project_name' => $projectName,
+                    'api_url'      => $apiUrl,
+                    'role_name'         => $role->role,
+                    'status'       => $is_active,
+                    'status_code'  => 500,
+                    'api_response' => [
+                        'status'  => false,
+                        'message' => $e->getMessage()
+                    ]
+                ];
+            }
         }
 
         return response()->json([
-            'status' => true,
-            'message' => "Role status updated successfully"
+            'status'  => $allSuccess,
+            'message' => "Role '{$role->role}' status updated successfully",
+            'data'    => $apiResponses
         ]);
 
     } catch (\Exception $e) {
         return response()->json([
             'status' => false,
-            'message' => "Error updating status: ". $e->getMessage()
+            'message' => 'Error updating status: ' . $e->getMessage()
         ]);
     }
 }
+
 
 
 //     public function updateStatus($req)

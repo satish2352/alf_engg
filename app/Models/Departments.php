@@ -8,7 +8,7 @@ class Departments extends Model
 {
     public $table = 'departments';
     public $timestamps = true;
-    protected $fillable = ['plant_id','department_code','department_name','department_short_name', 'created_by', 'is_active'];
+    protected $fillable = ['plant_id','department_code','department_name','department_short_name', 'send_api', 'send_api_project_id', 'created_by', 'is_active'];
 
     public function plant()
     {

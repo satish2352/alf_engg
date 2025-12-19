@@ -27,7 +27,14 @@
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
-
+                        <div class="form-group">
+                            <label>Designation Code <span class="text-danger">*</span></label>
+                            <input type="text" name="designation_code" class="form-control"
+                                value="{{ old('designation_code', $data->designation_code) }}">
+                            @error('designation_code')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
 
                         <div class="form-group">
                             <label>Short Description <span class="text-danger">*</span></label>

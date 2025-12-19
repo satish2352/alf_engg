@@ -236,7 +236,7 @@
                                     <img id="signatureImage"
                                         src="{{ config('fileConstants.EMPLOYEE_SIGNATURE_VIEW') . $employee->employee_signature }}"
                                         width="120" height="120"
-                                        style="object-fit:contain; border:1px solid #ccc;">
+                                        style="object-fit:contain;">
                                 @else
                                     <img id="signatureImage"
                                         src="#"
